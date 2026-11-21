@@ -2,7 +2,7 @@ Variable_Name,Data_Type,N_Missing,Missing_Ratio,Value_Range,Definition,Business_
 id,int64,0,0.0,1 ~ 350992,Unique game identifier,"Primary key, not used in model"
 primary,str,0,0.0,21236 unique values,Primary category ID,"Category identifier, usable for group analysis"
 description,str,1,0.0,21615 unique values,Text description of the game,"Text feature, keywords extractable"
-yearpublished,float64,302,0.014,1900.0 ~ 2022.0,"Year first published. VERIFIED: 302 invalid years (<1500 or >2026, incl. -3500) recoded to NA; cleaned range 1900-2022",Reflects era; source of derived game_age (reference year 2022)
+yearpublished,float64,302,0.014,1900.0 ~ 2022.0,"Year first published. VERIFIED: 302 invalid years (outside 1900-2022, incl. -3500) recoded to NA; cleaned range 1900-2022",Reflects era; source of derived game_age (reference year 2022)
 minplayers,float64,44,0.002,1.0 ~ 10.0,Minimum number of players supported (0 recoded to NA),Entry barrier
 maxplayers,float64,164,0.0076,1.0 ~ 999.0,Maximum number of players supported (0 recoded to NA),"Game capacity, party suitability"
 playingtime,float64,774,0.0358,1.0 ~ 60000.0,Average playtime in minutes (0 recoded to NA; NOT capped here),"Time cost, affects player choice"
@@ -29,13 +29,13 @@ bayes_average,float64,0,0.0,0.0 ~ 8.511,BGG benchmark rating: Bayes-weighted ave
 users_rated,int64,0,0.0,30 ~ 108975,Number of users who rated it (data pre-filtered to >=30). UNMODIFIED: no winsorization/clipping applied,"Sample size, rating credibility"
 url,str,0,0.0,21631 unique values,Game detail page link,Display only
 thumbnail,str,6,0.0003,21616 unique values,Thumbnail link,Display only
-playingtime_capped,int64,0,0.0,1.0 ~ 600.0,playingtime capped at 600 min; zeros recoded to 1,Outlier-robust playtime for modelling
-log_playingtime,float64,0,0.0,0.6931 ~ 6.3986,Natural log of playingtime_capped,Variance-stabilized playtime
-maxplayers_capped,int64,0,0.0,1.0 ~ 36.0,maxplayers capped at 36; zeros recoded to 1,Outlier-robust capacity
+playingtime_capped,int64,0,0.0,1.0 ~ 600.0,playingtime capped at 600 min. NOTE: the 774 zero->NA rows become 600 here (pmin na.rm=TRUE side effect),Outlier-robust playtime for modelling
+log_playingtime,float64,0,0.0,0.6931 ~ 6.3986,log1p of playingtime_capped,Variance-stabilized playtime
+maxplayers_capped,int64,0,0.0,1.0 ~ 36.0,maxplayers capped at 36. NOTE: the 164 zero->NA rows become 36 here (pmin na.rm=TRUE side effect),Outlier-robust capacity
 zero_raters,bool,0,0.0,0.0 ~ 0.0,1 if users_rated==0 else 0. VERIFIED: constant 0 in delivered data (pre-filtered to users_rated>=30); carries no information,"Dead column, safe to drop"
-log_users_rated,float64,0,0.0,3.434 ~ 11.5989,Natural log of users_rated,Variance-stabilized rating count
+log_users_rated,float64,0,0.0,3.434 ~ 11.5989,log1p of users_rated,Variance-stabilized rating count
 game_age,float64,302,0.014,0.0 ~ 122.0,Years since publication (reference year 2022); NA when yearpublished NA,Game age effect
-log_game_age,float64,302,0.014,0.0 ~ 4.8122,Natural log of game_age; NA when game_age NA or 0,Log age effect
+log_game_age,float64,302,0.014,0.0 ~ 4.8122,log1p of game_age; NA when game_age NA,Log age effect
 cat_X..Card.Game.,indicator,0,0.0,0/1 (1 for 3623 games),Indicator: BGG category 'Card Game'. Duplicate 1/3 of category 'Card Game' (whitespace variants from untrimmed split). OR-merge all 3 before modelling,Duplicate indicator - merge before modelling
 cat_X.Wargame..,indicator,0,0.0,0/1 (1 for 2407 games),Indicator: BGG category 'Wargame'. Duplicate 1/2 of category 'Wargame'. OR-merge both before modelling,Duplicate indicator - merge before modelling
 cat_X.Fantasy.,indicator,0,0.0,0/1 (1 for 1480 games),Indicator: BGG category 'Fantasy',Dummy variable from tag splitting
@@ -80,5 +80,5 @@ designer_first,str,596,0.0276,7974 unique values,First-listed designer of boardg
 designer_id,str,596,0.0276,7974 unique values,"Identifier of designer_first (7,974 unique)",Grouping factor for multilevel model
 multi_designer,int64,0,0.0,0.0 ~ 1.0,"1 if more than one designer credited, else 0",Collaboration indicator
 z_log_users,float64,0,0.0,-1.211 ~ 4.4179,z-standardized log_users_rated: (x-mean)/sd on full data,Standardized predictor
-z_game_age,float64,302,0.014,-2.9003 ~ 2.8329,z-standardized game_age: (x-mean)/sd on full data,Standardized predictor
+z_game_age,float64,302,0.014,-2.9003 ~ 2.8329,"z-standardized log_game_age (NOTE: standardizes the LOG of game age, matching delivered data)",Standardized predictor
 z_log_play,float64,0,0.0,-3.366 ~ 2.4398,z-standardized log_playingtime: (x-mean)/sd on full data,Standardized predictor
