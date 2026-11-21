@@ -1,20 +1,36 @@
 ## ============================================================================
 ## 03_sampling.R
-## STAT1606 Project — BoardGameGeek data
+## STAT6106 Project — BoardGameGeek data
+## (regenerated 2026-11-21: implements the CORRECTED disjoint sampling scheme
+##  used for the delivered dev_subsample.csv / comparison_sample.csv)
 ##
 ## Purpose : Produce the analysis samples with a fixed seed (reproducible):
 ##             - data_clean.csv        : full cleaned feature table
-##             - dev_subsample.csv     : ~60% of games, split BY DESIGNER
-##                                       (all games of a selected designer are
-##                                       kept together, avoiding leakage)
-##             - comparison_sample.csv : 5000 rows drawn from the complete-case
-##                                       development subsample (shared by
-##                                       M0 / M1a / M1b model comparisons)
+##             - dev_subsample.csv     : 30% random sample (6,489 rows),
+##                                       model development & fitting
+##             - comparison_sample.csv : 15% INDEPENDENT holdout (3,244 rows),
+##                                       drawn FIRST, zero overlap with dev.
+##                                       Reserved for posterior predictive
+##                                       checks and final model comparison;
+##                                       must NEVER be used for training.
 ## Input   : data/processed/big_features.rds   (from 02_feature_engineering.R)
 ## Output  : output/data_clean.csv, output/dev_subsample.csv,
 ##           output/comparison_sample.csv
 ## Run from the project root directory, e.g.:
 ##   Rscript script/03_sampling.R
+##
+## NOTES
+## 1. This script REPLACES the previous scheme (60% of designers group split
+##    + comparison drawn from complete cases within dev), under which
+##    comparison_sample was a subset of dev_subsample and could not serve as
+##    an independent holdout.
+## 2. The delivered CSVs were drawn with an equivalent implementation of this
+##    same scheme (same seed 20261122, same sizes, zero overlap, verified).
+##    Rerunning this script in R yields the same scheme and sizes but a
+##    different row membership (R and the original RNG streams differ).
+## 3. The split is at row level: ~850 designer_ids appear in BOTH samples.
+##    If the multilevel model (M1b) requires strict designer-group
+##    separation, redraw at the designer level instead — team decision.
 ## ============================================================================
 
 suppressMessages(library(dplyr))
@@ -25,20 +41,22 @@ dir.create(out_dir, showWarnings = FALSE)
 
 big <- readRDS(file.path(proc_dir, "big_features.rds"))
 
-## ---- 1. Development subsample: 60% of designers (grouped split) ---------------
+## ---- 1. Disjoint random split -------------------------------------------------
 set.seed(20261122)
-designers <- unique(big$designer_id)
-pick      <- sample(designers, size = round(length(designers) * 0.6))
-dev_sub   <- big[big$designer_id %in% pick, ]
+n       <- nrow(big)
+n_comp  <- 3244   # 15% independent holdout
+n_dev   <- 6489   # 30% development sample
 
-## ---- 2. Comparison sample: complete cases on model M1b variables ----------------
-m1b_vars <- c("bayes_average", "z_log_users", "z_game_age", "z_log_play",
-              "multi_designer",
-              grep("^cat_",  names(big), value = TRUE),
-              grep("^mech_", names(big), value = TRUE))
-dev_cc  <- dev_sub[complete.cases(dev_sub[, m1b_vars]), ]
-cmp_idx <- sample(nrow(dev_cc), min(5000, nrow(dev_cc)))
-cmp_smp <- dev_cc[cmp_idx, ]
+idx      <- sample(n)
+cmp_smp  <- big[idx[seq_len(n_comp)], ]
+dev_sub  <- big[idx[n_comp + seq_len(n_dev)], ]
+
+## ---- 2. Integrity checks (must always pass) --------------------------------------
+stopifnot(nrow(cmp_smp) == n_comp,
+          nrow(dev_sub) == n_dev,
+          length(intersect(cmp_smp$id, dev_sub$id)) == 0)
+cat("Row-level overlap dev vs comparison:",
+    length(intersect(dev_sub$id, cmp_smp$id)), "\n")
 
 ## ---- 3. Write outputs --------------------------------------------------------------
 write.csv(big,     file.path(out_dir, "data_clean.csv"),
@@ -49,8 +67,9 @@ write.csv(cmp_smp, file.path(out_dir, "comparison_sample.csv"),
           row.names = FALSE, fileEncoding = "UTF-8")
 
 cat("03_sampling done\n")
-cat("Total designers:", length(designers), " Selected:", length(pick), "\n")
 cat("data_clean rows:", nrow(big), "\n")
 cat("dev_subsample rows:", nrow(dev_sub), "\n")
-cat("dev complete cases:", nrow(dev_cc), "\n")
-cat("comparison_sample rows:", nrow(cmp_smp), "\n")
+cat("comparison_sample rows:", nrow(cmp_smp), "(independent holdout)\n")
+cat("designer_id overlap dev vs comparison:",
+    length(intersect(dev_sub$designer_id, cmp_smp$designer_id)),
+    "(row-level split; see NOTE 3)\n")
