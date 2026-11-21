@@ -7,7 +7,7 @@
                        designer identifiers, capped / log / standardized
                        variables -> big_features.rds
 3. 03_samples.R      — construct dev_subsample and comparison_sample
-4. 04_dictionary.R   — export data_dictionary.csv (83 variables)
+4. 04_dictionary.R   — export data_dictionary.csv (75 variables)
 
 ## Cleaning & feature rules
 - Invalid years: yearpublished < 1500 or > 2026 set to NA (302 games).
@@ -21,13 +21,15 @@
 - IMPORTANT: `average` and `users_rated` are completely unmodified
   (verified row-by-row against the merged raw data: 0 of 21,631 values
   changed). They can be used directly as model outcome / weight.
-- Indicators: cat_* (20 indicators), mech_* (20 indicators) as 0/1 dummies,
-  split from the raw tag strings. KNOWN ISSUE: tags were split without
-  trimming whitespace, so the same tag produced duplicate columns
-  (e.g. 'Card Game' x3, 'Wargame' x2, 'Dice Rolling' x2,
-  'Hand Management' x2, 'Set Collection' x2, 'Simulation' x2), and the
-  mechanic 'Bag and Pool Building' was wrongly split into mech_Bag +
-  mech_and.Pool.Building. Merge or re-parse these before modelling.
+- Indicators: cat_* (17 categories), mech_* (15 mechanics) as 0/1 dummies,
+  split from the raw tag strings. FIXED 2026-11-21: the raw split had not
+  trimmed whitespace, producing duplicate columns for the same tag
+  ('Card Game' x3, 'Wargame'/'Dice Rolling'/'Hand Management'/
+  'Set Collection'/'Simulation' x2), and 'Bag and Pool Building' had been
+  wrongly split at 'and'. All 8 redundant columns were merged by logical
+  OR into 7 clean indicators (cat_Card_Game, cat_Wargame,
+  mech_Dice_Rolling, mech_Hand_Management, mech_Set_Collection,
+  mech_Simulation, mech_Bag_and_Pool_Building): 83 -> 75 variables.
 - Designer IDs: designer_first = first-listed designer; designer_id factor
   (7,974 unique); multi_designer = 1 if >1 designer credited (5,817 games).
 - Standardization: z_ prefix = (x - mean) / sd, computed on full data
@@ -36,9 +38,9 @@
 
 ## Data files
 - data_clean.csv        — unified cleaned & engineered dataset
-                          (21,631 rows x 83 variables).
+                          (21,631 rows x 75 variables).
                           THIS IS THE SINGLE SOURCE OF TRUTH for modelling.
-- data_dictionary.csv   — definitions for all 83 variables, with n_missing,
+- data_dictionary.csv   — definitions for all 75 variables, with n_missing,
                           missing ratio and value range per variable.
 - details_cleaned.csv   — cleaned details table (21,631 rows x 23 vars).
 - ratings_cleaned.csv   — cleaned ratings table (21,631 rows x 10 vars;
@@ -62,7 +64,7 @@
   reserve it for posterior predictive checks and final model comparison.
 - dev_subsample: 30% random sample (6,489 rows) drawn from the REMAINING
   85% of games, same seed. Row-level overlap with comparison_sample is 0.
-  Both samples carry all 83 variables (subsets of data_clean.csv).
+  Both samples carry all 75 variables (subsets of data_clean.csv).
 - NOTE on designer leakage: the split is at row level, so 854 designer_ids
   appear in BOTH dev and comparison. If the multilevel model requires
   strict designer-group separation, re-draw comparison at the designer
