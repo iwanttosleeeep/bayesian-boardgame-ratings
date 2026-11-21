@@ -7,7 +7,7 @@
                        designer identifiers, capped / log / standardized
                        variables -> big_features.rds
 3. 03_samples.R      — construct dev_subsample and comparison_sample
-4. 04_dictionary.R   — export data_dictionary.csv (83 variables)
+4. 04_dictionary.R   — export variable_dictionary.csv (83 variables)
 
 ## Cleaning & feature rules
 - Invalid years: yearpublished < 1500 or > 2026 set to NA (302 games).
@@ -38,23 +38,18 @@
 - data_clean.csv        — unified cleaned & engineered dataset
                           (21,631 rows x 83 variables).
                           THIS IS THE SINGLE SOURCE OF TRUTH for modelling.
-- data_dictionary.csv   — definitions for all 83 variables, with n_missing,
+- variable_dictionary.csv — definitions for all 83 variables, with n_missing,
                           missing ratio and value range per variable.
-- details_cleaned.csv   — cleaned details table (21,631 rows x 23 vars).
-- ratings_cleaned.csv   — cleaned ratings table (21,631 rows x 10 vars;
-                          pre-filtered to users_rated >= 30).
-- data_merged.csv       — raw merge of details + ratings
-                          (21,631 rows x 32 vars), kept for audit.
 - dev_subsample.csv     — 6,489 rows (30% random sample of data_clean,
                           seed 20261122), model development & fitting.
 - comparison_sample.csv — 3,244 rows (15% INDEPENDENT holdout, drawn first
                           from data_clean with the same seed; ZERO overlap
                           with dev_subsample), posterior predictive checks
                           and model comparison.
-- model_sample.csv      — alias of the full merged data (21,631 rows).
-- model_train.csv       — 17,305 rows (80% split of model_sample).
-- model_test.csv        — 4,326 rows (20% split of model_sample).
 - big_clean.rds / big_features.rds — intermediate R objects (local only).
+- Removed legacy files (in git history): data_merged.csv, details_cleaned.csv,
+  ratings_cleaned.csv, model_sample.csv, model_train.csv, model_test.csv,
+  data_dictionary.csv (renamed to variable_dictionary.csv).
 
 ## Sampling method (redrawn 2026-11-21 for clean train/holdout separation)
 - comparison_sample: 15% independent holdout (3,244 rows), drawn FIRST

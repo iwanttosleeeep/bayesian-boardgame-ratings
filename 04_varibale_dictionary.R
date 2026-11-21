@@ -2,14 +2,14 @@
 ## 04_varibale_dictionary.R
 ## STAT6106 Project — BoardGameGeek data
 ## (regenerated 2026-11-21: emits the enriched dictionary matching the
-##  delivered data_dictionary.csv — type / missingness / range / definition;
+##  delivered variable_dictionary.csv — type / missingness / range / definition;
 ##  bayes_average correctly labelled as BGG benchmark, NOT model outcome)
 ##
-## Purpose : Generate data_dictionary.csv documenting every variable in the
+## Purpose : Generate variable_dictionary.csv documenting every variable in the
 ##           final feature table: name, type, missing count, missing ratio,
 ##           value range, definition and business meaning.
 ## Input   : data/processed/big_features.rds   (from 02_feature_engineering.R)
-## Output  : output/data_dictionary.csv
+## Output  : output/variable_dictionary.csv
 ## Run from the project root directory, e.g.:
 ##   Rscript script/04_varibale_dictionary.R
 ## ============================================================================
@@ -136,7 +136,7 @@ rows  <- lapply(vars, function(v) {
 })
 
 desc <- bind_rows(rows)
-write.csv(desc, file.path(out_dir, "data_dictionary.csv"),
+write.csv(desc, file.path(out_dir, "variable_dictionary.csv"),
           row.names = FALSE, fileEncoding = "UTF-8")
 cat("Dictionary generated:", nrow(desc), "variables\n")
-cat("Saved:", file.path(out_dir, "data_dictionary.csv"), "\n")
+cat("Saved:", file.path(out_dir, "variable_dictionary.csv"), "\n")
