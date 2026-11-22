@@ -1,6 +1,6 @@
 # P5 — Preliminary Bayesian shrinkage analysis (2026-11-22)
 
-**Status:** preliminary, exploratory analysis. This directory and `code/P5/` do not replace the group proposal, original M1a, or P1's data files.
+**Status:** preliminary, exploratory analysis. **Model A, not old D, is the original M1a baseline.** See [model_a_original](./model_a_original/) for its historically recorded output and a reproduction script. The earlier 'old D' is only the comparator for the external-SD D extension. This directory and `code/P5/` do not replace the group proposal, original M1a, or P1's data files.
 
 ## Scope and samples
 
@@ -44,9 +44,9 @@ Requires R, JAGS, `rjags`, `coda`. Working directory must be consistent across s
 - `prior_sensitivity/`: model parameter prior sensitivity summaries and convergence.
 - `model_comparison/`: like-for-like old vs calibrated D holdout scoring, shrinkage and convergence.
 
-**IMPORTANT: Missing artifacts in the chat uploads:** `P5_SD_matched.csv`, `parameter_draws.rds`, `latent_rating_draws_for_P6.rds`, and any other local saved posterior RDS. These cannot be reconstructed from summary CSVs. Upload the genuine files from the R working directory before treating the GitHub version as fully reproducible or ready for P6 rank-interval calculation.
+**Repository artifact status (2026-11-22):** `model_d/P5_SD_matched.csv` has been uploaded and verified (6,416 matched games). The user has supplied the genuine `parameter_draws.rds` and `latent_rating_draws_for_P6.rds` in ChatGPT, but the connected GitHub text-file write interface does **not** support direct binary uploads; these RDS files have NOT yet been pushed to GitHub. They must be uploaded separately to `outputs/P5/model_d/` before the repository is self-contained and P6 can run rank-interval calculations. Do not substitute CSV posterior means for latent rating draws.
 
-**No final report claims or all-BGG ranking claims are authorized by this preliminary folder.**
+**Model history:** original intercept-only A (full raw ratings) → B varying-tau only → C varying-mean only → D varying-mean and varying-tau with unknown common s → external-SD D with game-specific historical SD. The existing matched-sample model comparison is **old D vs external-SD D, not A vs external-SD D**.\n\n**No final report claims or all-BGG ranking claims are authorized by this preliminary folder.**
 
 ## Interpretation
 
