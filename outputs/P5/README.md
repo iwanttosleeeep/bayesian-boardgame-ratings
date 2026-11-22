@@ -61,13 +61,17 @@ Run the R scripts from the **same RStudio working directory** used for the initi
 
 If starting clean: run 01 to prepare external SD; 02 and 03 to fit both models; 04 to construct the holdout prediction cache; 05/06 for sensitivities; 07 for the model comparison; 08 for P6 handoff. R packages `rjags` and `coda` plus JAGS are required.
 
-## Still-local artifacts / completeness warning
+## Posterior draws and reproducibility status
 
-The current GitHub snapshot contains uploaded CSV summaries and the matching table, **not** the original posterior RDS files and other large/per-game caches. In particular, GitHub does **not** yet contain:
-- `P5_external_SD/Model_D_calibrated/parameter_draws.rds` and `latent_rating_draws_for_P6.rds`
-- `P5_external_SD/Model_A_same_6416/parameter_draws.rds` and optional baseline latent draws
-- `P5_external_SD/holdout_validation/holdout_game_predictions.csv`
+**Both M1a model folders now contain the genuine uploaded posterior files**:
 
-These were used by the student's local code, but cannot be recreated from the summary CSVs alone. RDS files were supplied in chat for the Extended model but the GitHub integration does not accept local binary uploads. **P6 requires actual posterior latent draws, not just posterior means, to calculate rank probabilities and intervals.** Upload genuine local RDS files separately before describing the repository as self-contained.
+- [Baseline](M1a_Baseline/): \`parameter_draws.rds\`, \`latent_rating_draws_for_P6.rds\`
+- [Extended External SD](M1a_Extended_ExternalSD/): \`parameter_draws.rds\`, \`latent_rating_draws_for_P6.rds\`
 
-Historical rating SDs are plugged in as fixed values with unknown snapshot timing and not fully modeled uncertainty. P4's designer effects require separate treatment of held-out games by seen/unseen designer; M1a's comparison here does not identify the causal effect of designer variables.
+The GitHub object listing confirms each file is present; these binary files have **not** been independently opened or the model fits rerun during this README update. They are intended for P6's **within-6,416-game** rank credible intervals and top-10 probabilities.
+
+**Not a complete single-command reproduction package:** the local P5 R scripts still use original working paths under \`P5_external_SD/\` rather than the GitHub presentation folders. For reuse without refitting, download or copy the RDS and matched CSV into the script-expected local locations. Some source caches, holdout per-game prediction files and detailed per-game comparison files are not committed.
+
+The external historical rating SD snapshot date is not verified, SD is treated as a plug-in value, and holdout data were consulted during exploration; these limitations should remain visible in the final report. Formal cross-model M0/M1a/M1b WAIC comparison remains pending.
+
+See the [team status](../../docs/TEAM_PLAN_AND_STATUS.md) and [P1 data contract](../../docs/P1_DATA_GUIDE.md).
