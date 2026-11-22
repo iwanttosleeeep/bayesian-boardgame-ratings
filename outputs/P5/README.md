@@ -46,7 +46,9 @@ Requires R, JAGS, `rjags`, `coda`. Working directory must be consistent across s
 
 **Repository artifact status (2026-11-22):** `model_d/P5_SD_matched.csv` has been uploaded and verified (6,416 matched games). The user has supplied the genuine `parameter_draws.rds` and `latent_rating_draws_for_P6.rds` in ChatGPT, but the connected GitHub text-file write interface does **not** support direct binary uploads; these RDS files have NOT yet been pushed to GitHub. They must be uploaded separately to `outputs/P5/model_d/` before the repository is self-contained and P6 can run rank-interval calculations. Do not substitute CSV posterior means for latent rating draws.
 
-**Model history:** original intercept-only A (full raw ratings) → B varying-tau only → C varying-mean only → D varying-mean and varying-tau with unknown common s → external-SD D with game-specific historical SD. The existing matched-sample model comparison is **old D vs external-SD D, not A vs external-SD D**.\n\n**No final report claims or all-BGG ranking claims are authorized by this preliminary folder.**
+**Model history:** original intercept-only A (full raw ratings) → B varying-tau only → C varying-mean only → D varying-mean and varying-tau with unknown common s → external-SD D with game-specific historical SD. The existing matched-sample model comparison is **old D vs external-SD D, not A vs external-SD D**.
+
+**No final report claims or all-BGG ranking claims are authorized by this preliminary folder.**
 
 ## Interpretation
 
