@@ -24,14 +24,14 @@ We examine Bayesian shrinkage of BoardGameGeek (BGG) average ratings, how assump
 
 | Root file | Size | Correct use |
 | --- | ---: | --- |
-| [\`data_clean.csv\`](data_clean.csv) | 21,631 games × 83 columns | Full cleaned/engineered BGG table |
-| [\`variable_dictionary.csv\`](variable_dictionary.csv) | 83 fields | Variable definitions, types and missingness |
-| [\`dev_subsample.csv\`](dev_subsample.csv) | 6,489 games | **Development / fitting** |
-| [\`comparison_sample.csv\`](comparison_sample.csv) | 3,244 games | **Independent-by-game holdout: NEVER use for fitting** |
+| [`data_clean.csv`](data_clean.csv) | 21,631 games × 83 columns | Full cleaned/engineered BGG table |
+| [`variable_dictionary.csv`](variable_dictionary.csv) | 83 fields | Variable definitions, types and missingness |
+| [`dev_subsample.csv`](dev_subsample.csv) | 6,489 games | **Development / fitting** |
+| [`comparison_sample.csv`](comparison_sample.csv) | 3,244 games | **Independent-by-game holdout: NEVER use for fitting** |
 
 The split uses seed **20261122**, randomly samples **games** rather than whole designers, and has no overlapping game IDs. **912 designer IDs** appear in both partitions: do not call this an unseen-designer validation split.
 
-**Important:** \`comparison_sample.csv\` is *currently a holdout*, **not** the common complete-case training sample for WAIC described in the 20 Nov plan. M0/M1a/M1b WAIC needs separately agreed **common development game IDs**, comparable likelihoods, and consistent fits. Holdout ELPD and WAIC are different evaluations.
+**Important:** `comparison_sample.csv` is *currently a holdout*, **not** the common complete-case training sample for WAIC described in the 20 Nov plan. M0/M1a/M1b WAIC needs separately agreed **common development game IDs**, comparable likelihoods, and consistent fits. Holdout ELPD and WAIC are different evaluations.
 
 P5's two current models share **6,416** SD-matched development games and are evaluated on **3,209** SD-matched holdout games. These are *subsets* of P1's samples, **not all BGG games**. The holdout was inspected during earlier model exploration, so predictive comparison is exploratory.
 

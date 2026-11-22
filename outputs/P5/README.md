@@ -65,12 +65,12 @@ If starting clean: run 01 to prepare external SD; 02 and 03 to fit both models; 
 
 **Both M1a model folders now contain the genuine uploaded posterior files**:
 
-- [Baseline](M1a_Baseline/): \`parameter_draws.rds\`, \`latent_rating_draws_for_P6.rds\`
-- [Extended External SD](M1a_Extended_ExternalSD/): \`parameter_draws.rds\`, \`latent_rating_draws_for_P6.rds\`
+- [Baseline](M1a_Baseline/): `parameter_draws.rds`, `latent_rating_draws_for_P6.rds`
+- [Extended External SD](M1a_Extended_ExternalSD/): `parameter_draws.rds`, `latent_rating_draws_for_P6.rds`
 
 The GitHub object listing confirms each file is present; these binary files have **not** been independently opened or the model fits rerun during this README update. They are intended for P6's **within-6,416-game** rank credible intervals and top-10 probabilities.
 
-**Not a complete single-command reproduction package:** the local P5 R scripts still use original working paths under \`P5_external_SD/\` rather than the GitHub presentation folders. For reuse without refitting, download or copy the RDS and matched CSV into the script-expected local locations. Some source caches, holdout per-game prediction files and detailed per-game comparison files are not committed.
+**Not a complete single-command reproduction package:** the local P5 R scripts still use original working paths under `P5_external_SD/` rather than the GitHub presentation folders. For reuse without refitting, download or copy the RDS and matched CSV into the script-expected local locations. Some source caches, holdout per-game prediction files and detailed per-game comparison files are not committed.
 
 The external historical rating SD snapshot date is not verified, SD is treated as a plug-in value, and holdout data were consulted during exploration; these limitations should remain visible in the final report. Formal cross-model M0/M1a/M1b WAIC comparison remains pending.
 

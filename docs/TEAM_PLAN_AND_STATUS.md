@@ -15,11 +15,11 @@
 
 ## Dependencies (do not skip)
 
-- **P1 → everyone:** [\`data_clean.csv\`](../data_clean.csv), [dictionary](../variable_dictionary.csv), [development](../dev_subsample.csv), [holdout](../comparison_sample.csv), documented in [P1 guide](P1_DATA_GUIDE.md).
+- **P1 → everyone:** [`data_clean.csv`](../data_clean.csv), [dictionary](../variable_dictionary.csv), [development](../dev_subsample.csv), [holdout](../comparison_sample.csv), documented in [P1 guide](P1_DATA_GUIDE.md).
 - **P2 → P1/P5/P4:** M0 posterior draws, diagnostics, pointwise likelihood; M1b JAGS runtime evidence.
 - **P3 → report/P6:** Poisson vs NB fit, count-tail and count-floor PPC, within-M2 model comparison. Do not mix popularity-model WAIC with rating-model WAIC.
 - **P4 → P2/P5/P6:** Designer-effect specification, marginal likelihood, posterior draws, how unseen designers are handled, M1b ranking where possible.
-- **P5 → P1/P6:** [Baseline posterior](../outputs/P5/M1a_Baseline/) and [external-SD posterior](../outputs/P5/M1a_Extended_ExternalSD/) (both have \`parameter_draws.rds\` and \`latent_rating_draws_for_P6.rds\`); [model comparison](../outputs/P5/M1a_Model_Comparison/) and [sensitivity](../outputs/P5/Sensitivity_Analysis/). Rank intervals require latent draws, not posterior mean CSV alone.
+- **P5 → P1/P6:** [Baseline posterior](../outputs/P5/M1a_Baseline/) and [external-SD posterior](../outputs/P5/M1a_Extended_ExternalSD/) (both have `parameter_draws.rds` and `latent_rating_draws_for_P6.rds`); [model comparison](../outputs/P5/M1a_Model_Comparison/) and [sensitivity](../outputs/P5/Sensitivity_Analysis/). Rank intervals require latent draws, not posterior mean CSV alone.
 - **P6 → all:** BGG benchmark, within-sample rank uncertainty, consistent figures/slides, integrated results and final checks.
 
 ## Dates and intended checkpoints
@@ -41,8 +41,8 @@
 
 ## Sampling and modeling rules that have changed since the 20 Nov plan
 
-1. **Actual P1 split:** \`dev_subsample.csv\` has 6,489 game-random development rows, \`comparison_sample.csv\` has 3,244 disjoint game-random **holdout** rows (seed 20261122); 912 designers overlap. The original plan instead described designer-group sampling of ~5,000 and an *in-development* complete-case comparison sample.
-2. **Formal M0/M1a/M1b WAIC:** the current \`comparison_sample.csv\` cannot serve as both train and held out. Build a separately named common training-ID subset within development and compare appropriately integrated, compatible pointwise likelihoods. **This formal cross-model comparison is not yet verified as completed.**
+1. **Actual P1 split:** `dev_subsample.csv` has 6,489 game-random development rows, `comparison_sample.csv` has 3,244 disjoint game-random **holdout** rows (seed 20261122); 912 designers overlap. The original plan instead described designer-group sampling of ~5,000 and an *in-development* complete-case comparison sample.
+2. **Formal M0/M1a/M1b WAIC:** the current `comparison_sample.csv` cannot serve as both train and held out. Build a separately named common training-ID subset within development and compare appropriately integrated, compatible pointwise likelihoods. **This formal cross-model comparison is not yet verified as completed.**
 3. **P5 scope:** present M1a Baseline and Extended fits share only the 6,416 development games with historical SD matched; holdout ELPD is on 3,209 matched holdout games. This differs from the original full-data M1a aim. Global BGG Top 10/50 probabilities cannot be inferred from rankings computed on these 6,416 alone.
 4. **P5 changes multiple assumptions:** the external-SD extension also changes mean and between-game dispersion vs the baseline. Its improvement cannot be ascribed solely to historical SD. The historical SD source date is unverified and observation noise uncertainty is plugged in rather than estimated.
 5. **Holdout is exploratory:** the group has already used the holdout to guide previous model experiments; do not present it as fully untouched final testing.
