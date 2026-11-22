@@ -52,7 +52,7 @@ readme <- c(
   'probabilities and rank credible intervals. Do not rank each row independently.',
   'Scope: DEVELOPMENT SAMPLE ONLY (games matched to historical SD).',
   'Do NOT label these results as global BoardGameGeek Top-10 or Top-50.',
-  'Model: externally M1a Extended (External SD); historical SDs are plug-in estimates.',
+  'Model: M1a Extended using external historical SD as plug-in estimates.',
   'Important caveat: historical SD snapshot date is not independently verified.',
   'posterior_ratings_development.csv provides summary means/intervals,',
   'but ranking probabilities require latent_rating_draws_for_P6.rds.',

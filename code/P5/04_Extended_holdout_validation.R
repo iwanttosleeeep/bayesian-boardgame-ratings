@@ -1,4 +1,4 @@
-# STAT6106 / P5 — M1a Extended: evaluate saved posterior on on held-out games
+# STAT6106 / P5 — M1a Extended: validate saved posterior on held-out games
 # Run AFTER 01_prepare_historical_SD.R and 03_M1a_Extended_ExternalSD.R.
 # Does NOT rerun JAGS and does NOT download the full raw BGG dataset.
 # Only comparison_sample.csv (3,244 games) is downloaded once and cached.
