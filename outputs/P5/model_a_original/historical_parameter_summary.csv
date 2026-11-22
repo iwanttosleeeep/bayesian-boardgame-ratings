@@ -1,0 +1,5 @@
+parameter,mean,lower95,upper95,source
+alpha,6.4361,6.424,6.4482,original_2026-11-21_chat_output
+tau,0.8641,0.855,0.8735,original_2026-11-21_chat_output
+s,2.9884,2.957,2.9997,original_2026-11-21_chat_output
+m,11.9616,11.607,12.2597,original_2026-11-21_chat_output
