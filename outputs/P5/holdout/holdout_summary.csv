@@ -1,0 +1,10 @@
+"metric","value"
+"total_comparison_games",3244
+"matched_games",3209
+"unmatched_or_invalid_games",35
+"share_n_hist_within_5pct",0.945777500779059
+"individual_95_predictive_coverage",0.943284512309131
+"sum_log_predictive_density",-4126.12795353674
+"mean_log_predictive_density",-1.285798676702
+"groups_passing_mean_PPC",3
+"groups_passing_variance_PPC",3
