@@ -1,0 +1,10 @@
+"metric","value"
+"train_games",6416
+"old_median_abs_adjustment",0.0602839763719114
+"new_median_abs_adjustment",0.00952611342336862
+"median_abs_new_minus_old",0.0494985567223893
+"p95_abs_new_minus_old",0.35336330683057
+"max_abs_new_minus_old",1.1799507124868
+"old_median_shrinkage_weight",0.858432561060614
+"new_median_shrinkage_weight",0.978578362628769
+"development_top50_overlap",31
