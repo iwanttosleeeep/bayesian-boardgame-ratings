@@ -7,7 +7,7 @@ files <- c('latent_rating_draws_for_P6.rds', 'posterior_ratings_development.csv'
            'parameter_draws.rds', 'convergence.csv', 'grouped_PPC_development.csv')
 missing <- files[!file.exists(file.path(src, files))]
 if (length(missing)) stop('Missing required model files: ', paste(missing, collapse=', '),
-                          '\nPlease locate the saved Model D outputs; do not refit yet.')
+                          '\nPlease locate the saved M1a Extended outputs; do not refit yet.')
 
 latent <- readRDS(file.path(src, files[1]))
 ratings <- read.csv(file.path(src, files[2]), stringsAsFactors=FALSE,
@@ -52,11 +52,11 @@ readme <- c(
   'probabilities and rank credible intervals. Do not rank each row independently.',
   'Scope: DEVELOPMENT SAMPLE ONLY (games matched to historical SD).',
   'Do NOT label these results as global BoardGameGeek Top-10 or Top-50.',
-  'Model: externally calibrated Model D; historical SDs are plug-in estimates.',
+  'Model: externally M1a Extended (External SD); historical SDs are plug-in estimates.',
   'Important caveat: historical SD snapshot date is not independently verified.',
   'posterior_ratings_development.csv provides summary means/intervals,',
   'but ranking probabilities require latent_rating_draws_for_P6.rds.',
-  'The baseline Model D has been checked on holdout; performance is not perfect.',
+  'The M1a Extended reference fit has been checked on holdout; performance is not perfect.',
   'Prior sensitivity and SD sensitivity results are retained by P5 separately.'
 )
 writeLines(readme, file.path(dst, 'P6_README.txt'), useBytes=TRUE)

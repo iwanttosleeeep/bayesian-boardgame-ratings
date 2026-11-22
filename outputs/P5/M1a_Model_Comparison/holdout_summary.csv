@@ -1,0 +1,13 @@
+"metric","value"
+"training_games_each",6416
+"holdout_games_each",3209
+"draws_per_model",1000
+"Baseline_holdout_ELPD",-4347.82798001539
+"Extended_holdout_ELPD",-4126.12499440055
+"ELPD_Extended_minus_Baseline",221.70298561484
+"approx_paired_SE_ELPD_difference",18.0167833535431
+"Baseline_mean_log_predictive_density",-1.35488562792626
+"Extended_mean_log_predictive_density",-1.28579775456545
+"Baseline_individual_95pct_predictive_coverage",0.9460891243378
+"Extended_individual_95pct_predictive_coverage",0.943284512309131
+"all_rhat_below_1_01_and_ESS_at_least_400",1

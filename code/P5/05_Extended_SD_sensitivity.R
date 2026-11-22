@@ -1,5 +1,5 @@
-# STAT6106 P5 — external-SD sensitivity for calibrated Model D
-# Uses ONLY locally saved P5_SD_matched.csv and the baseline Model D fit.
+# STAT6106 P5 — external-SD sensitivity for M1a Extended (External SD)
+# Uses ONLY locally saved P5_SD_matched.csv and the M1a Extended reference fit fit.
 # No CSV downloads, no repeat of the earlier A-F experiments.
 # Three SD scenarios: 0.8x, 1.0x, 1.2x historical within-game SD.
 # 1.0x reuses saved posterior draws; 0.8x/1.2x are refitted in JAGS.

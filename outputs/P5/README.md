@@ -1,62 +1,73 @@
-# P5 — Preliminary Bayesian shrinkage analysis (2026-11-22)
+# STAT6106 — P5 Bayesian rating shrinkage
 
-**Status:** preliminary, exploratory analysis. **Model A, not old D, is the original M1a baseline.** See [model_a_original](./model_a_original/) for its historically recorded output and a reproduction script. The earlier 'old D' is only the comparator for the external-SD D extension. This directory and `code/P5/` do not replace the group proposal, original M1a, or P1's data files.
+**Status:** preliminary development-sample results, updated 22 November 2026. This is P5's contribution; P1's files and the team proposal remain unchanged.
 
-## Scope and samples
+## Two models retained for the final P5 narrative
 
-- P1's `dev_subsample.csv`: 6,489 games; **6,416** match historical within-game rating SD data and are used for the calibrated Model D training.
-- P1's `comparison_sample.csv`: 3,244 distinct game IDs; **3,209** match historical SD data and are used for exploratory holdout checks.
-- Neither the model nor ranking outputs currently cover all BGG games. Ranked Top 10/Top 50 results would be **within the 6,416 matched development games only**.
-- P1's holdout had been consulted during earlier model exploration; treat its results as **exploratory**, not as an untouched independent test.
+| Model | Description | Shared training data |
+|---|---|---|
+| **M1a Baseline** (formerly “Model A”) | Intercept-only hierarchical shrinkage, shared rater SD `s`, constant between-game SD `tau` | 6,416 SD-matched development games |
+| **M1a Extended (External SD)** (formerly “new Model D”) | Game-specific historical rating SD as fixed plug-in; mean and between-game variance vary with log rating count | Same 6,416 games |
 
-## Model (extension, NOT original intercept-only M1a)
+Baseline: `y_i ~ Normal(alpha, tau^2 + s^2/n_i)`, `alpha ~ N(6.4,1^2)`, `s ~ Uniform(0.5,3)`, `tau ~ half-Cauchy(0,1)`. Common pseudo-votes: `m = s^2/tau^2`.
 
-For `x_i = log(n_i) - mean_train(log(n))`:
+Extended: `x_i = log(n_i)-mean_training(log(n))`, `mu_i = alpha+gamma*x_i`, `tau_i = exp(a_tau+b_tau*x_i)`, `y_i ~ Normal(mu_i, tau_i^2+sd_hist_i^2/n_i)`. The plug-in `sd_hist_i` comes from a separate historical BGG snapshot of **unverified date**. Game-specific pseudo-votes: `m_i = sd_hist_i^2/tau_i^2`.
 
-```
-y_i ~ Normal(alpha + gamma*x_i, tau_i^2 + sd_hist_i^2/n_i)
-log(tau_i) = a_tau + b_tau*x_i
-```
+These models differ in the **mean**, **between-game variance**, and **measurement-noise** assumptions. A difference in predictive performance cannot be attributed to historical SD alone.
 
-`sd_hist_i` is a historical per-game rating SD, used as a fixed plug-in estimate. Its snapshot date has **not** been independently established as identical to the January 2022 BGG snapshot. Missing historical SD observations are not modeled here. The implied per-game effective pseudo-votes are `m_i = sd_hist_i^2/tau_i^2`; this is not a globally common pseudo-vote count and cannot be interpreted as fully equivalent to the BGG ~2,000-vote adjustment.
+## Fixed data and comparison
 
-The original constant-s and constant-tau M1a should remain documented as a baseline, rather than being silently replaced by this extension.
+- P1's development sample: 6,489 games, of which **6,416** match usable historical per-game SD. Both models are fitted to exactly those **same 6,416 game IDs**; no re-sampling of P1 data.
+- P1's independent holdout: 3,244 games, of which **3,209** match usable SD. Both models are assessed on precisely the **same 3,209 holdout games**.
+- The holdout was already consulted in earlier model development, so this is an **exploratory** predictive comparison, not a pristine, untouched test set.
+- Posterior ranking and Top 50 comparisons cover only the **6,416 development games**, **not all BGG games**. Do not call these global BGG rankings.
 
-## Workflow
+## Verified outputs from the 6,416/3,209 comparison
 
-Run R scripts from the project working directory, in this order:
+| Metric | Baseline | Extended |
+|---|---:|---:|
+| Holdout ELPD (higher is better) | −4347.83 | −4126.12 |
+| 95% individual predictive coverage | 94.61% | 94.33% |
+| Holdout grouped mean PPC passing | 1/4 | 3/4 |
+| Holdout grouped variance PPC passing | 2/4 | 3/4 |
+| Development grouped mean PPC passing | 0/4 | 4/4 |
+| Development grouped variance PPC passing | 1/4 | 4/4 |
+| Median absolute shrinkage (rating points) | 0.0360 | 0.0095 |
 
-1. `code/P5/P5_01_save_SD_lookup.R`: matches P1 development data to historical SD, caches source data locally.
-2. `code/P5/P5_02_Model_D_external_SD.R`: fits calibrated D and saves posterior summaries and latent rating draws.
-3. `code/P5/P5_03_holdout_validation_fixed.R`: exploratory holdout evaluation (fixed download timeout).
-4. `code/P5/P5_04_SD_sensitivity.R`: historical SD x0.8, x1.0, x1.2.
-5. `code/P5/P5_05_prior_sensitivity.R`: four tau/gamma prior variations.
-6. `code/P5/P5_07_same_sample_model_comparison.R`: old common-s D vs calibrated D with 6,416 shared training games and 3,209 shared holdout games.
-7. `code/P5/P5_06_prepare_P6_handoff.R`: optional handoff validation; **not yet confirmed to have been run**.
+Difference in holdout ELPD (Extended − Baseline) is **+221.70**, approximate paired SE **18.02** (assumes independence across games and does not adjust for designer clustering). Development Top 50 overlap is **36/50**. Numerically, both fits pass the reported R-hat < 1.01 and ESS ≥ 400 checks. Baseline `s` remains near its prior upper bound, and neither model is perfect in the highest-rating-count holdout group.
 
-Requires R, JAGS, `rjags`, `coda`. Working directory must be consistent across scripts. The matching script downloads P1 development data and a separate historical SD source. The later scripts require locally saved caches and RDS posterior objects.
+This is **holdout ELPD, not WAIC**. The final M0/M1a/M1b WAIC exercise still requires consistent training IDs, compatible pointwise likelihood definitions and coordination with P2/P4.
 
-## Saved results
+## Repository layout
 
-- `model_d/`: numeric convergence, grouped development PPC and posterior ratings (where available).
-- `holdout/`: 3,209-game holdout summary and grouped PPC.
-- `sd_sensitivity/`: SD multiplier sensitivity summaries and convergence.
-- `prior_sensitivity/`: model parameter prior sensitivity summaries and convergence.
-- `model_comparison/`: like-for-like old vs calibrated D holdout scoring, shrinkage and convergence.
+- `code/P5/01_prepare_historical_SD.R` — source match and fixed 6,416-game lookup
+- `code/P5/02_M1a_Baseline.R` — refit the original M1a baseline on those same games
+- `code/P5/03_M1a_Extended_ExternalSD.R` — fit extended M1a with game-specific SD
+- `code/P5/04_Extended_holdout_validation.R` — exploratory holdout predictions
+- `code/P5/05_Extended_SD_sensitivity.R` — historical SD ×0.8, ×1, ×1.2
+- `code/P5/06_Extended_prior_sensitivity.R` — alternative gamma/tau prior choices
+- `code/P5/07_Baseline_vs_Extended_comparison.R` — matched-game comparison, no model refitting
+- `code/P5/08_prepare_P6_handoff.R` — check and prepare ranking-draw handoff, no refitting
+- `outputs/P5/M1a_Baseline/` — updated same-sample baseline parameter, convergence and PPC CSVs
+- `outputs/P5/M1a_Extended_ExternalSD/` — matched SD, posterior rating summaries, convergence and PPC, holdout summaries
+- `outputs/P5/M1a_Model_Comparison/` — matched baseline/extended held-out predictive and shrinkage summaries
+- `outputs/P5/Sensitivity_Analysis/` — extended-model SD and prior robustness summaries
 
-**Repository artifact status (2026-11-22):** `model_d/P5_SD_matched.csv` has been uploaded and verified (6,416 matched games). The user has supplied the genuine `parameter_draws.rds` and `latent_rating_draws_for_P6.rds` in ChatGPT, but the connected GitHub text-file write interface does **not** support direct binary uploads; these RDS files have NOT yet been pushed to GitHub. They must be uploaded separately to `outputs/P5/model_d/` before the repository is self-contained and P6 can run rank-interval calculations. Do not substitute CSV posterior means for latent rating draws.
+The earlier full-21,831-game Model A outputs and **old common-s D vs external-SD D** comparison files have been removed from the **current** P5 tree. They remain recoverable via Git history. This does not erase the old experiments or mean they were invalid; they simply do not belong in the current two-model report.
 
-**Model history:** original intercept-only A (full raw ratings) → B varying-tau only → C varying-mean only → D varying-mean and varying-tau with unknown common s → external-SD D with game-specific historical SD. The existing matched-sample model comparison is **old D vs external-SD D, not A vs external-SD D**.
+## Running scripts and legacy local cache paths
 
-**No final report claims or all-BGG ranking claims are authorized by this preliminary folder.**
+Run the R scripts from the **same RStudio working directory** used for the initial P5 analysis. All scripts deliberately retain existing local input/output paths under `P5_external_SD/` (e.g. `Model_A_same_6416/`, `Model_D_calibrated/`, `M1a_A_vs_ExternalSD_Comparison/`) to **avoid moving or invalidating previously generated posterior draws**. These are internal cache paths, **not** the GitHub folder names above. The numbered script names and external documentation are now normalized; no reruns were needed for this repository reorganization.
 
-## Interpretation
+If starting clean: run 01 to prepare external SD; 02 and 03 to fit both models; 04 to construct the holdout prediction cache; 05/06 for sensitivities; 07 for the model comparison; 08 for P6 handoff. R packages `rjags` and `coda` plus JAGS are required.
 
-Initial diagnostics indicate numerical convergence and reasonable grouped PPC on most bands, with residual misfit for very high-rating-count games. Fixed historical SD assumptions alter shrinkage meaningfully; tested tau/gamma priors have much less effect. Old/common-s and calibrated models have similar holdout predictive scores but substantially different shrinkage/ranking behavior. Comparisons involving additional historical SD information are conditional on that extra information; beware snapshot timing and data reuse.
+## Still-local artifacts / completeness warning
 
-## Team interface
+The current GitHub snapshot contains uploaded CSV summaries and the matching table, **not** the original posterior RDS files and other large/per-game caches. In particular, GitHub does **not** yet contain:
+- `P5_external_SD/Model_D_calibrated/parameter_draws.rds` and `latent_rating_draws_for_P6.rds`
+- `P5_external_SD/Model_A_same_6416/parameter_draws.rds` and optional baseline latent draws
+- `P5_external_SD/holdout_validation/holdout_game_predictions.csv`
 
-- P1 files are left untouched; holdout data are never used for parameter fitting.
-- P2/P4/P5 must agree on common training game IDs for formal matched-row WAIC.
-- P4's designer effects cannot be isolated by comparing two models that also differ in observation noise, mean and dispersion.
-- P6 should use **actual** latent posterior draws `latent_rating_draws_for_P6.rds`, not just posterior means, to compute rank credible intervals and top-10 probabilities. Do not claim a whole-BGG rank from 6,416 matched development games.
+These were used by the student's local code, but cannot be recreated from the summary CSVs alone. RDS files were supplied in chat for the Extended model but the GitHub integration does not accept local binary uploads. **P6 requires actual posterior latent draws, not just posterior means, to calculate rank probabilities and intervals.** Upload genuine local RDS files separately before describing the repository as self-contained.
+
+Historical rating SDs are plugged in as fixed values with unknown snapshot timing and not fully modeled uncertainty. P4's designer effects require separate treatment of held-out games by seen/unseen designer; M1a's comparison here does not identify the causal effect of designer variables.

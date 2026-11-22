@@ -1,5 +1,5 @@
-# STAT6106 / P5 — Stage 2: Model D with game-specific historical SD
-# Run AFTER P5_01_save_SD_lookup.R.
+# STAT6106 / P5 — M1a Extended (External SD): Bayesian shrinkage
+# Run AFTER 01_prepare_historical_SD.R.
 # This script does NOT download/read either large source dataset.
 # Fits on matched DEVELOPMENT games only; comparison_sample is reserved.
 

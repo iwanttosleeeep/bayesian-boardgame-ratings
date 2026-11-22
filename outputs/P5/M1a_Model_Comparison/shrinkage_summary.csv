@@ -1,0 +1,10 @@
+"metric","value"
+"development_games_each",6416
+"Baseline_median_abs_adjustment",0.0359955663193721
+"Extended_median_abs_adjustment",0.00950903637682421
+"median_abs_rating_difference",0.0255837579362366
+"p95_abs_rating_difference",0.239352892449841
+"max_abs_rating_difference",0.867188321721243
+"Baseline_median_shrinkage_weight",0.915041081366871
+"Extended_median_shrinkage_weight",0.978602491693122
+"development_top50_overlap",36

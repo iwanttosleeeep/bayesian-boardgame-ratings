@@ -1,6 +1,6 @@
-# STAT6106 P5 — Stage 5: PRIOR SENSITIVITY of calibrated Model D
+# STAT6106 P5 — Stage 5: PRIOR SENSITIVITY of M1a Extended (External SD)
 # ---------------------------------------------------------------------------
-# Run AFTER P5_01_save_SD_lookup.R and P5_02_Model_D_external_SD.R.
+# Run AFTER 01_prepare_historical_SD.R and 03_M1a_Extended_ExternalSD.R.
 # Does NOT download anything, rerun the baseline, or redo SD x0.8/x1.2.
 # Reuses existing 6,416-game lookup and baseline MCMC draws.
 # Re-fits FOUR alternatives changing priors ONLY; likelihood/data stay fixed.
@@ -47,7 +47,7 @@ stopifnot(all(pars %in% colnames(original$draws)),
           isTRUE(all.equal(unname(original$x_center),
                            mean(log(dat$n_2022)), tolerance = 1e-9)))
 
-# Check that the saved baseline is the expected calibrated Model D.
+# Check that the saved baseline is the expected M1a Extended (External SD).
 expected_prior_lines <- c("alpha ~ dnorm(6.4, 1)",
                           "gamma ~ dnorm(0, 1)",
                           "a_tau ~ dnorm(log(0.85), 4)",

@@ -1,5 +1,5 @@
-# STAT6106 / P5 — Stage 3: evaluate calibrated Model D on held-out games
-# Run AFTER P5_01_save_SD_lookup.R and P5_02_Model_D_external_SD.R.
+# STAT6106 / P5 — M1a Extended: evaluate saved posterior on on held-out games
+# Run AFTER 01_prepare_historical_SD.R and 03_M1a_Extended_ExternalSD.R.
 # Does NOT rerun JAGS and does NOT download the full raw BGG dataset.
 # Only comparison_sample.csv (3,244 games) is downloaded once and cached.
 # Reuses previously cached historical_games.csv and parameter_draws.rds.
