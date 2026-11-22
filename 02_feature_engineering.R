@@ -1,8 +1,7 @@
 ## ============================================================================
 ## 02_feature_engineering.R
 ## STAT6106 Project — BoardGameGeek data
-## (regenerated 2026-11-21 to match the delivered pipeline and document the
-##  known column artifacts in the delivered data_clean.csv)
+## (regenerated 2026-11-21; parse bug fixed 2026-11-22)
 ##
 ## Purpose : Build the features promised in the proposal:
 ##             - category indicators  : top 20 boardgamecategory -> cat_* (0/1)
@@ -16,19 +15,13 @@
 ## Run from the project root directory, e.g.:
 ##   Rscript script/02_feature_engineering.R
 ##
-## IMPORTANT — relationship to the delivered output/data_clean.csv:
-##   The delivered CSV was produced by an EARLIER version of this script that
-##   split tag strings on "," WITHOUT trimming whitespace. That created
-##   8 artifact columns: duplicate indicators for the same tag
-##   ('Card Game' x3, 'Wargame' / 'Dice Rolling' / 'Hand Management' /
-##   'Set Collection' / 'Simulation' x2) and a wrongly split mechanic
-##   ('Bag and Pool Building' -> mech_Bag + mech_and.Pool.Building).
-##   This corrected version trims tokens, so a rerun yields a DEDUPLICATED
-##   indicator set (fewer cat_*/mech_* columns than the delivered 40).
-##   The delivered data_clean.csv (83 columns) remains the authoritative
-##   dataset for the current report — merge the artifact columns by logical
-##   OR before modelling (see data_dictionary.csv). Do NOT overwrite the
-##   delivered CSV without team agreement.
+## HISTORY: the first delivered data_clean.csv (2026-11-21) was produced with
+##   a broken parse (default-TRE character class silently matched nothing, so
+##   brackets/quotes/whitespace leaked into the tag tokens), creating duplicate
+##   indicator columns (e.g. 'Card Game' x3) and splitting the mechanic
+##   'Bag and Pool Building'. The 2026-11-22 rerun of the full pipeline
+##   (01-04) with the fixes below produced the current clean CSV: 20 + 20
+##   deduplicated indicators, 83 variables total.
 ## ============================================================================
 
 suppressMessages(library(dplyr))
@@ -37,9 +30,12 @@ proc_dir <- file.path("data", "processed")
 big <- readRDS(file.path(proc_dir, "big_clean.rds"))
 
 ## ---- Helper: split a comma-separated list field into clean tokens -------------
-## NOTE: trimws() is the fix — the delivered data was built without it.
+## FIXED 2026-11-22: perl = TRUE is REQUIRED — with the default TRE engine the
+## character class "[\\[\\]\"']" silently matches nothing (verified on
+## R 4.5.3/Windows), which is exactly how the legacy artifact columns
+## (cat_X..Card.Game. etc.) were created. trimws() is the second fix.
 parse_list <- function(x) {
-  x <- gsub("[\\[\\]\"']", "", as.character(x))
+  x <- gsub("[\\[\\]\"']", "", as.character(x), perl = TRUE)
   trimws(unlist(strsplit(x, ",")))
 }
 

@@ -1,84 +1,84 @@
-Variable_Name,Data_Type,N_Missing,Missing_Ratio,Value_Range,Definition,Business_Meaning
-id,int64,0,0.0,1 ~ 350992,Unique game identifier,"Primary key, not used in model"
-primary,str,0,0.0,21236 unique values,Primary category ID,"Category identifier, usable for group analysis"
-description,str,1,0.0,21615 unique values,Text description of the game,"Text feature, keywords extractable"
-yearpublished,float64,302,0.014,1900.0 ~ 2022.0,"Year first published. VERIFIED: 302 invalid years (outside 1900-2022, incl. -3500) recoded to NA; cleaned range 1900-2022",Reflects era; source of derived game_age (reference year 2022)
-minplayers,float64,44,0.002,1.0 ~ 10.0,Minimum number of players supported (0 recoded to NA),Entry barrier
-maxplayers,float64,164,0.0076,1.0 ~ 999.0,Maximum number of players supported (0 recoded to NA),"Game capacity, party suitability"
-playingtime,float64,774,0.0358,1.0 ~ 60000.0,Average playtime in minutes (0 recoded to NA; NOT capped here),"Time cost, affects player choice"
-minplaytime,int64,0,0.0,0 ~ 60000,Minimum playtime in minutes,Lower bound of duration
-maxplaytime,int64,0,0.0,0 ~ 60000,Maximum playtime in minutes,Upper bound of duration
-minage,float64,1301,0.0601,1.0 ~ 25.0,Minimum recommended player age (0 recoded to NA),"Age barrier, affects audience"
-boardgamecategory,str,283,0.0131,6730 unique values,Game category tags (raw comma-separated string),Core category feature
-boardgamemechanic,str,1590,0.0735,8291 unique values,Game mechanic tags (raw comma-separated string),Core gameplay feature
-boardgamefamily,str,3761,0.1739,11285 unique values,Game series/family tag,"Series affiliation, IP continuity"
-boardgameexpansion,str,16125,0.7455,5264 unique values,Expansion tag,Expansion attribute
-boardgameimplementation,str,16769,0.7752,4247 unique values,Derived work tag,Derivation relationship
-boardgamedesigner,str,596,0.0276,9136 unique values,Game designer(s) (raw string),Designer brand effect
-boardgameartist,str,5907,0.2731,9080 unique values,Game artist,"Art style, first impression"
-boardgamepublisher,str,1,0.0,11265 unique values,Game publisher,Publisher reputation
-owned,int64,0,0.0,0 ~ 168364,Number of users who own this game,"Market ownership, popularity metric"
-trading,int64,0,0.0,0 ~ 2508,Number of users trading this game,Circulation activity
-wanting,int64,0,0.0,0 ~ 2011,Number of users on want list,Latent demand
-wishing,int64,0,0.0,0 ~ 19325,Number of users on wish list,"Anticipation, strong demand signal"
-name,str,0,0.0,21236 unique values,Game name,"Identifier, not used in model"
-year,int64,0,0.0,0 ~ 3500,Year of rating statistics,Reference for rating timeliness
-rank,int64,0,0.0,1 ~ 21831,BGG overall site ranking,"Composite quality metric, lower is better"
-average,float64,0,0.0,1.04 ~ 9.57,User average rating (0-10). UNMODIFIED: no winsorization/clipping applied,"Core target variable, genuine reputation"
-bayes_average,float64,0,0.0,0.0 ~ 8.511,BGG benchmark rating: Bayes-weighted average that shrinks ratings toward the prior mean,BGG site benchmark for comparison/ranking; NOT used as model outcome
-users_rated,int64,0,0.0,30 ~ 108975,Number of users who rated it (data pre-filtered to >=30). UNMODIFIED: no winsorization/clipping applied,"Sample size, rating credibility"
-url,str,0,0.0,21631 unique values,Game detail page link,Display only
-thumbnail,str,6,0.0003,21616 unique values,Thumbnail link,Display only
-playingtime_capped,int64,0,0.0,1.0 ~ 600.0,playingtime capped at 600 min. NOTE: the 774 zero->NA rows become 600 here (pmin na.rm=TRUE side effect),Outlier-robust playtime for modelling
-log_playingtime,float64,0,0.0,0.6931 ~ 6.3986,log1p of playingtime_capped,Variance-stabilized playtime
-maxplayers_capped,int64,0,0.0,1.0 ~ 36.0,maxplayers capped at 36. NOTE: the 164 zero->NA rows become 36 here (pmin na.rm=TRUE side effect),Outlier-robust capacity
-zero_raters,bool,0,0.0,0.0 ~ 0.0,1 if users_rated==0 else 0. VERIFIED: constant 0 in delivered data (pre-filtered to users_rated>=30); carries no information,"Dead column, safe to drop"
-log_users_rated,float64,0,0.0,3.434 ~ 11.5989,log1p of users_rated,Variance-stabilized rating count
-game_age,float64,302,0.014,0.0 ~ 122.0,Years since publication (reference year 2022); NA when yearpublished NA,Game age effect
-log_game_age,float64,302,0.014,0.0 ~ 4.8122,log1p of game_age; NA when game_age NA,Log age effect
-cat_X..Card.Game.,indicator,0,0.0,0/1 (1 for 3623 games),Indicator: BGG category 'Card Game'. Duplicate 1/3 of category 'Card Game' (whitespace variants from untrimmed split). OR-merge all 3 before modelling,Duplicate indicator - merge before modelling
-cat_X.Wargame..,indicator,0,0.0,0/1 (1 for 2407 games),Indicator: BGG category 'Wargame'. Duplicate 1/2 of category 'Wargame'. OR-merge both before modelling,Duplicate indicator - merge before modelling
-cat_X.Fantasy.,indicator,0,0.0,0/1 (1 for 1480 games),Indicator: BGG category 'Fantasy',Dummy variable from tag splitting
-cat_X.Card.Game.,indicator,0,0.0,0/1 (1 for 1441 games),Indicator: BGG category 'Card Game'. Duplicate 2/3 of category 'Card Game'. OR-merge all 3 before modelling,Duplicate indicator - merge before modelling
-cat_X.World.War.II..,indicator,0,0.0,0/1 (1 for 1205 games),Indicator: BGG category 'World War II',Dummy variable from tag splitting
-cat_X..Adventure.,indicator,0,0.0,0/1 (1 for 1126 games),Indicator: BGG category 'Adventure',Dummy variable from tag splitting
-cat_X.Fighting.,indicator,0,0.0,0/1 (1 for 1056 games),Indicator: BGG category 'Fighting',Dummy variable from tag splitting
-cat_X..Card.Game..,indicator,0,0.0,0/1 (1 for 992 games),Indicator: BGG category 'Card Game'. Duplicate 3/3 of category 'Card Game'. OR-merge all 3 before modelling,Duplicate indicator - merge before modelling
-cat_X..Animals.,indicator,0,0.0,0/1 (1 for 986 games),Indicator: BGG category 'Animals',Dummy variable from tag splitting
-cat_X..Action...Dexterity.,indicator,0,0.0,0/1 (1 for 933 games),Indicator: BGG category 'Action / Dexterity',Dummy variable from tag splitting
-cat_X..Bluffing.,indicator,0,0.0,0/1 (1 for 919 games),Indicator: BGG category 'Bluffing',Dummy variable from tag splitting
-cat_X..Wargame.,indicator,0,0.0,0/1 (1 for 915 games),Indicator: BGG category 'Wargame'. Duplicate 2/2 of category 'Wargame'. OR-merge both before modelling,Duplicate indicator - merge before modelling
-cat_X.Party.Game..,indicator,0,0.0,0/1 (1 for 911 games),Indicator: BGG category 'Party Game',Dummy variable from tag splitting
-cat_X..Abstract.Strategy.,indicator,0,0.0,0/1 (1 for 890 games),Indicator: BGG category 'Abstract Strategy',Dummy variable from tag splitting
-cat_X.Science.Fiction..,indicator,0,0.0,0/1 (1 for 824 games),Indicator: BGG category 'Science Fiction',Dummy variable from tag splitting
-cat_X.Dice.,indicator,0,0.0,0/1 (1 for 740 games),Indicator: BGG category 'Dice',Dummy variable from tag splitting
-cat_X..Economic.,indicator,0,0.0,0/1 (1 for 738 games),Indicator: BGG category 'Economic',Dummy variable from tag splitting
-cat_X.Children.s.Game.,indicator,0,0.0,0/1 (1 for 706 games),Indicator: BGG category 'Children s Game',Dummy variable from tag splitting
-cat_X.Humor.,indicator,0,0.0,0/1 (1 for 693 games),Indicator: BGG category 'Humor',Dummy variable from tag splitting
-cat_X.Miniatures.,indicator,0,0.0,0/1 (1 for 658 games),Indicator: BGG category 'Miniatures',Dummy variable from tag splitting
-mech_X..Dice.Rolling.,indicator,0,0.0,0/1 (1 for 3048 games),Indicator: BGG mechanic 'Dice Rolling'. Duplicate 1/2 of mechanic 'Dice Rolling'. OR-merge both before modelling,Duplicate indicator - merge before modelling
-mech_X.Dice.Rolling.,indicator,0,0.0,0/1 (1 for 2405 games),Indicator: BGG mechanic 'Dice Rolling'. Duplicate 2/2 of mechanic 'Dice Rolling'. OR-merge both before modelling,Duplicate indicator - merge before modelling
-mech_X.Variable.Player.Powers..,indicator,0,0.0,0/1 (1 for 2316 games),Indicator: BGG mechanic 'Variable Player Powers',Dummy variable from tag splitting
-mech_X.Hand.Management.,indicator,0,0.0,0/1 (1 for 2105 games),Indicator: BGG mechanic 'Hand Management'. Duplicate 2/2 of mechanic 'Hand Management'. OR-merge both before modelling,Duplicate indicator - merge before modelling
-mech_X.Hexagon.Grid.,indicator,0,0.0,0/1 (1 for 1418 games),Indicator: BGG mechanic 'Hexagon Grid',Dummy variable from tag splitting
-mech_X..Hand.Management.,indicator,0,0.0,0/1 (1 for 1388 games),Indicator: BGG mechanic 'Hand Management'. Duplicate 1/2 of mechanic 'Hand Management'. OR-merge both before modelling,Duplicate indicator - merge before modelling
-mech_X.Set.Collection..,indicator,0,0.0,0/1 (1 for 1296 games),Indicator: BGG mechanic 'Set Collection'. Duplicate 1/2 of mechanic 'Set Collection'. OR-merge both before modelling,Duplicate indicator - merge before modelling
-mech_X..Area.Majority...Influence.,indicator,0,0.0,0/1 (1 for 1291 games),Indicator: BGG mechanic 'Area Majority / Influence',Dummy variable from tag splitting
-mech_X.Grid.Movement.,indicator,0,0.0,0/1 (1 for 1264 games),Indicator: BGG mechanic 'Grid Movement',Dummy variable from tag splitting
-mech_X.Set.Collection.,indicator,0,0.0,0/1 (1 for 1227 games),Indicator: BGG mechanic 'Set Collection'. Duplicate 2/2 of mechanic 'Set Collection'. OR-merge both before modelling,Duplicate indicator - merge before modelling
-mech_X.Modular.Board.,indicator,0,0.0,0/1 (1 for 1225 games),Indicator: BGG mechanic 'Modular Board',Dummy variable from tag splitting
-mech_X..Card.Drafting.,indicator,0,0.0,0/1 (1 for 1224 games),Indicator: BGG mechanic 'Card Drafting',Dummy variable from tag splitting
-mech_X.Simulation..,indicator,0,0.0,0/1 (1 for 1200 games),Indicator: BGG mechanic 'Simulation'. Duplicate 1/2 of mechanic 'Simulation'. OR-merge both before modelling,Duplicate indicator - merge before modelling
-mech_X..Action.Points.,indicator,0,0.0,0/1 (1 for 1138 games),Indicator: BGG mechanic 'Action Points',Dummy variable from tag splitting
-mech_X.Tile.Placement..,indicator,0,0.0,0/1 (1 for 1133 games),Indicator: BGG mechanic 'Tile Placement',Dummy variable from tag splitting
-mech_X..Cooperative.Game.,indicator,0,0.0,0/1 (1 for 860 games),Indicator: BGG mechanic 'Cooperative Game',Dummy variable from tag splitting
-mech_X.Simulation.,indicator,0,0.0,0/1 (1 for 834 games),Indicator: BGG mechanic 'Simulation'. Duplicate 2/2 of mechanic 'Simulation'. OR-merge both before modelling,Duplicate indicator - merge before modelling
-mech_X..Auction.Bidding.,indicator,0,0.0,0/1 (1 for 833 games),Indicator: BGG mechanic 'Auction Bidding',Dummy variable from tag splitting
-mech_Bag,indicator,0,0.0,0/1 (1 for 760 games),"ARTIFACT: first half of BGG mechanic 'Bag and Pool Building', wrongly split at 'and'. Merge with mech_and.Pool.Building (logical OR) before modelling",Do not use as-is
-mech_and.Pool.Building.,indicator,0,0.0,0/1 (1 for 665 games),"ARTIFACT: second half of BGG mechanic 'Bag and Pool Building', wrongly split at 'and'. Merge with mech_Bag (logical OR) before modelling",Do not use as-is
-designer_first,str,596,0.0276,7974 unique values,First-listed designer of boardgamedesigner,Designer grouping key
-designer_id,str,596,0.0276,7974 unique values,"Identifier of designer_first (7,974 unique)",Grouping factor for multilevel model
-multi_designer,int64,0,0.0,0.0 ~ 1.0,"1 if more than one designer credited, else 0",Collaboration indicator
-z_log_users,float64,0,0.0,-1.211 ~ 4.4179,z-standardized log_users_rated: (x-mean)/sd on full data,Standardized predictor
-z_game_age,float64,302,0.014,-2.9003 ~ 2.8329,"z-standardized log_game_age (NOTE: standardizes the LOG of game age, matching delivered data)",Standardized predictor
-z_log_play,float64,0,0.0,-3.366 ~ 2.4398,z-standardized log_playingtime: (x-mean)/sd on full data,Standardized predictor
+"Variable_Name","Data_Type","N_Missing","Missing_Ratio","Value_Range","Definition","Business_Meaning"
+"id","numeric",0,0,"     1 ~ 350992","Unique game identifier","Primary key, not used in model"
+"primary","character",0,0,"21236 unique values","Primary category ID","Category identifier, usable for group analysis"
+"description","character",1,0,"21616 unique values","Text description of the game","Text feature, keywords extractable"
+"yearpublished","numeric",302,0.014,"1900 ~ 2022","Year first published; values outside 1900-2022 recoded to NA (302 games)","Reflects era; source of derived game_age (reference year 2022)"
+"minplayers","numeric",44,0.002," 1 ~ 10","Minimum number of players supported (0 recoded to NA: 44)","Entry barrier"
+"maxplayers","numeric",164,0.0076,"  1 ~ 999","Maximum number of players supported (0 recoded to NA: 164)","Game capacity"
+"playingtime","numeric",774,0.0358,"    1 ~ 60000","Average playtime in minutes (0 recoded to NA: 774; original NOT capped)","Time cost, affects player choice"
+"minplaytime","numeric",0,0,"    0 ~ 60000","Minimum playtime in minutes","Lower bound of duration"
+"maxplaytime","numeric",0,0,"    0 ~ 60000","Maximum playtime in minutes","Upper bound of duration"
+"minage","numeric",1301,0.0601," 1 ~ 25","Minimum recommended player age (0 recoded to NA: 1,301)","Age barrier"
+"boardgamecategory","character",283,0.0131,"6731 unique values","Game category tags (raw comma-separated string)","Core category feature"
+"boardgamemechanic","character",1590,0.0735,"8292 unique values","Game mechanic tags (raw comma-separated string)","Core gameplay feature"
+"boardgamefamily","character",3761,0.1739,"11286 unique values","Game series/family tag","Series affiliation, IP continuity"
+"boardgameexpansion","character",16125,0.7455,"5265 unique values","Expansion tag","Expansion attribute"
+"boardgameimplementation","character",16769,0.7752,"4248 unique values","Derived work tag","Derivation relationship"
+"boardgamedesigner","character",596,0.0276,"9137 unique values","Game designer(s) (raw string)","Designer brand effect"
+"boardgameartist","character",5907,0.2731,"9081 unique values","Game artist","Art style, first impression"
+"boardgamepublisher","character",1,0,"11266 unique values","Game publisher","Publisher reputation"
+"owned","numeric",0,0,"     0 ~ 168364","Number of users who own this game","Market ownership, popularity metric"
+"trading","numeric",0,0,"   0 ~ 2508","Number of users trading this game","Circulation activity"
+"wanting","numeric",0,0,"   0 ~ 2011","Number of users on want list","Latent demand"
+"wishing","numeric",0,0,"    0 ~ 19325","Number of users on wish list","Anticipation, strong demand signal"
+"name","character",0,0,"21236 unique values","Game name","Identifier, not used in model"
+"year","numeric",0,0,"   0 ~ 3500","Publication year from the ratings table (RAW: not cleaned, retains invalid values; identical to yearpublished where yearpublished is valid — use yearpublished for modelling)","Redundant with yearpublished; kept for reference only"
+"rank","numeric",0,0,"    1 ~ 21831","BGG overall site ranking","Composite quality metric, lower is better"
+"average","numeric",0,0,"1.04 ~ 9.57","User average rating (0-10). UNMODIFIED: no winsorization/clipping applied","Core target variable, genuine reputation"
+"bayes_average","numeric",0,0,"0.000 ~ 8.511","BGG benchmark rating: Bayes-weighted average that shrinks ratings toward the prior mean","BGG site benchmark for comparison/ranking; NOT used as model outcome"
+"users_rated","numeric",0,0,"    30 ~ 108975","Number of users who rated it (data pre-filtered to >=30). UNMODIFIED: no winsorization/clipping applied","Sample size, rating credibility"
+"url","character",0,0,"21631 unique values","Game detail page link","Display only"
+"thumbnail","character",6,3e-04,"21617 unique values","Thumbnail link","Display only"
+"playingtime_capped","numeric",774,0.0358,"  1 ~ 600","playingtime capped at 600 min; NA where playtime is unknown (fixed 2026-11-22: NA no longer filled with the cap)","Outlier-robust playtime for modelling"
+"log_playingtime","numeric",774,0.0358,"0.693147 ~ 6.398595","log1p of playingtime_capped; NA where playtime is unknown","Variance-stabilized playtime"
+"maxplayers_capped","numeric",164,0.0076," 1 ~ 36","maxplayers capped at 36; NA where maxplayers is unknown (fixed 2026-11-22: NA no longer filled with the cap)","Outlier-robust capacity"
+"zero_raters","logical",0,0,"1 unique values","1 if users_rated==0 else 0. VERIFIED: constant 0 (data pre-filtered to users_rated>=30)","Dead column, safe to drop"
+"log_users_rated","numeric",0,0," 3.43399 ~ 11.59888","log1p of users_rated","Variance-stabilized rating count"
+"game_age","numeric",302,0.014,"  0 ~ 122","Years since publication (2022 - yearpublished); NA when yearpublished NA","Game age effect"
+"log_game_age","numeric",302,0.014,"0.00000 ~ 4.81218","log1p of game_age; NA when game_age NA","Log age effect"
+"cat_Card.Game","indicator",0,0,"0/1 (1 for 6402 games)","Indicator: BGG category 'Card Game'","Dummy variable from tag splitting"
+"cat_Wargame","indicator",0,0,"0/1 (1 for 3820 games)","Indicator: BGG category 'Wargame'","Dummy variable from tag splitting"
+"cat_Fantasy","indicator",0,0,"0/1 (1 for 2681 games)","Indicator: BGG category 'Fantasy'","Dummy variable from tag splitting"
+"cat_Party.Game","indicator",0,0,"0/1 (1 for 1968 games)","Indicator: BGG category 'Party Game'","Dummy variable from tag splitting"
+"cat_Dice","indicator",0,0,"0/1 (1 for 1847 games)","Indicator: BGG category 'Dice'","Dummy variable from tag splitting"
+"cat_Science.Fiction","indicator",0,0,"0/1 (1 for 1666 games)","Indicator: BGG category 'Science Fiction'","Dummy variable from tag splitting"
+"cat_Fighting","indicator",0,0,"0/1 (1 for 1658 games)","Indicator: BGG category 'Fighting'","Dummy variable from tag splitting"
+"cat_Childrens.Game","indicator",0,0,"0/1 (1 for 1635 games)","Indicator: BGG category 'Childrens Game'","Dummy variable from tag splitting"
+"cat_Abstract.Strategy","indicator",0,0,"0/1 (1 for 1545 games)","Indicator: BGG category 'Abstract Strategy'","Dummy variable from tag splitting"
+"cat_Economic","indicator",0,0,"0/1 (1 for 1503 games)","Indicator: BGG category 'Economic'","Dummy variable from tag splitting"
+"cat_Animals","indicator",0,0,"0/1 (1 for 1354 games)","Indicator: BGG category 'Animals'","Dummy variable from tag splitting"
+"cat_World.War.II","indicator",0,0,"0/1 (1 for 1212 games)","Indicator: BGG category 'World War II'","Dummy variable from tag splitting"
+"cat_Bluffing","indicator",0,0,"0/1 (1 for 1206 games)","Indicator: BGG category 'Bluffing'","Dummy variable from tag splitting"
+"cat_Humor","indicator",0,0,"0/1 (1 for 1204 games)","Indicator: BGG category 'Humor'","Dummy variable from tag splitting"
+"cat_Adventure","indicator",0,0,"0/1 (1 for 1181 games)","Indicator: BGG category 'Adventure'","Dummy variable from tag splitting"
+"cat_Deduction","indicator",0,0,"0/1 (1 for 1150 games)","Indicator: BGG category 'Deduction'","Dummy variable from tag splitting"
+"cat_Miniatures","indicator",0,0,"0/1 (1 for 1091 games)","Indicator: BGG category 'Miniatures'","Dummy variable from tag splitting"
+"cat_Action...Dexterity","indicator",0,0,"0/1 (1 for 1090 games)","Indicator: BGG category 'Action / Dexterity'","Dummy variable from tag splitting"
+"cat_Movies...TV...Radio.theme","indicator",0,0,"0/1 (1 for 1069 games)","Indicator: BGG category 'Movies / TV / Radio theme'","Dummy variable from tag splitting"
+"cat_Medieval","indicator",0,0,"0/1 (1 for 1013 games)","Indicator: BGG category 'Medieval'","Dummy variable from tag splitting"
+"mech_Dice.Rolling","indicator",0,0,"0/1 (1 for 6112 games)","Indicator: BGG mechanic 'Dice Rolling'","Dummy variable from tag splitting"
+"mech_Hand.Management","indicator",0,0,"0/1 (1 for 4421 games)","Indicator: BGG mechanic 'Hand Management'","Dummy variable from tag splitting"
+"mech_Set.Collection","indicator",0,0,"0/1 (1 for 2936 games)","Indicator: BGG mechanic 'Set Collection'","Dummy variable from tag splitting"
+"mech_Variable.Player.Powers","indicator",0,0,"0/1 (1 for 2719 games)","Indicator: BGG mechanic 'Variable Player Powers'","Dummy variable from tag splitting"
+"mech_Hexagon.Grid","indicator",0,0,"0/1 (1 for 2371 games)","Indicator: BGG mechanic 'Hexagon Grid'","Dummy variable from tag splitting"
+"mech_Simulation","indicator",0,0,"0/1 (1 for 2099 games)","Indicator: BGG mechanic 'Simulation'","Dummy variable from tag splitting"
+"mech_Card.Drafting","indicator",0,0,"0/1 (1 for 1869 games)","Indicator: BGG mechanic 'Card Drafting'","Dummy variable from tag splitting"
+"mech_Tile.Placement","indicator",0,0,"0/1 (1 for 1805 games)","Indicator: BGG mechanic 'Tile Placement'","Dummy variable from tag splitting"
+"mech_Modular.Board","indicator",0,0,"0/1 (1 for 1697 games)","Indicator: BGG mechanic 'Modular Board'","Dummy variable from tag splitting"
+"mech_Grid.Movement","indicator",0,0,"0/1 (1 for 1635 games)","Indicator: BGG mechanic 'Grid Movement'","Dummy variable from tag splitting"
+"mech_Area.Majority...Influence","indicator",0,0,"0/1 (1 for 1600 games)","Indicator: BGG mechanic 'Area Majority / Influence'","Dummy variable from tag splitting"
+"mech_Cooperative.Game","indicator",0,0,"0/1 (1 for 1568 games)","Indicator: BGG mechanic 'Cooperative Game'","Dummy variable from tag splitting"
+"mech_Roll...Spin.and.Move","indicator",0,0,"0/1 (1 for 1364 games)","Indicator: BGG mechanic 'Roll / Spin and Move'","Dummy variable from tag splitting"
+"mech_Area.Movement","indicator",0,0,"0/1 (1 for 1195 games)","Indicator: BGG mechanic 'Area Movement'","Dummy variable from tag splitting"
+"mech_Simultaneous.Action.Selection","indicator",0,0,"0/1 (1 for 1177 games)","Indicator: BGG mechanic 'Simultaneous Action Selection'","Dummy variable from tag splitting"
+"mech_Action.Points","indicator",0,0,"0/1 (1 for 1173 games)","Indicator: BGG mechanic 'Action Points'","Dummy variable from tag splitting"
+"mech_Take.That","indicator",0,0,"0/1 (1 for 1122 games)","Indicator: BGG mechanic 'Take That'","Dummy variable from tag splitting"
+"mech_Auction.Bidding","indicator",0,0,"0/1 (1 for 1113 games)","Indicator: BGG mechanic 'Auction Bidding'","Dummy variable from tag splitting"
+"mech_Team.Based.Game","indicator",0,0,"0/1 (1 for 1028 games)","Indicator: BGG mechanic 'Team Based Game'","Dummy variable from tag splitting"
+"mech_Solo...Solitaire.Game","indicator",0,0,"0/1 (1 for 992 games)","Indicator: BGG mechanic 'Solo / Solitaire Game'","Dummy variable from tag splitting"
+"designer_first","character",596,0.0276,"7132 unique values","First-listed designer of boardgamedesigner","Designer grouping key"
+"designer_id","factor",596,0.0276,"7132 unique values","Factor identifier of designer_first (7,131 unique; deduplicated after tag-parse fix)","Grouping factor for multilevel model"
+"multi_designer","integer",0,0,"0 ~ 1","1 if more than one designer credited, else 0 (5,817 games)","Collaboration indicator"
+"z_log_users","numeric",0,0,"-1.21100 ~  4.41786","z-standardized log_users_rated: (x-mean)/sd on full data","Standardized predictor"
+"z_game_age","numeric",302,0.014,"-2.90033 ~  2.83289","z-standardized log_game_age (NOTE: standardizes the LOG of game age, matching delivered data)","Standardized predictor"
+"z_log_play","numeric",774,0.0358,"-3.64391 ~  2.81503","z-standardized log_playingtime: (x-mean)/sd on full data","Standardized predictor"

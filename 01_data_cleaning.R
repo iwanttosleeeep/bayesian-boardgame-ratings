@@ -1,6 +1,7 @@
 ## ============================================================================
 ## 01_data_cleaning.R
-## STAT1606 Project — BoardGameGeek data
+## STAT6106 Project — BoardGameGeek data
+## (fixed 2026-11-22: pmin() no longer fills NA with the cap value)
 ##
 ## Purpose : Read raw details.csv + ratings.csv, merge, and apply the cleaning
 ##           steps promised in the proposal:
@@ -8,7 +9,8 @@
 ##             - structural zeros (playingtime / maxplayers / minplayers /
 ##               minage == 0) -> NA
 ##             - extreme values capped (playingtime at 600 min,
-##               maxplayers at 36)
+##               maxplayers at 36) — capped columns KEEP NA where the
+##               original value is missing
 ##             - derived variables: zero_raters, log_users_rated,
 ##               playingtime_capped, log_playingtime, maxplayers_capped,
 ##               game_age, log_game_age
@@ -67,7 +69,7 @@ rm(details, ratings); gc()
 big <- big %>% select(-any_of(c("num.x", "num.y")))
 
 ## ---- 5. Invalid publication years -> NA ---------------------------------------
-## Proposal: years outside the plausible range are data errors.
+## Rule: only plausible publication years 1900-2022 are kept.
 big$yearpublished <- ifelse(between(big$yearpublished, 1900, 2022),
                             big$yearpublished, NA)
 cat("Invalid yearpublished set to NA:", sum(is.na(big$yearpublished)), "\n")
@@ -84,15 +86,13 @@ cat("Zeros set to NA -> playingtime:", sum(is.na(big$playingtime)),
     " minage:", sum(is.na(big$minage)), "\n")
 
 ## ---- 7. Extreme values: cap at plausible upper bounds --------------------------
-## NOTE: na.rm = TRUE replicates the original console pipeline exactly.
-## Side effect to be aware of: rows where playingtime/maxplayers are NA
-## (the zeros set to NA in step 6) become 600 / 36 after capping, because
-## pmin(NA, cap, na.rm = TRUE) returns the cap. If the intended behaviour is
-## "keep them missing", replace na.rm = TRUE with na.rm = FALSE (or drop it)
-## and downstream complete.cases filtering will exclude those rows instead.
-big$playingtime_capped <- pmin(big$playingtime, 600, na.rm = TRUE)  # cap 600 min
-big$log_playingtime    <- log1p(big$playingtime_capped)
-big$maxplayers_capped  <- pmin(big$maxplayers, 36, na.rm = TRUE)    # cap 36 players
+## FIXED 2026-11-22: na.rm = FALSE, so rows where playingtime / maxplayers
+## are NA (unknown) STAY NA instead of being filled with the cap value
+## (previously pmin(NA, cap, na.rm = TRUE) silently turned 774 / 164 missing
+## rows into 600 / 36, fabricating data).
+big$playingtime_capped <- pmin(big$playingtime, 600, na.rm = FALSE)  # cap 600 min
+big$log_playingtime    <- log1p(big$playingtime_capped)              # NA stays NA
+big$maxplayers_capped  <- pmin(big$maxplayers, 36, na.rm = FALSE)    # cap 36 players
 
 ## ---- 8. Other derived variables -------------------------------------------------
 big$zero_raters     <- (big$users_rated == 0)          # games with no ratings

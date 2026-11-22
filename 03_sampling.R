@@ -24,11 +24,10 @@
 ##    + comparison drawn from complete cases within dev), under which
 ##    comparison_sample was a subset of dev_subsample and could not serve as
 ##    an independent holdout.
-## 2. The delivered CSVs were drawn with an equivalent implementation of this
-##    same scheme (same seed 20261122, same sizes, zero overlap, verified).
-##    Rerunning this script in R yields the same scheme and sizes but a
-##    different row membership (R and the original RNG streams differ).
-## 3. The split is at row level: ~850 designer_ids appear in BOTH samples.
+## 2. As of 2026-11-22 the delivered CSVs ARE the output of this script
+##    (full pipeline rerun in R 4.5.3): same data, same code, same seed
+##    reproduces dev_subsample.csv and comparison_sample.csv exactly.
+## 3. The split is at row level: ~900 designer_ids appear in BOTH samples.
 ##    If the multilevel model (M1b) requires strict designer-group
 ##    separation, redraw at the designer level instead — team decision.
 ## ============================================================================
