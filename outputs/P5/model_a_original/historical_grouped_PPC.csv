@@ -1,0 +1,9 @@
+group,statistic,observed,predicted_median,lower95,upper95,source
+30-40,mean,6.187,6.436,6.398,6.478,original_2026-11-21_chat_output
+100-200,mean,6.351,6.436,6.407,6.468,original_2026-11-21_chat_output
+1000-5000,mean,6.845,6.437,6.395,6.476,original_2026-11-21_chat_output
+5000+,mean,7.225,6.434,6.373,6.491,original_2026-11-21_chat_output
+30-40,variance,1.124,1.008,0.953,1.067,original_2026-11-21_chat_output
+100-200,variance,0.771,0.812,0.776,0.856,original_2026-11-21_chat_output
+1000-5000,variance,0.479,0.751,0.706,0.799,original_2026-11-21_chat_output
+5000+,variance,0.390,0.747,0.671,0.821,original_2026-11-21_chat_output
