@@ -1,6 +1,7 @@
 .local/
 outputs/P4/smoke/*.rds
 outputs/P4/**/*.rds
+!outputs/P4/M1b_WAIC_6489/pointwise_loglik_share.rds
 outputs/P4/**/source_snapshot/
 outputs/P4/**/source_hashes.csv
 outputs/P4/**/workers.log
