@@ -1,0 +1,13 @@
+"metric","value"
+"games",6489
+"named_games",5866
+"anonymous_games",623
+"named_designers",3221
+"singleton_designers",2320
+"repeated_designers",901
+"games_in_repeated_designers",3546
+"within_designer_pairs",16210
+"groups_ge5",157
+"groups_ge10",57
+"largest_group",97
+"full_design_columns",56

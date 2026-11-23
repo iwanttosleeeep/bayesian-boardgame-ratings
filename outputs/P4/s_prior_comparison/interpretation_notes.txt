@@ -1,0 +1,7 @@
+Same complete development games and identical preprocessing; only s prior upper limit changes.
+Baseline U(0.5,3) remains the baseline. U(0.5,6) is an explicitly relaxed boundary stress test.
+No holdout outcomes or formal model-comparison sample used.
+All diagnostics and covariance/scale caveats must accompany interpretation.
+Conditional theta means are Rao-Blackwellized over 1000 selected posterior draws; small per-game differences retain Monte Carlo error.
+Ranks and Top 50 overlap are within-development descriptive results, not global BGG rankings.
+Development PPC is in each run directory and is not held-out prediction.

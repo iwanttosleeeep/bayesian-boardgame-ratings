@@ -1,0 +1,15 @@
+Status: completed implementation/runtime smoke; NOT a final model fit
+Training games: 400
+Predictors: 55
+Named designers: 319
+Unknown designer games: 36
+Elapsed seconds: 43.36
+Max R-hat, all monitored parameters: 1.02111857727588
+Min ESS, all monitored parameters: 78.6349879060263
+Max R-hat, coefficients and scales: 1.02111857727588
+Min ESS, coefficients and scales: 78.6349879060263
+R-hat <=1.01 AND ESS >=400 for ALL: FALSE
+Passed: recipe replay, finite imputation, unseen/anonymous designer probe, latent shrinkage direction
+Passed: finite parameter/latent/loglik draws; game IDs saved
+No holdout file was read; no WAIC or holdout performance claimed
+Development MD5: 9aabdbb4970a86417a01bbdf08e2d069

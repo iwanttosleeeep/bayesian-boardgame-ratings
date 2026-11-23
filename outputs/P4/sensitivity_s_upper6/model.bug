@@ -1,0 +1,18 @@
+model {
+  for (i in 1:N) {
+    mu[i] <- alpha + inprod(X[i,], beta[]) + known[i] * u[designer[i]]
+    latent_var[i] <- pow(tau, 2) + (1-known[i]) * pow(sigma_d, 2)
+    y[i] ~ dnorm(mu[i], 1/(latent_var[i] + pow(s, 2)/n[i]))
+  }
+  for (j in 1:J) {
+    z_u[j] ~ dnorm(0, 1)
+    u[j] <- sigma_d * z_u[j]
+  }
+  for (p in 1:P) {
+    beta[p] ~ dnorm(0, beta_prec[p])
+  }
+  alpha ~ dnorm(6.4, 1)
+  s ~ dunif(0.5, 6)
+  tau ~ dt(0, 1, 1) T(0,)
+  sigma_d ~ dnorm(0, 4) T(0,)
+}

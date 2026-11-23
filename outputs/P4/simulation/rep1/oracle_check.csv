@@ -1,0 +1,2 @@
+"rep","max_rhat","min_bulk","min_tail","oracle_coverage","posterior_theta_coverage","theta_rmse","raw_rmse","measurement_z_mean","measurement_z_sd","latent_z_mean","latent_z_sd","beta_coverage","designer_effect_coverage"
+1,1.00590707414699,576.256311122021,1085.03020471371,0.9495,0.8845,0.174126585671493,0.184057303987307,-0.0308324708803343,0.99799490476296,0.0185575768151767,0.981194547207353,0.964285714285714,0.945848375451264

@@ -1,0 +1,6 @@
+Label: baseline_development
+Training rows: 6489
+Source MD5: 9aabdbb4970a86417a01bbdf08e2d069
+Model MD5: 2682b30ed989d38bdf1162326b84f5b0
+Seeds: 610801,610802,610803,610804
+Holdout read: FALSE

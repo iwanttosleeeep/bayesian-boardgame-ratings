@@ -1,0 +1,15 @@
+"metric","value"
+"baseline_diagnostic_pass",1
+"upper6_diagnostic_pass",1
+"median_absolute_theta_change",0.0418664665696999
+"max_absolute_theta_change",0.86435029938345
+"within_sample_rank_spearman",0.993686255093571
+"top50_overlap",42
+"baseline_median_abs_adjustment",0.0554570839206265
+"upper6_median_abs_adjustment",0.0988781412658577
+"slopes_with_same_mean_sign",53
+"slopes",56
+"strong_baseline_effects",26
+"strong_baseline_effects_retain_direction",26
+"baseline_s_above_2_95",0.925375
+"upper6_s_above_5_95",0

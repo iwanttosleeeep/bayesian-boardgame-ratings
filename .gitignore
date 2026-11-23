@@ -1,0 +1,15 @@
+.local/
+outputs/P4/smoke/*.rds
+outputs/P4/**/*.rds
+outputs/P4/**/source_snapshot/
+outputs/P4/**/source_hashes.csv
+outputs/P4/**/workers.log
+outputs/P4/**/worker_*.txt
+outputs/P4/**/worker_pids.csv
+outputs/P4/**/run.log
+outputs/P4/**/run_errors.log
+outputs/P4/resources/original_smoke_hashes.csv
+outputs/P4/**/sessionInfo*.txt
+outputs/P4/**/environment_verified.txt
+outputs/P4/**/runtime_versions.txt
+/p4_reproduced/
