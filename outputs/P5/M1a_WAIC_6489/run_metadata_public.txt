@@ -1,0 +1,16 @@
+STAT6106 P5 — M1a Baseline WAIC handoff (6489 games)
+Date: 2026-11-23
+Input: dev_subsample.csv (downloaded from repository main)
+Input MD5: 1605e4e28a246899205ae14f0f965229
+Training games: 6489
+Unique game IDs: 6489
+Posterior chains: 4
+Samples per chain: 3000
+Shared pointwise loglik matrix: 500 draws x 6489 games
+Shared loglik file size (MiB): 22.38
+All convergence targets passed: TRUE
+Original M1a priors: alpha~N(6.4,1^2); s~Uniform(0.5,3); tau~half-Cauchy(0,1)
+Likelihood: y_i~Normal(alpha, tau^2+s^2/n_i), latent theta integrated
+No holdout data read. Do NOT call this an out-of-sample evaluation.
+This is a separate 6489-game refit; original 6416-game P5 outputs unchanged.
+Formal cross-model WAIC is pending P2/P4 same-ID and likelihood verification.

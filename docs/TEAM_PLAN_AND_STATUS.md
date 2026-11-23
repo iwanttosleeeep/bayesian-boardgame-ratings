@@ -10,7 +10,7 @@
 | **P2** | M0 normal Bayesian regression using JAGS, hand-written Gibbs and CAVI; M1b runtime benchmark | JAGS/Gibbs R scripts, initial posterior/log-likelihood RDS and comparison table delivered. Code targets `comparison_sample.csv` (holdout); this fit is **not accepted as development training**. | Agree common development IDs, refit M0 on development, retain IDs and preprocessing; CAVI and M1b timing still unverified |
 | **P3** | M2 popularity count models: Poisson and truncated NB, overdispersion, PPC and within-M2 WAIC | No P3-specific deliverables verified in GitHub | Check count truncation, fit Poisson/NB on the same sample, report diagnostics and tail/30-floor PPC |
 | **P4** | M1b covariates + log rating count + designer random effects; shrinkage and partial pooling | **[PR #1 merged](https://github.com/iwanttosleeeep/bayesian-boardgame-ratings/pull/1)**: 6,489-game development M1b, four-chain convergence, `s` prior sensitivity, IDs and model/diagnostic summaries; [delivery details](P4_DELIVERY.md) | 28 Nov presentation plots and interpretation; coordinate identical training-ID M0/M1a/M1b WAIC; posterior/latent/loglik RDS remain local; simulation theta interval coverage only 84–88% |
-| **P5** | M1a baseline and external-SD extension, prior/SD sensitivity, model checks and cross-model comparison | 8 R scripts, model summaries, exploratory A-vs-Extended holdout ELPD comparison, sensitivity, **4 RDS posterior files present** | Coordinate WAIC/LOO with P2/P4, document restricted-sample and SD limitations, write own section |
+| **P5** | M1a baseline and external-SD extension, prior/SD sensitivity, model checks and cross-model comparison | Earlier 6,416-game fits, comparison and 4 posterior RDS; **new [6,489-game M1a handoff](../outputs/P5/M1a_WAIC_6489/README.md)** (code, exact training IDs, diagnostics, parameter summary, single-model WAIC 17,496.15). Its large log-likelihood RDS remains local pending upload. | Upload 6,489-game likelihood RDS; agree comparison likelihood with P2/P4; complete joint WAIC and own report section |
 | **P6** | BGG pseudo-vote benchmark, posterior rank credible intervals/Top 10 probabilities, slides and report integration | No P6-owned deliverables verified in GitHub | Both M1a models' latent rating RDS are available from P5; first ranking/benchmark and slide handoff |
 
 ## Dependencies (do not skip)
@@ -19,7 +19,7 @@
 - **P2 → P1/P5/P4:** M0 posterior draws, diagnostics, pointwise likelihood; M1b JAGS runtime evidence.
 - **P3 → report/P6:** Poisson vs NB fit, count-tail and count-floor PPC, within-M2 model comparison. Do not mix popularity-model WAIC with rating-model WAIC.
 - **P4 → P2/P5/P6:** Designer-effect specification, marginal likelihood, posterior draws, how unseen designers are handled, M1b ranking where possible.
-- **P5 → P1/P6:** [Baseline posterior](../outputs/P5/M1a_Baseline/) and [external-SD posterior](../outputs/P5/M1a_Extended_ExternalSD/) (both have `parameter_draws.rds` and `latent_rating_draws_for_P6.rds`); [model comparison](../outputs/P5/M1a_Model_Comparison/) and [sensitivity](../outputs/P5/Sensitivity_Analysis/). Rank intervals require latent draws, not posterior mean CSV alone.
+- **P5 → P1/P6:** [Original 6,416-game baseline](../outputs/P5/M1a_Baseline/) and [external-SD posterior](../outputs/P5/M1a_Extended_ExternalSD/) (both have `parameter_draws.rds` and `latent_rating_draws_for_P6.rds`); [model comparison](../outputs/P5/M1a_Model_Comparison/) and [sensitivity](../outputs/P5/Sensitivity_Analysis/). Separately, [6,489-game M1a WAIC handoff](../outputs/P5/M1a_WAIC_6489/README.md) has IDs that were verified to match **P4 baseline IDs in the same order**; the P5 500-draw likelihood RDS still needs upload. Rank intervals require latent draws, not posterior mean CSV alone.
 - **P6 → all:** BGG benchmark, within-sample rank uncertainty, consistent figures/slides, integrated results and final checks.
 
 ## Dates and intended checkpoints
@@ -42,7 +42,7 @@
 ## Sampling and modeling rules that have changed since the 20 Nov plan
 
 1. **Actual P1 split:** `dev_subsample.csv` has 6,489 game-random development rows, `comparison_sample.csv` has 3,244 disjoint game-random **holdout** rows (seed 20261122); 912 designers overlap. The original plan instead described designer-group sampling of ~5,000 and an *in-development* complete-case comparison sample.
-2. **Formal M0/M1a/M1b WAIC:** the current `comparison_sample.csv` cannot serve as both train and held out. Build a separately named common training-ID subset within development and compare appropriately integrated, compatible pointwise likelihoods. **This formal cross-model comparison is not yet verified as completed.**
+2. **Formal M0/M1a/M1b WAIC:** the current `comparison_sample.csv` is reserved as holdout. The working target is **all 6,489 development games**. P4 fitted these, and P5's separate M1a refit uses identical IDs in identical order; **P2's final development-only fit and likelihood remain to be aligned**. Use appropriately integrated, comparable per-game likelihoods. **No three-model WAIC comparison has been completed.**
 3. **P5 scope:** present M1a Baseline and Extended fits share only the 6,416 development games with historical SD matched; holdout ELPD is on 3,209 matched holdout games. This differs from the original full-data M1a aim. Global BGG Top 10/50 probabilities cannot be inferred from rankings computed on these 6,416 alone.
 4. **P5 changes multiple assumptions:** the external-SD extension also changes mean and between-game dispersion vs the baseline. Its improvement cannot be ascribed solely to historical SD. The historical SD source date is unverified and observation noise uncertainty is plugged in rather than estimated.
 5. **Holdout is exploratory:** the group has already used the holdout to guide previous model experiments; do not present it as fully untouched final testing.
@@ -58,7 +58,8 @@
 - [x] **P4 M1b first three milestones** — full 6,489-game development fit, convergence and `s`-prior sensitivity merged in PR #1; [scientific caveats](P4_DELIVERY.md) documented
 - [ ] **P4 continuing** — 28 Nov analysis/figures, model-comparison alignment and downloadable posterior/latent/loglik draws where needed
 - [x] **P5 M1a model fitting/validation** — baseline, extension, sensitivity and same-ID exploratory holdout ELPD, posterior RDS in GitHub
-- [ ] **P5 remaining** — formal M0/M1a/M1b matched comparison and possible M1b prior sensitivity
+- [x] **P5 6,489-game M1a WAIC refit** — four chains passed diagnostics; full development IDs match P4; standalone WAIC and metadata uploaded
+- [ ] **P5 remaining** — upload pointwise likelihood RDS, complete formal M0/M1a/M1b matched comparison, and interpret limitations
 - [ ] **P6** — BGG benchmark, ranking uncertainty, slides and report integration
 
 Only change a pending status to completed once a teammate has linked or supplied the actual artifact.

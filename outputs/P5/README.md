@@ -1,6 +1,17 @@
 # STAT6106 — P5 Bayesian rating shrinkage
 
-**Status:** preliminary development-sample results, updated 22 November 2026. This is P5's contribution; P1's files and the team proposal remain unchanged.
+**Status:** preliminary development-sample results, updated 23 November 2026. This is P5's contribution; P1's files and the team proposal remain unchanged.
+
+## Additional M1a Baseline refit for M0/M1a/M1b WAIC (6,489 games)
+
+This is a **separate, same-specification baseline refit**, not a replacement for the matched 6,416-game Baseline-vs-Extended experiment described below. It uses **all 6,489 P1 development games** and never reads the 3,244-game holdout.
+
+- Reproduction script: [09_M1a_Baseline_WAIC_6489.R](../../code/P5/09_M1a_Baseline_WAIC_6489.R).
+- Handoff files and upload status: [M1a_WAIC_6489/README.md](M1a_WAIC_6489/README.md).
+- Four MCMC chains, 3,000 retained samples/chain; all reported R-hat <=1.01 and ESS >=400.
+- Posterior mean `s` = 2.9655, close to the U(0.5,3) upper boundary; this parameter is **not** a reliably identified individual-rater SD.
+- **Single-model** WAIC = **17,496.15** (`p_WAIC` = 2.2385), calculated from a 500 × 6,489 game-level log-likelihood matrix with latent game rating integrated out. This is **in-sample**, not holdout ELPD, and does not yet establish which of M0/M1a/M1b performs best.
+- P5's 6,489 training IDs have been checked **identical and in the same order** to P4 baseline's uploaded `train_game_ids.csv`. P2 must still deliver a matching development fit. The new M1a likelihood RDS remains to be uploaded; the existing 6,416-game RDS must **not** be substituted.
 
 ## Two models retained for the final P5 narrative
 
@@ -48,6 +59,7 @@ This is **holdout ELPD, not WAIC**. The final M0/M1a/M1b WAIC exercise still req
 - `code/P5/06_Extended_prior_sensitivity.R` — alternative gamma/tau prior choices
 - `code/P5/07_Baseline_vs_Extended_comparison.R` — matched-game comparison, no model refitting
 - `code/P5/08_prepare_P6_handoff.R` — check and prepare ranking-draw handoff, no refitting
+- `code/P5/09_M1a_Baseline_WAIC_6489.R` — new separate 6,489-development-game M1a fit for formal WAIC handoff
 - `outputs/P5/M1a_Baseline/` — updated same-sample baseline parameter, convergence and PPC CSVs
 - `outputs/P5/M1a_Extended_ExternalSD/` — matched SD, posterior rating summaries, convergence and PPC, holdout summaries
 - `outputs/P5/M1a_Model_Comparison/` — matched baseline/extended held-out predictive and shrinkage summaries
@@ -72,6 +84,6 @@ The GitHub object listing confirms each file is present; these binary files have
 
 **Not a complete single-command reproduction package:** the local P5 R scripts still use original working paths under `P5_external_SD/` rather than the GitHub presentation folders. For reuse without refitting, download or copy the RDS and matched CSV into the script-expected local locations. Some source caches, holdout per-game prediction files and detailed per-game comparison files are not committed.
 
-The external historical rating SD snapshot date is not verified, SD is treated as a plug-in value, and holdout data were consulted during exploration; these limitations should remain visible in the final report. Formal cross-model M0/M1a/M1b WAIC comparison remains pending.
+The external historical rating SD snapshot date is not verified, SD is treated as a plug-in value, and holdout data were consulted during exploration; these limitations should remain visible in the final report. Formal cross-model M0/M1a/M1b WAIC comparison remains pending. The separate 6,489-game baseline has a standalone WAIC estimate, but P2/P4 still need aligned likelihood file handoffs.
 
 See the [team status](../../docs/TEAM_PLAN_AND_STATUS.md) and [P1 data contract](../../docs/P1_DATA_GUIDE.md).

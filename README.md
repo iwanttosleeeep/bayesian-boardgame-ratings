@@ -16,6 +16,7 @@ We examine Bayesian shrinkage of BoardGameGeek (BGG) average ratings, how assump
 | **[Team plan and progress](docs/TEAM_PLAN_AND_STATUS.md)** | P1–P6 roles, handoffs, deadlines, verified status and limitations |
 | **[P4 M1b delivery](docs/P4_DELIVERY.md)** | P4 preliminary model, reproduction, convergence and caveats |
 | **[P5 results](outputs/P5/README.md)** | M1a baseline, external-SD extension, tests and comparisons |
+| **[P5 M1a 6,489-game WAIC handoff](outputs/P5/M1a_WAIC_6489/README.md)** | New development-only M1a fit, game IDs, diagnostics and standalone WAIC; large likelihood RDS pending upload |
 | **[P5 R scripts](code/P5/)** | Numbered P5 workflow |
 | **[P1 script index](code/P1/README.md)** | Links to the four P1 scripts, which remain at the repository root |
 
@@ -34,19 +35,19 @@ The split uses seed **20261122**, randomly samples **games** rather than whole d
 
 **Important:** `comparison_sample.csv` is *currently a holdout*, **not** the common complete-case training sample for WAIC described in the 20 Nov plan. M0/M1a/M1b WAIC needs separately agreed **common development game IDs**, comparable likelihoods, and consistent fits. Holdout ELPD and WAIC are different evaluations.
 
-P5's two current models share **6,416** SD-matched development games and are evaluated on **3,209** SD-matched holdout games. These are *subsets* of P1's samples, **not all BGG games**. The holdout was inspected during earlier model exploration, so predictive comparison is exploratory.
+P5's two original same-sample models share **6,416** SD-matched development games and are evaluated on **3,209** SD-matched holdout games. These are *subsets* of P1's samples, **not all BGG games**. Separately, P5 refitted the **unchanged M1a Baseline** on **all 6,489 development games** for the planned M0/M1a/M1b WAIC comparison; it is a distinct fit and not the external-SD holdout experiment. The holdout was inspected during earlier model exploration, so predictive comparison is exploratory.
 
 ## Team ownership and current GitHub status
 
 **Status means artifacts verified in this repository, not whether a person has worked locally.** New PRs and subsequent stages may change these statuses. See the [detailed team plan](docs/TEAM_PLAN_AND_STATUS.md) for handoffs and dates.
 
-| Owner | Responsibility | Repo status as of 22 Nov |
+| Owner | Responsibility | Repo status as of 23 Nov |
 | --- | --- | --- |
 | **P1** | Cleaning, features, dictionary, EDA, M0/M1 PPC | **Four data files + four scripts delivered**; own EDA/PPC artifacts not verified |
 | **P2** | M0 Bayesian regression, JAGS/Gibbs/CAVI; M1b runtime | **M0 JAGS/Gibbs code, summaries and draws uploaded; preliminary fit used holdout and requires development-only refit; CAVI not yet verified** |
 | **P3** | M2 popularity: Poisson and truncated NB | No P3-owned outputs verified |
 | **P4** | M1b covariates + designer random effects | **[PR #1 merged](https://github.com/iwanttosleeeep/bayesian-boardgame-ratings/pull/1): 6,489-game development fits, diagnostics, prior-boundary sensitivity, IDs and reproducible code. Large posterior RDS remain local; calibration caveat.** |
-| **P5** | M1a baseline, external-SD extension, PPC, prior/SD sensitivity, model comparison | **Code, results and both models' parameter/latent posterior RDS uploaded** |
+| **P5** | M1a baseline, external-SD extension, PPC, prior/SD sensitivity, model comparison | **Original 6,416-game code/results and posterior RDS uploaded; separate 6,489-game M1a fit has code, exact IDs, diagnostics and standalone WAIC = 17,496.15 uploaded. Its 500 × 6,489 log-likelihood RDS still needs upload; cross-model WAIC pending.** |
 | **P6** | BGG benchmark, ranking uncertainty, slides/report integration | No P6-owned outputs verified; P5 draw handoff is available |
 
 ## Model naming
@@ -65,7 +66,7 @@ External-SD M1a changes **more than one modeling assumption**. A-vs-Extended pre
 
 | Date | Planned handoff |
 | --- | --- |
-| **23–24 Nov** | P4 M1b code and scale decision **delivered**; M2 truncation check; P5 draws ready for P6 |
+| **23–24 Nov** | P4 M1b code and scale decision **delivered**; P5 6,489-game M1a WAIC refit and metadata delivered; M2 truncation check; P5 draws ready for P6 |
 | **26–27 Nov** | Preliminary M0/M1b/M2, EDA/PPC and first BGG/ranking outputs (as available) |
 | **28 Nov** | Presentation-result freeze: reproducible numbers, figures, limitations and slide material from every owner |
 | **29–30 Nov** | Slides compiled and verified; team rehearsal |

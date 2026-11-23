@@ -1,0 +1,2 @@
+model,training_games,posterior_loglik_draws,ids_match,loglik_finite,lppd,p_waic,elpd_waic,waic_deviance,waic_se,max_pointwise_p_waic,n_pointwise_p_waic_above_0_4
+M1a Baseline,6489,500,True,True,-8745.835687135488,2.238501863297829,-8748.074188998788,17496.148377997575,133.22176713941624,0.07615517981876425,0
