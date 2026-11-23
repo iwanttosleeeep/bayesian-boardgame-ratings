@@ -1,0 +1,15 @@
+Delivery environment: R version 4.5.3 (2026-03-11 ucrt) JAGS 4.3.2
+PASS: modern diagnostics detect shifted chain; Gaussian conditioning; repeated/anonymous covariance
+PASS: full training IDs, fresh preprocessing, unchanged priors, chain identity/RNG states, diagnostics and posterior artifacts
+                   run games chains retained_per_chain max_rhat min_bulk_ess
+1 baseline_development  6489      4               4000 1.001172     1456.859
+2 sensitivity_s_upper6  6489      4               4000 1.005365     1377.121
+  min_tail_ess max_mcse_mean_over_sd all_diagnostics_pass resource_stop
+1     2470.183            0.02628617                 TRUE         FALSE
+2     3006.318            0.02698350                 TRUE         FALSE
+  data_recipe_map_chain_state_latent_loglik_checks
+1                                             TRUE
+2                                             TRUE
+PASS: all R files parse; existing posterior verified; NO full fit run; finish_analysis NOT restarted
+PASS: staged scope, tracked relative links, prohibited-file and credential-pattern checks. Files=163, total=9.30 MiB, largest=outputs/P4/s_prior_comparison/parameter_comparison.csv (1526000 bytes). No full fit or finish_analysis restarted.
+PASS: PowerShell/R syntax and completed-run log-preservation guard; no other member files staged.

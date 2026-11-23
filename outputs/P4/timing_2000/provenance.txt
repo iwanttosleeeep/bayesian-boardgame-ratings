@@ -1,0 +1,6 @@
+Label: timing_only
+Training rows: 2000
+Source MD5: 9aabdbb4970a86417a01bbdf08e2d069
+Model MD5: 2682b30ed989d38bdf1162326b84f5b0
+Seeds: 610781,610782,610783,610784
+Holdout read: FALSE

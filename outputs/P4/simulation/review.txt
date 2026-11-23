@@ -1,0 +1,7 @@
+Implementation checks PASS: Gaussian conditioning, repeated/anonymous covariance, finite draws, generator residual scales.
+Both simulations meet modern diagnostic thresholds and improve latent RMSE over raw observed means.
+Calibration limitation: posterior s is weakly identified and low in both fixed-truth replicates; theta interval coverage is only 84-88%.
+Oracle conditioning coverage is near 95%. Passing MCMC diagnostics is not a calibration guarantee.
+Two replicates are a limited recovery check, not simulation-based calibration or a comprehensive coverage study.
+Execution note: editing analysis script while its original Rscript invocation was reading it caused a trailing parser error after both replicates were saved.
+Both saved replicates were independently checked here; future wrapper parses the whole script using source() before execution.

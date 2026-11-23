@@ -1,0 +1,13 @@
+IMPLEMENTATION AND RESOURCE GATE: PASS for monitored full-development baseline run
+Implementation: independent Gaussian/covariance tests and two saved simulation fits pass; simulation calibration caveat retained.
+Resources: 32 GB installed RAM, 22 logical processors; four R workers plus directly launched x64 master measured.
+2000-game corrected pilot elapsed seconds: 68.48
+Measured pilot maximum aggregate working set MB: 917
+Projected full 4000/chain elapsed minutes: 16.3
+Projected full 12000/chain elapsed minutes: 32.9
+Planning RAM MB at 4000/12000 draws: 6199 11807
+Time projection is linear in N/iterations, not a guarantee. Graph compilation, sparse factorization, diagnostics and posterior export can add cost.
+RAM planning is a heuristic (N-scaled pilot peak plus seven raw-draw copies), not an observed full-data bound.
+Use JAGS glm::Generic block updates with unchanged model/priors; actual sampler list and run settings are saved.
+Monitor actual memory and diagnostics. Do not claim convergence when the ceiling is reached.
+U(0.5,6) sensitivity is a separate boundary stress test; it is not a replacement baseline or a claim that s>5 is plausible for bounded ratings.

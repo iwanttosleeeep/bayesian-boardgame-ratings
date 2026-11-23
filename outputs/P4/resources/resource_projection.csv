@@ -1,0 +1,13 @@
+"metric","value"
+"pilot_elapsed_seconds",68.48
+"pilot_peak_aggregate_working_MB",917
+"pilot_max_private_MB",1031.35546875
+"pilot_sum_process_peaks_MB",1046.62109375
+"full_compile_warmup_est_seconds",476.16282
+"full_sample_1000_est_seconds",124.97814
+"full_4000_est_seconds",976.07538
+"full_12000_est_seconds",1975.9005
+"full_4000_raw_draw_MB",400.5126953125
+"full_12000_raw_draw_MB",1201.5380859375
+"full_4000_memory_planning_MB",6199.35100585937
+"full_12000_memory_planning_MB",11806.5287402344

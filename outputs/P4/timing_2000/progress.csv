@@ -1,0 +1,2 @@
+"draws_per_chain","elapsed","max_rhat","min_bulk_ess","min_tail_ess","max_mcse_ratio","passed","draw_object_MB","max_worker_batch_seconds"
+500,77.71,1.05243586885683,64.7397490472549,122.991504046968,0.123653022262521,FALSE,21.2886352539062,21.64

@@ -1,0 +1,7 @@
+Status: diagnostic thresholds NOT met
+Draws per chain: 500
+Elapsed seconds: 68.48
+Diagnostics: posterior rank-normalized/folded split Rhat, bulk/tail ESS, MCSE
+Thresholds: Rhat<=1.01; bulk/tail ESS>=400; MCSE(mean)/SD<=0.05
+Parameter draws and RNG states saved per chain; chain number is explicit
+No holdout read; no formal matched-model comparison performed
