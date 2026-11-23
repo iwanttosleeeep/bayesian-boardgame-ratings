@@ -1,15 +1,15 @@
 # Team project plan and progress — P1–P6
 
-**Working status as of 22 November 2026**, grounded in the project plan dated 20 Nov and the deliverables visible in this repository. This is **not a replacement for the original proposal**. “Not in repo” does not mean the owner has not worked locally.
+**Working status as of 23 November 2026**, grounded in the project plan dated 20 Nov and the deliverables visible in this repository. This is **not a replacement for the original proposal**. “Not in repo” does not mean the owner has not worked locally.
 
 ## Ownership, evidence, next handoff
 
 | Owner | Assigned responsibilities | Current evidence | Next output / dependency |
 | --- | --- | --- | --- |
 | **P1** | Data joining/cleaning, feature engineering and dictionary; EDA; M0/M1 grouped PPC | 4 shared CSVs and 4 reproducibility scripts; P1 README | EDA figures/tables and model PPC once draws are shared |
-| **P2** | M0 normal Bayesian regression using JAGS, hand-written Gibbs and CAVI; M1b runtime benchmark | No P2-specific deliverables verified in GitHub | M0 fit, posterior and likelihood draws, convergence, M1b timing result to P4 |
+| **P2** | M0 normal Bayesian regression using JAGS, hand-written Gibbs and CAVI; M1b runtime benchmark | JAGS/Gibbs R scripts, initial posterior/log-likelihood RDS and comparison table delivered. Code targets `comparison_sample.csv` (holdout); this fit is **not accepted as development training**. | Agree common development IDs, refit M0 on development, retain IDs and preprocessing; CAVI and M1b timing still unverified |
 | **P3** | M2 popularity count models: Poisson and truncated NB, overdispersion, PPC and within-M2 WAIC | No P3-specific deliverables verified in GitHub | Check count truncation, fit Poisson/NB on the same sample, report diagnostics and tail/30-floor PPC |
-| **P4** | M1b covariates + log rating count + designer random effects; shrinkage and partial pooling | No P4-specific deliverables verified in GitHub | Marginal JAGS model and conditional latent-rating function; P2 timing; converged output and designer effect interpretation |
+| **P4** | M1b covariates + log rating count + designer random effects; shrinkage and partial pooling | **[PR #1 merged](https://github.com/iwanttosleeeep/bayesian-boardgame-ratings/pull/1)**: 6,489-game development M1b, four-chain convergence, `s` prior sensitivity, IDs and model/diagnostic summaries; [delivery details](P4_DELIVERY.md) | 28 Nov presentation plots and interpretation; coordinate identical training-ID M0/M1a/M1b WAIC; posterior/latent/loglik RDS remain local; simulation theta interval coverage only 84–88% |
 | **P5** | M1a baseline and external-SD extension, prior/SD sensitivity, model checks and cross-model comparison | 8 R scripts, model summaries, exploratory A-vs-Extended holdout ELPD comparison, sensitivity, **4 RDS posterior files present** | Coordinate WAIC/LOO with P2/P4, document restricted-sample and SD limitations, write own section |
 | **P6** | BGG pseudo-vote benchmark, posterior rank credible intervals/Top 10 probabilities, slides and report integration | No P6-owned deliverables verified in GitHub | Both M1a models' latent rating RDS are available from P5; first ranking/benchmark and slide handoff |
 
@@ -27,8 +27,8 @@
 | Date | Milestone | Evidence at this review |
 | --- | --- | --- |
 | **22 Nov** | P1 cleans data and freezes data files | Delivered in GitHub |
-| **23 Nov** | P4 marginal M1b skeleton; P3 truncation feasibility | Owners to confirm/push |
-| **24 Nov** | P5 latent draws; P2/P4 runtime and specification decision | P5 draw files present; P2/P4 unverified |
+| **23 Nov** | P4 marginal M1b skeleton; P3 truncation feasibility | **P4 delivered and PR #1 merged; P3 unverified** |
+| **24 Nov** | P5 latent draws; P2/P4 runtime and specification decision | **P5 draw files present; P4 runtime and 6,489-game specification delivered early; P2 runtime unverified** |
 | **26 Nov** | Preliminary M0/M1b/M2; P1 EDA; P5 sensitivity; P6 BGG benchmark | P5 sensitivity already present; other owners unverified |
 | **27 Nov** | P1/P3 model PPC; P6 initial ranking | P6 can use uploaded draws |
 | **28 Nov** | **Freeze presentation results** (code, figures, slide points, limitations) | All owners |
@@ -53,9 +53,10 @@
 
 - [x] **P1 data preparation** — data cleaning, variables, splits and code uploaded
 - [ ] **P1 model checking and EDA** — not yet evidenced in repo
-- [ ] **P2 M0** — JAGS/Gibbs/CAVI, M1b runtime and diagnostics
+- [ ] **P2 M0** — preliminary JAGS/Gibbs delivered, but holdout-trained fit must be replaced with a development-trained fit; CAVI, M1b runtime and final handoff pending
 - [ ] **P3 M2** — Poisson/NB fits, PPC, diagnostics and model selection
-- [ ] **P4 M1b** — converged fit, interpretation and posterior/likelihood draws
+- [x] **P4 M1b first three milestones** — full 6,489-game development fit, convergence and `s`-prior sensitivity merged in PR #1; [scientific caveats](P4_DELIVERY.md) documented
+- [ ] **P4 continuing** — 28 Nov analysis/figures, model-comparison alignment and downloadable posterior/latent/loglik draws where needed
 - [x] **P5 M1a model fitting/validation** — baseline, extension, sensitivity and same-ID exploratory holdout ELPD, posterior RDS in GitHub
 - [ ] **P5 remaining** — formal M0/M1a/M1b matched comparison and possible M1b prior sensitivity
 - [ ] **P6** — BGG benchmark, ranking uncertainty, slides and report integration

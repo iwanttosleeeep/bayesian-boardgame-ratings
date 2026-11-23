@@ -1,7 +1,7 @@
 # How Much Should We Shrink a Board Game Rating?
 
 **STAT6106 Bayesian Data Analysis | Group project**  
-**Working repository overview — 22 Nov 2026**
+**Working repository overview — 23 Nov 2026**
 
 We examine Bayesian shrinkage of BoardGameGeek (BGG) average ratings, how assumptions influence adjusted scores and ranking uncertainty, and how our results compare with BGG's own adjusted-rating benchmark. M0, M1b and M2 support the central M1a shrinkage analysis.
 
@@ -14,6 +14,7 @@ We examine Bayesian shrinkage of BoardGameGeek (BGG) average ratings, how assump
 | **[P1 data guide](docs/P1_DATA_GUIDE.md)** | The four shared CSVs, scripts, cleaning rules and training/holdout contract |
 | **[P1 original technical notes](docs/P1_PIPELINE_NOTES_2026-11-22.md)** | P1's detailed README preserved verbatim |
 | **[Team plan and progress](docs/TEAM_PLAN_AND_STATUS.md)** | P1–P6 roles, handoffs, deadlines, verified status and limitations |
+| **[P4 M1b delivery](docs/P4_DELIVERY.md)** | P4 preliminary model, reproduction, convergence and caveats |
 | **[P5 results](outputs/P5/README.md)** | M1a baseline, external-SD extension, tests and comparisons |
 | **[P5 R scripts](code/P5/)** | Numbered P5 workflow |
 | **[P1 script index](code/P1/README.md)** | Links to the four P1 scripts, which remain at the repository root |
@@ -37,14 +38,14 @@ P5's two current models share **6,416** SD-matched development games and are eva
 
 ## Team ownership and current GitHub status
 
-**Status means artifacts verified in this repository, not whether a person has worked locally.** See the [detailed team plan](docs/TEAM_PLAN_AND_STATUS.md) for handoffs and dates.
+**Status means artifacts verified in this repository, not whether a person has worked locally.** New PRs and subsequent stages may change these statuses. See the [detailed team plan](docs/TEAM_PLAN_AND_STATUS.md) for handoffs and dates.
 
 | Owner | Responsibility | Repo status as of 22 Nov |
 | --- | --- | --- |
 | **P1** | Cleaning, features, dictionary, EDA, M0/M1 PPC | **Four data files + four scripts delivered**; own EDA/PPC artifacts not verified |
-| **P2** | M0 Bayesian regression, JAGS/Gibbs/CAVI; M1b runtime | No P2-owned outputs verified |
+| **P2** | M0 Bayesian regression, JAGS/Gibbs/CAVI; M1b runtime | **M0 JAGS/Gibbs code, summaries and draws uploaded; preliminary fit used holdout and requires development-only refit; CAVI not yet verified** |
 | **P3** | M2 popularity: Poisson and truncated NB | No P3-owned outputs verified |
-| **P4** | M1b covariates + designer random effects | No P4-owned outputs verified |
+| **P4** | M1b covariates + designer random effects | **[PR #1 merged](https://github.com/iwanttosleeeep/bayesian-boardgame-ratings/pull/1): 6,489-game development fits, diagnostics, prior-boundary sensitivity, IDs and reproducible code. Large posterior RDS remain local; calibration caveat.** |
 | **P5** | M1a baseline, external-SD extension, PPC, prior/SD sensitivity, model comparison | **Code, results and both models' parameter/latent posterior RDS uploaded** |
 | **P6** | BGG benchmark, ranking uncertainty, slides/report integration | No P6-owned outputs verified; P5 draw handoff is available |
 
@@ -64,7 +65,7 @@ External-SD M1a changes **more than one modeling assumption**. A-vs-Extended pre
 
 | Date | Planned handoff |
 | --- | --- |
-| **23–24 Nov** | M1b code and timing decision; M2 truncation check; P5 draws ready for P6 |
+| **23–24 Nov** | P4 M1b code and scale decision **delivered**; M2 truncation check; P5 draws ready for P6 |
 | **26–27 Nov** | Preliminary M0/M1b/M2, EDA/PPC and first BGG/ranking outputs (as available) |
 | **28 Nov** | Presentation-result freeze: reproducible numbers, figures, limitations and slide material from every owner |
 | **29–30 Nov** | Slides compiled and verified; team rehearsal |
