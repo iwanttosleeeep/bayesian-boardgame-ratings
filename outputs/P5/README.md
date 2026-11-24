@@ -1,6 +1,14 @@
 # STAT6106 — P5 Bayesian rating shrinkage
 
-**Status:** preliminary development-sample results, updated 23 November 2026. This is P5's contribution; P1's files and the team proposal remain unchanged.
+**Status:** planned P5 model calculations and cross-model comparisons complete as of 24 November 2026. Presentation and report remain. This is P5's contribution; P1's files and the team proposal remain unchanged.
+
+## Final comparison deliverables (24 November)
+
+- [6,489-game M0/M1a/M1b WAIC](WAIC_Comparison_6489/README.md) — complete, separate sample.
+- [6,416-game four-model WAIC](WAIC_Comparison_6416/README.md) — complete; substantial M1b pointwise WAIC warnings.
+- [3,209-game four-model exploratory holdout](Holdout_Comparison_3209/README.md) — complete; primary predictive evidence.
+- [Full-scope P6 handoff](P6_Full_Handoff/README.md) — 21,375 games × 500 draws, uploaded and owner-validated; 256 unmatched games excluded.
+- P4's [matched ExternalSD extension](../P4/ExternalSD_6416/README.md) and [holdout validation](../P4/Holdout_3209/README.md) are merged (PRs #5 and #6). No additional fitting required for these comparisons.
 
 ## Additional M1a Baseline refit for M0/M1a/M1b WAIC (6,489 games)
 
@@ -11,7 +19,7 @@ This is a **separate, same-specification baseline refit**, not a replacement for
 - Four MCMC chains, 3,000 retained samples/chain; all reported R-hat <=1.01 and ESS >=400.
 - Posterior mean `s` = 2.9655, close to the U(0.5,3) upper boundary; this parameter is **not** a reliably identified individual-rater SD.
 - **Single-model** WAIC = **17,496.15** (`p_WAIC` = 2.2385), calculated from a 500 × 6,489 game-level log-likelihood matrix with latent game rating integrated out. This is **in-sample**, not holdout ELPD, and does not yet establish which of M0/M1a/M1b performs best.
-- P5's 6,489 training IDs have been checked **identical and in the same order** to P4 baseline's uploaded `train_game_ids.csv`. P2 must still deliver a matching development fit. The new M1a likelihood RDS remains to be uploaded; the existing 6,416-game RDS must **not** be substituted.
+- P5's 6,489 training IDs have been checked **identical and in the same order** to P4 baseline's uploaded `train_game_ids.csv`. P2 and P4 subsequently delivered aligned likelihood files; the M1a 6,489 likelihood RDS is uploaded and the comparison is complete; the existing 6,416-game RDS must **not** be substituted.
 
 ## Two models retained for the final P5 narrative
 
@@ -47,7 +55,7 @@ These models differ in the **mean**, **between-game variance**, and **measuremen
 
 Difference in holdout ELPD (Extended − Baseline) is **+221.70**, approximate paired SE **18.02** (assumes independence across games and does not adjust for designer clustering). Development Top 50 overlap is **36/50**. Numerically, both fits pass the reported R-hat < 1.01 and ESS ≥ 400 checks. Baseline `s` remains near its prior upper bound, and neither model is perfect in the highest-rating-count holdout group.
 
-This is **holdout ELPD, not WAIC**. The final M0/M1a/M1b WAIC exercise still requires consistent training IDs, compatible pointwise likelihood definitions and coordination with P2/P4.
+This is **holdout ELPD, not WAIC**. The separate 6,489-game M0/M1a/M1b WAIC exercise and the 6,416-game four-model WAIC are now complete; see final deliverables above.
 
 ## Repository layout
 
@@ -82,8 +90,8 @@ If starting clean: run 01 to prepare external SD; 02 and 03 to fit both models; 
 
 The GitHub object listing confirms each file is present; these binary files have **not** been independently opened or the model fits rerun during this README update. They are intended for P6's **within-6,416-game** rank credible intervals and top-10 probabilities.
 
-**Not a complete single-command reproduction package:** the local P5 R scripts still use original working paths under `P5_external_SD/` rather than the GitHub presentation folders. For reuse without refitting, download or copy the RDS and matched CSV into the script-expected local locations. Some source caches, holdout per-game prediction files and detailed per-game comparison files are not committed.
+**Not a complete single-command reproduction package:** the local P5 R scripts still use original working paths under `P5_external_SD/` rather than the GitHub presentation folders. For reuse without refitting, download or copy the RDS and matched CSV into the script-expected local locations. Some source caches and detailed development comparisons are not committed. Both P5 per-game holdout CSVs are now uploaded.
 
-The external historical rating SD snapshot date is not verified, SD is treated as a plug-in value, and holdout data were consulted during exploration; these limitations should remain visible in the final report. Formal cross-model M0/M1a/M1b WAIC comparison remains pending. The separate 6,489-game baseline has a standalone WAIC estimate, but P2/P4 still need aligned likelihood file handoffs.
+The external historical rating SD snapshot date is not verified, SD is treated as a plug-in value, and holdout data were consulted during exploration; these limitations should remain visible in the final report. Formal cross-model comparisons are complete. Use the separate comparison READMEs for sample definitions and interpretation.
 
 See the [team status](../../docs/TEAM_PLAN_AND_STATUS.md) and [P1 data contract](../../docs/P1_DATA_GUIDE.md).
