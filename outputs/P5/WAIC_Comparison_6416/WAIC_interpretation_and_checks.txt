@@ -1,0 +1,11 @@
+Same 6416 development games; 500 retained draws/model, 125 per chain.
+M1a draw selection assumes the original 4 x 3000 chain-concatenated saved matrices.
+M1a Extended saved RDS has no ID vector; original local input and training center checked, not an independent RDS-to-ID provenance verification.
+All models score the observed game-average rating, integrating game theta.
+M1b conditions on learned named-designer effects and integrates independent anonymous effects.
+Conditional WAIC may be unreliable, especially for singleton designers; not unseen-designer prediction.
+p_waic_i > 0.4 is a warning; report counts and proportions, not a definitive ranking.
+Gamewise SE assumes independent units and does not account for shared designers; descriptive only.
+Do not compare numerical WAIC with the 6489-game table or the count-model WAIC.
+Use aligned exploratory holdout results as the primary predictive comparison.
+Historical SD timing is unverified and plug-in uncertainty is not propagated.
