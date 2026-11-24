@@ -1,0 +1,17 @@
+P3 final validation
+Date: 2026-11-23
+
+PASS: All P3 R scripts parse successfully.
+PASS: run_all.R saved mode completed data preparation, analysis, figures, report, and slides.
+PASS: Poisson and NB formal posterior files each contain 4,000 draws across four chains.
+PASS: Poisson and NB pointwise log-likelihood matrices each have dimensions 4000 x 19440 and contain only finite values.
+PASS: Poisson and NB PPC replicate matrices each have dimensions 50 x 19440 and contain only finite values.
+PASS: Alternative-prior NB posterior contains 4,000 draws across four chains.
+PASS: Recovered source-level MALA scripts completed isolated Poisson and NB short-chain execution tests with four workers and 160 saved test draws per model. Short-chain results were used only to test execution and did not replace formal posteriors or convergence diagnostics.
+PASS: Report and slides use the full-draw WAIC values and contain no missing effect entries.
+PASS: Wargame effect and other reported values match the saved result tables.
+PASS: Original code/P3_popularity/README.md remains unchanged.
+
+The two full pointwise log-likelihood caches were validated locally but are excluded from the GitHub upload package because each is approximately 427–430 MiB. They can be regenerated from the included formal posterior draws with 03_analyze_M2.R.
+
+Formal model comparison uses all 4,000 posterior draws per model. These are full-sample within-M2 results, not independent holdout validation.

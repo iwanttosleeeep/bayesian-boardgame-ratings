@@ -1,0 +1,9 @@
+model {
+  for (i in 1:N) {
+    y[i] ~ dpois(mu[i]) T(30,)
+    log(mu[i]) <- alpha + inprod(X[i, ], beta) + delta * age[i]
+  }
+  alpha ~ dnorm(alpha_mean, 0.25)
+  delta ~ dnorm(0, 1)
+  for (j in 1:K) beta[j] ~ dnorm(0, 1)
+}
