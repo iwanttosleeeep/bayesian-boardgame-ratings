@@ -1,0 +1,31 @@
+P3 validation record
+Initial delivery: 2026-11-23
+PR #4 review fixes: 2026-11-24, prepared locally
+
+Initial delivery checks
+PASS: All original P3 R scripts parsed successfully.
+PASS: Poisson and NB formal posterior files each contain 4,000 draws across four chains.
+PASS: Poisson and NB pointwise log-likelihood matrices each have dimensions 4000 x 19440 and contain only finite values.
+PASS: Poisson and NB PPC replicate matrices each have dimensions 50 x 19440 and contain only finite values.
+PASS: Alternative-prior NB posterior contains 4,000 draws across four chains.
+PASS: Source-level MALA scripts completed isolated Poisson and NB short-chain execution tests. Test draws did not replace formal posteriors.
+
+PR #4 review fixes
+PASS: run_all.R uses code/P3 and checks all required scripts, including 05_write_report.R, before running.
+PASS: README commands and references match code/P3 and the committed result tables.
+PASS: 05_write_report.R is included in the review-fix package. The report and presentation are explicitly documented as locally generated, separate deliverables that are intentionally not committed.
+PASS: All 15 CSV result tables in tables/P3 are included in the review-fix package.
+PASS: The PPC loop resets yrep and mu for every model and uses is.null(yrep) before simulating.
+PASS: An isolated two-model regression test passed with both PPC caches absent, with only the NB cache absent, and with an invalid NB cache. No cross-model PPC reuse occurred.
+PASS: code/P3/run_all.R . saved completed using the saved posteriors and local log-likelihood caches without model refitting.
+PASS: M2_WAIC_difference.csv now uses pointwise elpd_waic_i = lppd_i - Var_draw(loglik_i) for each model and se_delta_waic = 2 * sqrt(N * var(elpd_waic_NB_i - elpd_waic_Poisson_i)).
+PASS: Independent regeneration from the full pointwise log-likelihood matrices confirmed delta_elpd_waic = 25269388.8435196, delta_waic = -50538777.6870392 and se_delta_waic = 2336371.66291842.
+PASS: The WAIC difference equals NB WAIC minus Poisson WAIC in M2_WAIC.csv.
+PASS: Formal Poisson, NB and alternative-prior NB posterior RDS files have unchanged MD5 hashes relative to the pre-review backup.
+PASS: The report retains PPC misfit, non-causal associations, left-truncated ranked-game scope and absence of independent holdout evaluation.
+
+Large-file handling
+The two full pointwise log-likelihood caches were validated locally but are excluded from GitHub because each is approximately 427–430 MiB. They are intermediate results and can be regenerated from the included formal posterior draws with 03_analyze_M2.R.
+
+Scope
+These are full-sample within-M2 results. M2 WAIC is not compared directly with M0/M1a/M1b rating-model WAIC. No independent holdout evaluation is claimed.
