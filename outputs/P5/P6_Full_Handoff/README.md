@@ -1,6 +1,6 @@
 # P5 to P6: Full cleaned-dataset ranking handoff
 
-**Status (24 Nov 2026):** Four CSV/TXT files uploaded. **Five RDS posterior-draw parts still pending manual upload.** Ranking posterior intervals and Top-10 probabilities need the RDS parts.
+**Status (24 Nov 2026):** All four CSV/TXT files and five RDS parts uploaded. Repository file presence checked; owner validated local RDS contents in R: 21,375 × 500, unique and identical ordered IDs matching the CSV, finite draws, and maximum absolute differences of 5.329071e-15 for posterior means and both interval endpoints. Remote binary contents were not independently decoded.
 
 ## Statistical scope
 
@@ -20,7 +20,7 @@
 | [P6_all_21631_SD_matching_audit.csv](P6_all_21631_SD_matching_audit.csv) | Audit of all 21,631 games and SD matching status |
 | [P6_all_games_posterior_ratings.csv](P6_all_games_posterior_ratings.csv) | Posterior rating summaries and BGG benchmarks for 21,375 matched games |
 
-## Pending binary files (upload them to this SAME directory)
+## Uploaded binary files
 
 - `P6_theta_draws_part_01.rds`
 - `P6_theta_draws_part_02.rds`
