@@ -10,8 +10,8 @@
 | **P2** | M0 Normal Bayesian regression, JAGS/Gibbs/CAVI; M1b runtime comparison | 6,489 development IDs, shared Gibbs/JAGS posteriors, diagnostics and two [500-draw loglik files](../outputs/P2/); [M0 sampler WAIC agreement](../outputs/P5/WAIC_Comparison_6489/M0_Gibbs_vs_JAGS_check.csv) | Presentation-ready M0 findings/figure; CAVI and independent runtime comparison not yet verified (later phase if required) |
 | **P3** | M2 rating-count Poisson vs truncated NB, PPC, WAIC and sensitivity | [PR #4 merged](https://github.com/iwanttosleeeep/bayesian-boardgame-ratings/pull/4): code, 19,440-case fit, PPC plots, tables and [handoff](../P3_HANDOFF.md) | Select concise slides; retain marked NB PPC mismatch and full-sample (not holdout) caveat |
 | **P4** | M1b covariates and designer random effects; partial pooling, diagnostics and sensitivity | [PR #1](https://github.com/iwanttosleeeep/bayesian-boardgame-ratings/pull/1) and [PR #2](https://github.com/iwanttosleeeep/bayesian-boardgame-ratings/pull/2) merged: 6,489-game fit, s-upper-6 sensitivity, diagnostic/PPC figures, 500 × 6,489 [likelihood handoff](../outputs/P4/M1b_WAIC_6489/README.md) | Prepare presentation figures and interpretation; full joint posterior RDS remains local; distinguish seen/new designer generalization |
-| **P5** | M1a baseline and Extended External-SD, checks, holdout, prior/SD sensitivity and model comparison | 6,416-game matched Baseline/Extended, 3,209-game exploratory holdout, latent draws for P6, 6,489-game Baseline refit, [completed three-model WAIC](../outputs/P5/WAIC_Comparison_6489/README.md) and [script](../code/P5/10_Compare_M0_M1a_M1b_WAIC_6489.R) | 1–2 presentation slides and English report section; flag M1b WAIC diagnostic warnings |
-| **P6** | BGG pseudo-vote benchmark, posterior rank intervals/Top-10 probabilities, slide/report integration | No P6-owned artifacts or PR verified in main at this review; P5 latent-draw handoff already available | Confirm progress; benchmark preview by 26 Nov, initial rank-uncertainty figures by 27 Nov, coordinate slide integration |
+| **P5** | M1a baseline and Extended External-SD, checks, holdout, prior/SD sensitivity and model comparison | 6,416-game matched Baseline/Extended, 3,209-game exploratory holdout, latent draws for P6, 6,489-game Baseline refit, [completed three-model WAIC](../outputs/P5/WAIC_Comparison_6489/README.md) and [script](../code/P5/10_Compare_M0_M1a_M1b_WAIC_6489.R) | 1–2 presentation slides and English report section; flag M1b WAIC diagnostic warnings; await requested P4 External-SD extension and aligned predictive comparison if feasible |
+| **P6** | BGG pseudo-vote benchmark, posterior rank intervals/Top-10 probabilities, slide/report integration | No P6-owned artifacts or PR verified in main at this review; P5 full-scope handoff uploaded and owner-validated (21,375 games × 500 draws) | Confirm progress; benchmark preview by 26 Nov, initial rank-uncertainty figures by 27 Nov, coordinate slide integration |
 
 ## Dependencies (do not skip)
 
@@ -20,7 +20,7 @@
 - **P3 → presentation/report:** Poisson versus NB for 19,440 complete-case games, left-truncation, PPC and sensitivity; [tables](../tables/P3/) and [plots](../figures/P3/) committed. M2 predicts **rating count**, not mean rating: never mix its WAIC with M0/M1a/M1b.
 - **P4 → P5/P6:** 6,489 development M1b and s-upper-6 sensitivity completed; 500 × 6,489 likelihood [exported and merged](../outputs/P4/M1b_WAIC_6489/README.md). Full posterior/latent-draw RDS remain **local**, but the required WAIC share is uploaded. Named-designer effects are **conditioned on** for the comparison. [P4 summary and figures](../outputs/P4/README.md).
 - **P5 → P1/P6:** 6,416 development and 3,209 exploratory holdout historical-SD-matched [model results](../outputs/P5/README.md); [Baseline latent draws](../outputs/P5/M1a_Baseline/) and [Extended latent draws](../outputs/P5/M1a_Extended_ExternalSD/) are in repo for P6's **within-sample** ranking; [matched three-model WAIC outputs](../outputs/P5/WAIC_Comparison_6489/README.md) uploaded with model-specific caveats.
-- **P6 → all:** Benchmark against BGG's published adjusted average, posterior rank uncertainty/Top-10 probabilities and assembled presentation/report; no verified P6 handoff yet. Avoid calling the 6,416 development-game ranking a global BGG ranking.
+- **P6 → all:** Benchmark against BGG's published adjusted average, posterior rank uncertainty/Top-10 probabilities and assembled presentation/report; no verified P6 handoff yet. Use the [full-scope handoff](../outputs/P5/P6_Full_Handoff/README.md) for ranking among 21,375 SD-matched games in the cleaned 2022 dataset; not a global BGG ranking.
 
 ## Dates and intended checkpoints
 
@@ -28,7 +28,7 @@
 | --- | --- | --- |
 | **22 Nov** | Freeze P1 data | Delivered and documented |
 | **23 Nov** | Early M1b implementation and P3 feasibility | P4 baseline/sensitivity merged in PR #1; P1 EDA committed |
-| **24 Nov** | P5 latent draws, cross-team model inputs | P2 development Gibbs/JAGS, P3 final M2 PR #4, P4 WAIC PR #2 and P5 three-model WAIC delivered; P6 not yet verified |
+| **24 Nov** | P5 latent draws, cross-team model inputs | P2 development Gibbs/JAGS, P3 final M2 PR #4, P4 WAIC PR #2 and P5 three-model WAIC delivered; P6 analysis not yet verified |
 | **26 Nov** | Preliminary M0/M1b/M2, P1 EDA, P5 sensitivity, P6 benchmark | Model-side analytical milestones largely delivered; confirm P6 preliminary BGG benchmark and finalize figures |
 | **27 Nov** | Model PPC, P6 initial ranking | P1 grouped PPC still to confirm; P6 rank-uncertainty outputs expected |
 | **28 Nov** | **Freeze 1 Dec presentation results** | All: figures, concise findings, limitations and slide text; resolve P6 dependency |
@@ -48,7 +48,7 @@
 5. **Exploratory holdout:** The holdout was consulted during model exploration, so do not present prior P5 holdout comparisons as untouched confirmatory testing; P1 splits by game, not new designer. Both data selection/feature standardization rules and top-20 tags were defined on the full cleaned data before splitting.
 6. **P4 caveats remain:** The 6,489 development fit and upper-6 s prior sensitivity passed MCMC convergence checks, but simulation theta-interval coverage was around **84–88%**, and grouped development PPC retains misfit. Passing convergence does not prove uncertainty calibration.
 7. **P3 scope:** 19,440 complete-case BGG games, outcome is number of ratings with lower truncation at 30. NB is preferred to Poisson within M2; PPC still misfits, and the comparison is full-sample not holdout.
-8. **P6 ranking:** P5 provides latent rating draws for within-development ranking. No verified P6 benchmark/rank intervals/Top-10 probabilities have been committed as of 24 Nov; full-BGG ranking claims are not justified by the sampled subset.
+8. **P6 ranking:** P5 also provides the uploaded and owner-validated full-scope handoff for 21,375 of 21,631 cleaned 2022 games (500 joint draws); 256 unmatched or invalid SD cases excluded. No verified P6 benchmark/rank intervals/Top-10 probabilities have been committed as of 24 Nov; Full-BGG ranking claims remain unsupported.
 
 ## Deliverable checklist (owner-reported completion still needed)
 
