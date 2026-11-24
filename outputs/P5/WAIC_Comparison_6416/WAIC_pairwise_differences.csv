@@ -1,0 +1,7 @@
+"model_A","model_B","delta_WAIC_A_minus_B","SE_delta_WAIC_gamewise_approx"
+"M1a_Extended","M1a_Baseline",-712.98864565454,66.663731790105
+"M1b_Baseline","M1a_Baseline",-5455.3191624712,127.411259650028
+"M1b_ExternalSD","M1a_Baseline",-5463.49639738366,126.465361915813
+"M1b_Baseline","M1a_Extended",-4742.33051681663,131.226744906321
+"M1b_ExternalSD","M1a_Extended",-4750.5077517291,134.507512397603
+"M1b_ExternalSD","M1b_Baseline",-8.17723491246418,24.9569426621184
