@@ -1,0 +1,2 @@
+PASS: all 486 pre-existing P4 files unchanged by SHA256.
+Includes original posteriors, preprocessing, models, training results and WAIC handoffs; no fitting or tuning.

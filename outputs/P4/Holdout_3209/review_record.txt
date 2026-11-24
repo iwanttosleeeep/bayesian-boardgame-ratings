@@ -1,0 +1,14 @@
+Read-only independent code review: no critical issue or statistical/array blocker.
+Verified conditional/marginal variances, draw alignment, shared unseen names,
+independent anonymous effects, response invariance and partial-batch weighting.
+Reviewer independently recombined all baseline per-game predictive densities
+and verified original binary-source hashes against the PR5 artifact manifest.
+Important finding addressed: exact commands, 14 genuine original RDS prerequisites
+and fresh-output preservation instructions added to docs/P4_HOLDOUT_3209.md.
+Provenance clarification addressed: same historical source is established, not
+byte identity with P5's unavailable original per-game holdout cache.
+ExternalSD outputs were pending at review time; subsequent independent full
+scalar-mixture/interval/PPC checks and all-game density recombination pass.
+Direct comparison with the unavailable P5 per-game cache remains unavailable;
+published matching audit, exact algorithm/order and observed aggregate checks
+are the stated sample authority. No refitting, tuning or shared-history rewrite.

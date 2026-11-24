@@ -1,0 +1,2 @@
+PASS: matched_baseline: all 3209 densities independently recombined from four equal chain mixtures; max error 4.44089e-14; prediction columns finite
+PASS: external_sd: all 3209 densities independently recombined from four equal chain mixtures; max error 4.26326e-14; prediction columns finite

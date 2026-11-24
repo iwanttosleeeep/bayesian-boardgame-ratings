@@ -1,0 +1,7 @@
+PASS: exact 3209 IDs/order; designer and rating-count partitions exhaustive
+matched_baseline PASS: finite 16000 x 3209 observed-average replicates; all four full chain indices and CSV groups agree
+Independent interval/PPC/scalar-mixture-LPD/mean/SD max errors: 5.3291e-15, 1.4655e-14, 4.8850e-15, 4.4409e-15, 2.1205e-14
+external_sd PASS: finite 16000 x 3209 observed-average replicates; all four full chain indices and CSV groups agree
+Independent interval/PPC/scalar-mixture-LPD/mean/SD max errors: 5.3291e-15, 1.4877e-14, 3.7748e-15, 4.4409e-15, 2.7867e-14
+PASS: paired pointwise log predictive density differences reread and verified
+Constructed prediction checks passed before scoring; no conditional theta, refitting or tuning

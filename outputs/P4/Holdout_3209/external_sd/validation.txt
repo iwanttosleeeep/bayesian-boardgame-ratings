@@ -1,0 +1,4 @@
+PASS: 16000 real draw indices; 3209 ordered finite predictions; CSV/RDS reread verified
+Independent scalar Normal log-density maximum error 1.99840144432528e-15
+All four chains and all retained draws used; no posterior fitting; no holdout-conditioned theta
+Total prediction/export elapsed seconds 23.82
