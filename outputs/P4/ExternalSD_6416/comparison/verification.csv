@@ -1,0 +1,6 @@
+"metric","value"
+"same_IDs_order",TRUE
+"same_covariates",TRUE
+"same_recipe_mapping",TRUE
+"baseline_all_diagnostics_pass",TRUE
+"external_all_diagnostics_pass",TRUE

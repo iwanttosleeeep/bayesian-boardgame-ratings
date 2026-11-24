@@ -1,0 +1,4 @@
+matched_baseline PASS: 6416 identical IDs/X/recipe/designer mapping; share 500 x 6416 finite, distinct real indices, 125/chain
+Independent full 1000-draw theta/weight/loglik/PPC replay max errors: 3.5527e-15, 3.3307e-16, 1.0658e-14, 4.4409e-15
+external_sd PASS: 6416 identical IDs/X/recipe/designer mapping; share 500 x 6416 finite, distinct real indices, 125/chain
+Independent full 1000-draw theta/weight/loglik/PPC replay max errors: 5.3291e-15, 3.3307e-16, 1.4211e-14, 5.3291e-15

@@ -1,0 +1,3 @@
+PASS: all 330 protected original code/result files match their pre-extension SHA256.
+Original complete posterior, preprocessing, model results and 6489 WAIC share unchanged.
+No other member source file modified; new outputs isolated under ExternalSD_6416.
