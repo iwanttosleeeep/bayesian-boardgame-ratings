@@ -1,0 +1,15 @@
+STAT6106 P5: matched-game WAIC comparison (6,489 development games).
+M0 JAGS is primary; Gibbs is the same model via another sampler.
+WAIC=-2 sum_i (lppd_i-Var_draw(loglik_i)).
+Delta WAIC SE is paired across games: sqrt(N*Var_i(WAIC_Ai-WAIC_Bi)).
+These are in-sample WAIC approximations, NOT independent holdout scores.
+M1a integrates game latent theta; M0 has no game latent effect.
+M1b integrates game theta BUT conditions on learned named-designer effects.
+M1b's predictive target is not an entirely unseen designer; singleton
+designer effects and conditional scoring can undermine WAIC reliability.
+Different covariates, random effects, and noise models change together.
+WAIC differences do not isolate the causal effect of model components.
+If many pointwise p_waic values exceed 0.4, flag WAIC reliability.
+Do not compare rating-model WAIC to P3's popularity-model WAIC.
+Numerically lowest development WAIC: M1b
+Use posterior predictive checks and scientific interpretation as well.
