@@ -1,0 +1,9 @@
+Games 6416
+Predictors 56
+Named designers 3192
+Anonymous games 612
+SD range 0.196023 4.05257
+Historical rating-count relative discrepancy median/max 0.00300526089999774 0.62280701754386
+Source: AgeOfWar games.csv StdDev, individual rating SD in rating points, not standard error
+Source date unverified; fixed plug-in; its estimation uncertainty and temporal mismatch unmodeled
+N=users_rated from development (not n_hist); development order preserved; 73 excluded

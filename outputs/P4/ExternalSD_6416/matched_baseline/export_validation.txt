@@ -1,0 +1,4 @@
+PASS: share 500 6416 finite; 125 real draws/chain; indices preserved; reread exact
+Independent loglik maximum absolute error 1.06581410364015e-14
+All original chain diagnostic thresholds met TRUE
+RDS bytes 24282220

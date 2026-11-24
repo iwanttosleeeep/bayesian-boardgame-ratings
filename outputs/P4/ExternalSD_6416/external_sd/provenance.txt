@@ -1,0 +1,6 @@
+Label: external_sd
+Training rows: 6416
+Source MD5: 9aabdbb4970a86417a01bbdf08e2d069
+Model MD5: 3863cf022965e82a16d52300d552250b
+Seeds: 611301,611302,611303,611304
+Holdout read: FALSE

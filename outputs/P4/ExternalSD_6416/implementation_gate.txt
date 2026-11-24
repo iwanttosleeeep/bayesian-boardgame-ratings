@@ -1,0 +1,4 @@
+PASS: implementation checks and 400-game ExternalSD short run
+Independent all-game loglik maximum error 1.77635683940025e-15
+PPC and conditional latent computations use same per-game sd_hist^2/n; finite outputs; no shared s
+Short-run diagnostic thresholds are recorded, not assumed to pass

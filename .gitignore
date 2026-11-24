@@ -2,6 +2,8 @@
 outputs/P4/smoke/*.rds
 outputs/P4/**/*.rds
 !outputs/P4/M1b_WAIC_6489/pointwise_loglik_share.rds
+!outputs/P4/ExternalSD_6416/matched_baseline/pointwise_loglik_share.rds
+!outputs/P4/ExternalSD_6416/external_sd/pointwise_loglik_share.rds
 outputs/P4/**/source_snapshot/
 outputs/P4/**/source_hashes.csv
 outputs/P4/**/workers.log

@@ -1,0 +1,10 @@
+path,bytes,sha256,note
+code/P4/M1b_sd_checks.R,1391,ff7ead781655475a4837861bd6c50d284c252751937df46ec3d5780b872e153e,post-fit working-tree bytes; fit-time manifest remains separate
+code/P4/M1b_sd_compare.R,8106,ce6ce0c5df9bbd9068ef882ce017dc80771ed22076cc5952668a0c9b7744e324,post-fit working-tree bytes; fit-time manifest remains separate
+code/P4/M1b_sd_inference.R,12589,8327ee8bdfa5d0db0c8d289c50b5ef86ea890269cea9fdf08f58fd45fda8bcc6,post-fit working-tree bytes; fit-time manifest remains separate
+code/P4/M1b_sd_provenance.py,3065,b38fa6d69561e0dee94614578d1b0bb04aef811d60b3888c21c724719ee50a3b,post-fit working-tree bytes; fit-time manifest remains separate
+code/P4/M1b_sd_report.R,10090,4de02d79909921d3412c195da363f20ec24679cabf2effbd27f81191a358256a,post-fit working-tree bytes; fit-time manifest remains separate
+code/P4/M1b_sd_run.R,4486,ba8f387e5902c63fdd626a50b6a9944aca832dbf97652c9505900ade50f2593c,post-fit working-tree bytes; fit-time manifest remains separate
+code/P4/M1b_sd_validate.R,4068,b0657cc25e054b3ba92eb055fffcd9cc2dd831224e33bc28f99e96ba9ca80fd0,post-fit working-tree bytes; fit-time manifest remains separate
+code/P4/M1b_diagnostics.R,2358,30598672d905a3f2944db71b6992110969bda2d488fe8a466faa02045dccc68b,post-fit working-tree bytes; fit-time manifest remains separate
+code/P4/P4_runtime.ps1,1133,84aad448e7acda250aa6967fdd43d9e62c2cdd754c3e5675752a58f46ed93e1a,post-fit working-tree bytes; fit-time manifest remains separate
