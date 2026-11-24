@@ -1,0 +1,8 @@
+"metric","value"
+"P1_cleaned_games",21631
+"historical_SD_matched_games",21375
+"historical_SD_unmatched_or_invalid",256
+"original_development_matched_games",6416
+"posterior_parameter_draws",12000
+"joint_theta_draws",500
+"historical_count_within_5pct_fraction",0.947508771929825
