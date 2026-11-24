@@ -1,0 +1,5 @@
+"chain","parameter_seed","prediction_seed","retained_draws","batch_size","training_games","holdout_games"
+1,611201,6320901,4000,128,6416,3209
+2,611202,6320902,4000,128,6416,3209
+3,611203,6320903,4000,128,6416,3209
+4,611204,6320904,4000,128,6416,3209

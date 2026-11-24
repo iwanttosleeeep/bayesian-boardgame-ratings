@@ -1,0 +1,7 @@
+PASS: 3209 unique comparison-order IDs, disjoint from both 6416-game fits
+PASS: P5 SD audit matches all original development SD/history counts and all comparison outcomes/counts
+PASS: published P5 holdout group counts, observed means/variances and count-discrepancy share agree
+PASS: both saved recipes/X columns/maps identical; holdout response replaced before preparing inputs
+Named unseen designer groups 1013
+Repeated unseen named groups 75
+P5 per-game cache unavailable: IDs reconstructed from its matching code plus published P6 SD audit, not directly compared with unavailable IDs
