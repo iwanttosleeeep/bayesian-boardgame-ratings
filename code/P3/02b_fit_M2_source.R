@@ -222,7 +222,7 @@ posterior <- list(
              n_iter_per_chain = n_samples, thin = thin,
              saved_per_chain = nrow(chain_results[[1]]$draws), total_saved = nrow(draw_matrix),
              engine = "MCMC", implementation = "Preconditioned MALA",
-             source_script = "code/P3_popularity/02b_fit_M2_source.R",
+             source_script = "code/P3/02b_fit_M2_source.R",
              acceptance_rates = vapply(chain_results, `[[`, numeric(1), "acceptance_rate"),
              map_convergence = map_code, map_max_absolute_gradient = max(abs(map_eval$gradient)),
              gradient_max_absolute_error = max(gradient_error)),

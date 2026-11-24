@@ -77,17 +77,20 @@ get_loglik_split <- function(post, index) {
   ll
 }
 
-waic_one <- function(ll) {
-
-
+elpd_waic_pointwise <- function(ll) {
   center <- apply(ll, 2, max)
-  elpd <- center + log(colMeans(exp(sweep(ll, 2, center, "-"))))
-  penalty <- apply(ll, 2, var)
-  data.frame(waic = -2 * sum(elpd - penalty), p_waic = sum(penalty),
+  lppd <- center + log(colMeans(exp(sweep(ll, 2, center, "-"))))
+  lppd - apply(ll, 2, var)
+}
+
+waic_one <- function(ll) {
+  elpd_waic <- elpd_waic_pointwise(ll)
+  data.frame(waic = -2 * sum(elpd_waic), p_waic = sum(apply(ll, 2, var)),
              n = ncol(ll), posterior_draws = nrow(ll))
 }
 
 dic_one <- function(post, ll, index) {
+
   d <- colMeans(post$draws[index, , drop = FALSE])
   beta <- grep("^beta\\[", names(d))
   mu <- as.numeric(exp(d["alpha"] + X %*% d[beta] + age * d["delta"]))
@@ -120,20 +123,23 @@ dic <- do.call(rbind, Map(function(label, post, ll, index) {
 dic$delta_dic <- dic$dic - min(dic$dic)
 write.csv(dic, "tables/P3/M2_DIC.csv", row.names = FALSE)
 
-elpd <- function(ll) {
-  center <- apply(ll, 2, max)
-  center + log(colMeans(exp(sweep(ll, 2, center, "-"))))
-}
-difference <- elpd(loglik$NB) - elpd(loglik$Poisson)
+pointwise_elpd_waic <- lapply(loglik, elpd_waic_pointwise)
+difference <- pointwise_elpd_waic$NB - pointwise_elpd_waic$Poisson
 comparison <- data.frame(
   comparison = "NB minus Poisson",
-  delta_elpd = sum(difference),
-  delta_waic = waic$waic[waic$model == "NB"] - waic$waic[waic$model == "Poisson"],
+  delta_elpd_waic = sum(difference),
+  delta_waic = -2 * sum(difference),
   se_delta_waic = 2 * sqrt(N * var(difference))
 )
+stopifnot(isTRUE(all.equal(
+  comparison$delta_waic,
+  waic$waic[waic$model == "NB"] - waic$waic[waic$model == "Poisson"],
+  tolerance = 1e-8
+)))
 write.csv(comparison, "tables/P3/M2_WAIC_difference.csv", row.names = FALSE)
 
 dictionary <- read.csv("outputs/P3/M2_parameter_dictionary.csv", check.names = FALSE)
+
 labels <- setNames(dictionary$label, dictionary$parameter)
 terms <- setNames(dictionary$term, dictionary$parameter)
 for (label in names(posts)) {
@@ -166,20 +172,23 @@ stats <- function(v) c(
 
 for (label in names(posts)) {
   post <- posts[[label]]
+  yrep <- NULL
+  mu <- NULL
   available <- indices[[label]]
   index <- available[unique(round(seq(1, length(available), length.out = 50)))]
   ppc_cache <- paste0("outputs/P3/M2_", label, "_ppc_replicates.rds")
   if (file.exists(ppc_cache)) {
-    cached <- readRDS(ppc_cache)
-    if (nrow(cached) == 50L && ncol(cached) == N && all(is.finite(cached))) {
+    cached <- tryCatch(readRDS(ppc_cache), error = function(e) NULL)
+    if (!is.null(cached) && nrow(cached) == 50L && ncol(cached) == N && all(is.finite(cached))) {
       yrep <- cached
     }
   }
-  if (!exists("yrep")) {
+  if (is.null(yrep)) {
     mu <- get_mu(post, index)
     yrep <- matrix(NA_real_, length(index), N)
   }
   for (s in seq_along(index)) {
+
     if (all(is.finite(yrep[s, ]))) next
     if (post$family == "negbin") {
       r <- post$draws[index[s], "r"]
