@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 770" width="1260" height="770" role="img" aria-labelledby="title desc">
+<title id="title">M0 posterior interval widths compared across Gibbs, JAGS and CAVI</title>
+<desc id="desc">Exact 95 percent interval widths for seven regression coefficients and sigma squared, based on uploaded M0_three_method_comparison.csv. Three methods agree closely. Parameters appear on the horizontal axis; interval width on the vertical axis. Three-method legend above the plot, no point overlap.</desc>
+<rect width="1260" height="770" fill="#fcfcfb"/>
+<text x="630" y="67" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="38" font-weight="700" fill="#1a1a19">M0: 95% interval width by method</text>
+<text x="630" y="102" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="18" fill="#52514e">Same 6,489 development games · 4 chains × 12,000 iterations for Gibbs and JAGS</text>
+<circle cx="400" cy="155" r="8" fill="#1f5f99"/><text x="418" y="162" font-size="22" fill="#1a1a19" font-family="Arial,DejaVu Sans,sans-serif">Gibbs</text>
+<circle cx="590" cy="155" r="8" fill="#2e8b57"/><text x="608" y="162" font-size="22" fill="#1a1a19" font-family="Arial,DejaVu Sans,sans-serif">JAGS</text>
+<circle cx="780" cy="155" r="8" fill="#d9534f"/><text x="798" y="162" font-size="22" fill="#1a1a19" font-family="Arial,DejaVu Sans,sans-serif">CAVI</text>
+<line x1="108" x2="1190" y1="598.98" y2="598.98" stroke="#e5e4e0" stroke-width="1"/><text x="90" y="605.98" font-size="21" text-anchor="end" fill="#52514e" font-family="Arial,DejaVu Sans,sans-serif">0.035</text>
+<line x1="108" x2="1190" y1="509.71" y2="509.71" stroke="#e5e4e0" stroke-width="1"/><text x="90" y="516.71" font-size="21" text-anchor="end" fill="#52514e" font-family="Arial,DejaVu Sans,sans-serif">0.037</text>
+<line x1="108" x2="1190" y1="420.44" y2="420.44" stroke="#e5e4e0" stroke-width="1"/><text x="90" y="427.44" font-size="21" text-anchor="end" fill="#52514e" font-family="Arial,DejaVu Sans,sans-serif">0.039</text>
+<line x1="108" x2="1190" y1="331.17" y2="331.17" stroke="#e5e4e0" stroke-width="1"/><text x="90" y="338.17" font-size="21" text-anchor="end" fill="#52514e" font-family="Arial,DejaVu Sans,sans-serif">0.041</text>
+<line x1="108" x2="1190" y1="241.89" y2="241.89" stroke="#e5e4e0" stroke-width="1"/><text x="90" y="248.89" font-size="21" text-anchor="end" fill="#52514e" font-family="Arial,DejaVu Sans,sans-serif">0.043</text>
+<line x1="108" y1="214" x2="108" y2="610" stroke="#777" stroke-width="1.3"/><line x1="108" y1="610" x2="1190" y2="610" stroke="#777" stroke-width="1.3"/>
+<text x="173.0" y="653" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="24" fill="#1a1a19">β1</text>
+<circle cx="158.00" cy="572.87" r="7.5" fill="#1f5f99"><title>beta1: Gibbs 0.035585</title></circle>
+<circle cx="173.00" cy="572.71" r="7.5" fill="#2e8b57"><title>beta1: JAGS 0.035589</title></circle>
+<circle cx="188.00" cy="569.44" r="7.5" fill="#d9534f"><title>beta1: CAVI 0.035662</title></circle>
+<text x="309.0" y="653" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="24" fill="#1a1a19">β2</text>
+<circle cx="294.00" cy="550.26" r="7.5" fill="#1f5f99"><title>beta2: Gibbs 0.036092</title></circle>
+<circle cx="309.00" cy="553.07" r="7.5" fill="#2e8b57"><title>beta2: JAGS 0.036029</title></circle>
+<circle cx="324.00" cy="559.31" r="7.5" fill="#d9534f"><title>beta2: CAVI 0.035889</title></circle>
+<text x="445.0" y="653" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="24" fill="#1a1a19">β3</text>
+<circle cx="430.00" cy="286.75" r="7.5" fill="#1f5f99"><title>beta3: Gibbs 0.041995</title></circle>
+<circle cx="445.00" cy="275.73" r="7.5" fill="#2e8b57"><title>beta3: JAGS 0.042242</title></circle>
+<circle cx="460.00" cy="296.15" r="7.5" fill="#d9534f"><title>beta3: CAVI 0.041785</title></circle>
+<text x="581.0" y="653" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="24" fill="#1a1a19">β4</text>
+<circle cx="566.00" cy="507.36" r="7.5" fill="#1f5f99"><title>beta4: Gibbs 0.037053</title></circle>
+<circle cx="581.00" cy="520.98" r="7.5" fill="#2e8b57"><title>beta4: JAGS 0.036748</title></circle>
+<circle cx="596.00" cy="519.06" r="7.5" fill="#d9534f"><title>beta4: CAVI 0.036791</title></circle>
+<text x="717.0" y="653" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="24" fill="#1a1a19">β5</text>
+<circle cx="702.00" cy="483.97" r="7.5" fill="#1f5f99"><title>beta5: Gibbs 0.037577</title></circle>
+<circle cx="717.00" cy="494.12" r="7.5" fill="#2e8b57"><title>beta5: JAGS 0.037349</title></circle>
+<circle cx="732.00" cy="488.29" r="7.5" fill="#d9534f"><title>beta5: CAVI 0.037480</title></circle>
+<text x="853.0" y="653" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="24" fill="#1a1a19">β6</text>
+<circle cx="838.00" cy="509.99" r="7.5" fill="#1f5f99"><title>beta6: Gibbs 0.036994</title></circle>
+<circle cx="853.00" cy="503.69" r="7.5" fill="#2e8b57"><title>beta6: JAGS 0.037135</title></circle>
+<circle cx="868.00" cy="508.32" r="7.5" fill="#d9534f"><title>beta6: CAVI 0.037031</title></circle>
+<text x="989.0" y="653" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="24" fill="#1a1a19">β7</text>
+<circle cx="974.00" cy="263.50" r="7.5" fill="#1f5f99"><title>beta7: Gibbs 0.042516</title></circle>
+<circle cx="989.00" cy="279.36" r="7.5" fill="#2e8b57"><title>beta7: JAGS 0.042161</title></circle>
+<circle cx="1004.00" cy="302.50" r="7.5" fill="#d9534f"><title>beta7: CAVI 0.041642</title></circle>
+<text x="1125.0" y="653" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="24" fill="#1a1a19">σ²</text>
+<circle cx="1110.00" cy="521.44" r="7.5" fill="#1f5f99"><title>sigma2: Gibbs 0.036737</title></circle>
+<circle cx="1125.00" cy="508.01" r="7.5" fill="#2e8b57"><title>sigma2: JAGS 0.037038</title></circle>
+<circle cx="1140.00" cy="511.49" r="7.5" fill="#d9534f"><title>sigma2: CAVI 0.036960</title></circle>
+<text x="630" y="706" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="25" fill="#52514e">Parameter</text><text x="28" y="412" transform="rotate(-90,28,412)" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="24" fill="#52514e">95% interval width</text>
+<text x="630" y="738" text-anchor="middle" font-family="Arial,DejaVu Sans,sans-serif" font-size="18" fill="#52514e">Source: tables/M0_three_method_comparison.csv · Values are posterior interval widths, not point estimates.</text>
+</svg>
