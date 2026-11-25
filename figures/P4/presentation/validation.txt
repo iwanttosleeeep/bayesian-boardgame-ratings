@@ -1,0 +1,10 @@
+PASS: 6416 identical IDs/order/n/raw means in both models
+PASS: n30-40 medians agree with original verified report: 0.2135195395 / 0.0709525802
+PASS: IQR calculated across games; no posterior uncertainty interpretation
+PASS: top14 selected by descending training game count, name tie-break; minimum count 21
+PASS: effect intervals copied directly from full-four-chain saved 95% summaries
+Rendering only: no fitting, holdout scoring, source-result overwrite or deck edits
+PASS: independent training-ID count check for all 14 selected designers
+PASS: final PNGs and rendered PDF pages visually inspected; all six count bands, names, legends and captions readable
+PASS: PDFs are single-page 16:9 vector drawings, without embedded raster plots
+PASS: all 486 protected original P4 files and complete holdout RDS hashes unchanged
