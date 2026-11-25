@@ -1,6 +1,6 @@
 # P5 presentation figures — delivery manifest
 
-**Status:** six figures generated locally on 25 November 2026, all plots visually reviewed. The image binaries are **not yet committed here**; upload the six PNG files listed below into this directory. `code/P5/15_Generate_P5_Figures.R` reproduces them using the original local P5 cache or the repository inputs, without refitting models.
+**Status:** six figures generated locally on 25 November 2026 and visually reviewed. Checks and this manifest are committed; the six PNG binaries are **not yet committed here**. Upload only those PNGs into this directory. `code/P5/15_Generate_P5_Figures.R` reproduces them using the original local P5 cache or the repository inputs, without refitting models.
 
 | Figure filename | Slide purpose | Key scope |
 | --- | --- | --- |
@@ -13,6 +13,6 @@
 
 **Suggested 1 December presentation order:** Fig 2 (shrinkage), Fig 5 (main predictive comparison), Fig 6 (WAIC caveats); optionally Fig 1 (identification limitations). Figs 3 and 4 can be backup or report figures. Avoid squeezing all six figures into the group deck.
 
-Generated checks: `P5_figure_checks.txt` validates the 12,000-draw P5 inputs, ordered development IDs, training centering, rerun shrinkage medians, and model sample sizes. Upload the checks file along with the figures.
+[Generated checks](P5_figure_checks.txt) are already committed with the local machine path redacted; they validate the 12,000-draw P5 inputs, ordered development IDs, training centering, rerun shrinkage medians, and model sample sizes. Upload only the six image binaries.
 
 **Data and caveats:** See [P5 results](../../outputs/P5/README.md), [four-model holdout](../../outputs/P5/Holdout_Comparison_3209/README.md), and [four-model WAIC](../../outputs/P5/WAIC_Comparison_6416/README.md). The results do not establish causality; external historical SD is a fixed plug-in, with snapshot timing unverified. The holdout was previously explored, and model families differ in more than one component.
