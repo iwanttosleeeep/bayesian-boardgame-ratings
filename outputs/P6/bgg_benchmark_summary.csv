@@ -13,7 +13,7 @@ model_m_mean,11.6128464527632
 model_m_lower95,10.6699595222378
 model_m_upper95,12.2579129964235
 ratio_bgg_over_model,161.373011140959
-ranking_model_m_eff_median,3.29539636930394
-ranking_model_m_eff_q25,2.10334790461689
-ranking_model_m_eff_q75,5.26884868820914
-ratio_bgg_over_ranking_m,568.67210799162
+ranking_model_m_eff_median,3.0239620603513
+ranking_model_m_eff_q25,2.35774647390133
+ranking_model_m_eff_q75,3.84331484402161
+ratio_bgg_over_ranking_m,619.716769787215

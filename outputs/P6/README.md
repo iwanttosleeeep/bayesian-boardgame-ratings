@@ -7,65 +7,82 @@ Code is in [`code/P6/`](../../code/P6/). Every number below is produced by those
 scripts; nothing is typed in by hand.
 
 ```bash
-Rscript code/P6/01_bgg_benchmark.R
-Rscript code/P6/02_rank_uncertainty.R
+Rscript code/P6/01_bgg_benchmark.R     # benchmark
+Rscript code/P6/02_rank_uncertainty.R  # ranking
+Rscript code/P6/05_verification.R      # checks on the ranking pipeline
 ```
 
-R 4.6, `data.table`, `ggplot2`. No model is fitted here: both scripts reuse
+R 4.6, `data.table`, `ggplot2`. No model is fitted here: the scripts reuse the
 posterior draws produced by P5.
 
 ---
 
-## 1. What BGG's rating rule implies
+## 1. A constant-m benchmark for BGG's adjusted score
 
-BGG's adjusted score (`bayes_average`) behaves like a Bayesian average that adds a
-fixed number of dummy votes at a fixed prior mean. With m dummy votes at prior
-mean C = 5.5,
+BGG's adjusted score is consistent with a Bayesian average that adds a fixed number
+of dummy votes at a fixed prior mean. With m dummy votes at C = 5.5,
 
 ```
 bayes_average = (n · ybar + m · 5.5) / (n + m)
 ```
 
-so each game's own implied m can be recovered exactly:
+For a single game this can be inverted, giving the count that game's own numbers
+imply:
 
 ```
 m_i = n_i (ybar_i − bayes_i) / (bayes_i − 5.5)
 ```
+
+**This is an equivalent count under a constant-m approximation, not an official BGG
+parameter.** The numbers below describe how well that approximation reproduces the
+published scores; they do not identify BGG's actual algorithm.
 
 | Quantity | Value |
 |---|---|
 | Games in the handoff | 21,375 |
 | Usable for the decomposition | 20,694 |
 | Not consistent with any positive m | 681 |
-| **Implied m — median** | **1,841** (IQR 1,709 – 2,081) |
+| Implied m — median | 1,841 (IQR 1,709 – 2,081) |
 | Implied m — 5th / 95th percentile | 1,278 / 3,283 |
-| **Best single m by least squares** | **1,874** (RMSE 0.020) |
+| Best single m by least squares | **1,874** (RMSE 0.020) |
 
-The median implied m is essentially the same in every rating-count band
-(1,860 / 1,835 / 1,810 / 2,209 for 30–99, 100–999, 1,000–9,999 and 10,000+ ratings),
-which confirms that BGG applies one fixed number rather than a rule that depends on n.
-This reproduces the benchmark reported in the earlier literature and in the group plan.
+The median implied m is similar in every rating-count band (1,860 / 1,835 / 1,810 /
+2,209 for 30–99, 100–999, 1,000–9,999 and 10,000+ ratings). That pattern is
+**approximately consistent with a constant-m benchmark**, though the top band is
+noticeably higher and the per-game spread is wide. It is not proof that BGG applies
+one fixed number.
 
 ## 2. What the model implies
 
 | Quantity | Value |
 |---|---|
-| **M1a Baseline posterior m = s²/τ²** | **11.6** (95% CI 10.7 – 12.3) |
-| M1a Extended, effective per-game m (ranking model) | median **3.3** (IQR 2.1 – 5.3), 8,995 games |
-| BGG / Baseline ratio | **161×** |
-| BGG / ranking-model median ratio | **569×** |
+| M1a Baseline posterior m = s²/τ² | **11.6** (95% credible interval 10.7 – 12.3) |
+| M1a Extended, effective per-game m | median **3.02** (IQR 2.36 – 3.84) over all 21,375 games |
+| BGG ÷ Baseline | **161×** |
+| BGG ÷ ranking-model median | **620×** |
 
-Two things matter for reading this.
+Two caveats belong with these numbers.
 
-First, the Baseline m is small because `s` — one rater's SD around a game's true
-score — is barely identified. In the M1a posterior `s` sits at the upper end of its
-prior (posterior mean 2.96 with the prior upper bound at 3.0). The data cannot pin
-`s` down, so m inherits that uncertainty. This is RQ2, not a defect of P6.
+First, the Baseline m is an estimate under this model and its priors, not a
+property of the data alone. In the M1a posterior `s` sits at the top of its prior
+(posterior mean 2.96, prior upper bound 3.0). The data contain averages only, so `s`
+is weakly identified; a different prior on `s` would move `m`. It is therefore more
+accurate to say the data are **consistent with a small m under this prior** than
+that sampling noise alone justifies twelve votes.
 
-Second, the ranking export uses the **Extended** model, which replaces the common
-`s²/n` with each game's own `sd_hist²/n`. It therefore has no single m; the
-effective per-game m has median 3.3. The ranking is consequently shrunk *even less*
-than the Baseline, so the 161× figure understates the gap for the ranking below.
+Second, the ranking export uses the **Extended** model, which has a shrinkage target
+that varies with n (`mu_i = alpha + gamma·x_i`, `x_i = log n_i − x_center`) and a
+variance that varies with n (`tau2_i = exp(2(a_tau + b_tau·x_i))`). There is no single
+m in that model. The effective per-game count is computed draw by draw as
+
+```
+m_i^(b) = sd_hist_i^2 / exp(2 (a_tau^(b) + b_tau^(b) x_i))
+```
+
+with the posterior mean taken per game and the median/IQR reported across games —
+the same aggregation as `code/P5/05_Extended_SD_sensitivity.R`. All 12,000 parameter
+draws are used, in batches, and no game is filtered out. The median is 3.02; P5's
+independently computed 3.06 on 6,416 development games is consistent with it.
 
 ## 3. Ranking under posterior shrinkage
 
@@ -74,6 +91,10 @@ parts of 21,375 games × 100 draws. The parts are concatenated by column and gam
 are ranked **inside each joint draw**, so that game A is compared with game B under
 the same posterior sample. Ranking once on the posterior mean would ignore the
 correlation between games and understate the uncertainty in the ordering.
+
+These are latent ratings from **M1a Extended**, not from M1b, which has the best
+holdout predictive performance. The two questions are different: M1b is fitted to
+predict an average, M1a is the model from which a pseudo-vote count is defined.
 
 | Quantity | Value |
 |---|---|
@@ -84,9 +105,15 @@ correlation between games and understate the uncertainty in the ordering.
 | Top-50 overlap | 1 / 50 |
 | Median 90% rank-interval width, all games | 2,576 ranks |
 | Median 90% rank-interval width, top-10 candidates | 71 ranks |
+| Games with P(top 10) > 0.5 | 6 |
 | Games with P(top 10) > 0.05 | 28 |
 
-### The rankings disagree completely at the top
+Top-k lists compared with BGG are ordered by **posterior median rank**, not by
+P(top k). At 500 draws the Monte Carlo standard error of a probability is at most
+0.022 (at p = 0.5). All 36 structural and numerical checks in
+`rank_verification_checks.md` pass.
+
+### The rankings disagree at the top
 
 | | Our median-rank top 10 | BGG adjusted-score top 10 |
 |---|---|---|
@@ -95,29 +122,42 @@ correlation between games and understate the uncertainty in the ordering.
 | Median latent / adjusted rating | 9.13 | 8.26 |
 | Median rating count, top 100 | 76 | 20,767 |
 
-Because the model justifies almost no shrinkage, a game with 43 ratings and a 9.56
-average keeps a latent rating of 9.44 and outranks everything. BGG's rule shrinks the
-same game toward 5.5 hard enough that the familiar titles — Gloomhaven, Pandemic
-Legacy, Brass: Birmingham — occupy the top ten. The two lists are not a mistake in
-either method; they are two answers to "how much should a 40-rating average be
-trusted".
+A game with 43 ratings and a 9.56 average keeps almost all of that average under our
+shrinkage, so it outranks everything; BGG's rule pulls the same game back toward 5.5,
+which is why the familiar titles lead its list.
 
-**The ranking is therefore an expression of m, not an independent result.** This is
-the strongest evidence in the project that the pseudo-vote choice is a modelling
-decision with substantive consequences, and it is the point the BGG comparison should
-make in the report.
+**What can and cannot be said.** The divergence at the top is consistent with the
+much smaller shrinkage our model applies. It should not be attributed to m alone:
+the Extended model's shrinkage target varies with n, its variance is
+heteroskedastic, and both differ from the assumptions behind BGG's rule. The honest
+statement is that the two rankings encode different beliefs about how much a rating
+from a small number of raters should be trusted, and that this choice — not sampling
+noise — is what separates the two lists.
 
-## 4. Figures
+## 4. Verification
+
+`code/P6/05_verification.R` re-derives the structural checks from the raw inputs and
+writes [`rank_verification_checks.csv`](rank_verification_checks.csv) and
+[`rank_verification_checks.md`](rank_verification_checks.md). It confirms: each part
+is 21,375 × 100 and the merge is 21,375 × 500; ids are unique and in the same order
+everywhere; draws are finite; `draw_numbers` covers 1–500 without repeats; the
+posterior means and intervals computed from the draws reproduce the handoff CSV;
+rank intervals are ordered; each draw contains exactly one game at each rank and
+exactly k games inside the top k (so there are no ties to break); and
+P(top 10), P(top 50), P(top 100) lie in [0, 1], are monotone per game, and sum to
+10, 50 and 100 respectively.
+
+## 5. Figures
 
 | File | Contents |
 |---|---|
 | `figures/P6/fig_bgg_pseudovotes.png` | Distribution of BGG's implied m against the model's m (log scale) |
-| `figures/P6/fig_bgg_m_by_band.png` | Implied m by rating-count band — evidence the rule is a fixed m |
+| `figures/P6/fig_bgg_m_by_band.png` | Implied m by rating-count band |
 | `figures/P6/fig_top10_probability.png` | P(top 10) for the 20 most likely games |
 | `figures/P6/fig_rank_intervals.png` | 90% rank intervals for the 15 highest-ranked games, with BGG's rank marked |
 | `figures/P6/fig_rank_vs_bgg.png` | Our median rank against BGG's adjusted rank, all 21,375 games |
 
-## 5. Data files
+## 6. Data files
 
 | File | Contents |
 |---|---|
@@ -125,19 +165,21 @@ make in the report.
 | `bgg_implied_m_by_game.csv` | Per-game implied m (20,694 games) |
 | `bgg_implied_m_excluded.csv` | The 681 games inconsistent with any positive m |
 | `bgg_implied_m_by_rating_band.csv` | Median and quartiles of implied m by n |
-| `ranking_model_effective_m.csv` | Per-game effective m of the Extended ranking model |
+| `ranking_model_effective_m.csv` | Per-game effective m of the Extended ranking model (all 21,375 games) |
 | `ranking_model_effective_m_by_band.csv` | The same, aggregated by n |
 | `rank_uncertainty_all_games.csv` | Median rank, 5th/95th rank, P(top 10/50/100), BGG rank |
 | `top10_posterior_probabilities.csv` | Top 30 games by P(top 10) |
 | `rank_vs_bgg_summary.csv` | Spearman, overlaps, interval widths |
+| `rank_verification_checks.csv` / `.md` | The 36 checks |
 
-## 6. Scope and limitations
+## 7. Scope and limitations
 
 1. **Ranking scope.** All rankings are within the 21,375 SD-matched games of the
    cleaned 2022 snapshot — not all games on BGG and not the current site ranking.
+   Conclusions must not be extended beyond this set.
 2. **Not holdout predictions.** `theta` conditions on each game's own observed
    average and rating count, including games that were in P5's exploratory holdout.
-   These are within-sample latent estimates, not out-of-sample forecasts.
+   These are within-sample latent estimates.
 3. **Historical SD is a plug-in.** The Extended model's per-game `sd_hist` comes from
    an external snapshot whose date and provenance are not verified, and its
    measurement uncertainty is not propagated.
@@ -147,25 +189,23 @@ make in the report.
 5. **681 games** cannot be decomposed into a positive m at all (for example when
    `bayes_average` equals `raw_average`); they are excluded from the benchmark and
    listed separately.
-6. **"BGG's rule is wrong" is not a supported claim.** Its larger m also resists
-   strategic voting and produces a more stable list. Our m answers a narrower
-   question — how much shrinkage sampling noise alone justifies.
+6. **"BGG's rule is wrong" is not a supported claim.** Its larger m may also serve to
+   resist strategic voting and to produce a stable list; that is a plausible design
+   purpose, not something this study demonstrates. The benchmark quantifies what one
+   model, under one prior, implies.
 
-## 7. Slide-ready points (1 Dec presentation)
+## 8. Slide-ready points
 
-- BGG's adjusted score implies **about 1,874 dummy votes at 5.5** per game, and the
-  implied number barely varies with rating count — it is a fixed rule.
-- Under M1a, sampling noise alone justifies **about 12** (95% CI 10.7–12.3), roughly
-  **160× fewer**; the ranking export uses an even lighter shrinkage (median 3.3).
-- Because of that, the two rankings agree on the broad shape of the list
-  (Spearman 0.78) but share **zero** of their top ten.
-- The top ten therefore demonstrates the consequence of the m choice rather than a
-  separate finding: our model favours low-n, high-average games; BGG favours
-  well-established ones.
+- BGG's published adjusted score is consistent with about **1,874 dummy votes at
+  5.5**, and the implied count varies little across rating counts.
+- Under M1a, `m = s²/τ²` has posterior mean **11.6 (95% CI 10.7 – 12.3)**; the
+  ranking model's effective per-game count has median **3.0**. Both are model-based
+  and depend on the prior for `s`.
+- The two rankings agree broadly (Spearman 0.78) but share **none** of their top ten.
+  That gap reflects the different shrinkage assumptions, not sampling noise alone.
 
-## 8. Report mapping
+## 9. Report mapping
 
 Feeds **RQ3 (BGG benchmark and ranking uncertainty)** and the discussion of what the
-gap reflects. Report outline slots: "Bayesian inference" (rank intervals) and
-"Results and conclusion" (benchmark, watchlist). English section drafted in
+gap reflects. English section draft in
 [`docs/P6_DELIVERY.md`](../../docs/P6_DELIVERY.md).

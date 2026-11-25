@@ -82,24 +82,45 @@ cat(sprintf("M1a posterior m: mean %.2f (95%% %.2f-%.2f)\n",
 cat(sprintf("ratio BGG / model: %.1fx\n", m_best / m_post["mean"]))
 
 # ------------------------------------- effective m implied by the ranking model --
-# The P6 handoff draws come from the M1a EXTENDED model, not the Baseline. That
-# model replaces the common s^2/n with each game's own v_obs = sd_hist^2 / n and
-# lets tau vary with a covariate, so it has no single m. We can still recover the
-# effective per-game pseudo-vote count from the reported posterior summaries:
+# The P6 handoff draws come from the M1a EXTENDED model, not the Baseline. In that
+# model both the shrinkage target and the between-game variance depend on n:
 #
-#   theta = w * ybar + (1 - w) * alpha,   w = n / (n + m)
-#   =>  m = n * (ybar - theta) / (theta - alpha)
+#   mu_i   = alpha + gamma * x_i
+#   tau2_i = exp(2 * (a_tau + b_tau * x_i)),   x_i = log(n_i) - x_center
+#   v_i    = sd_hist_i^2 / n_i
 #
-# This is defined only for games whose latent rating sits above the global mean.
+# so there is no single m. The effective per-game pseudo-vote count is the ratio of
+# the observation variance to the between-game variance, evaluated draw by draw:
+#
+#   m_i^(b) = sd_hist_i^2 / exp(2 * (a_tau^(b) + b_tau^(b) * x_i))
+#
+# We take the posterior mean of m for each game, then report the median and IQR
+# across games. That is the same aggregation P5 uses in
+# code/P5/05_Extended_SD_sensitivity.R, so the two numbers can be compared directly.
+# No game is filtered out. Draws are processed in batches to avoid a large matrix.
 ext <- readRDS("outputs/P5/M1a_Extended_ExternalSD/parameter_draws.rds")
-alpha_ext <- mean(ext$draws[, "alpha"])
+stopifnot(all(c("draws", "x_center") %in% names(ext)),
+          all(c("a_tau", "alpha", "b_tau", "gamma") %in% colnames(ext$draws)),
+          all(is.finite(games$sd_hist) & games$sd_hist > 0),
+          all(is.finite(games$n_2022) & games$n_2022 > 0))
 
-games[, m_eff := n_2022 * (raw_average - theta_mean) / (theta_mean - alpha_ext)]
-eff <- games[is.finite(m_eff) & m_eff > 0 & theta_mean > alpha_ext]
+x_ext   <- log(games$n_2022) - ext$x_center
+n_draws <- nrow(ext$draws)
+acc_m   <- numeric(nrow(games))
+STEP    <- 1000L
+for (s in seq(1L, n_draws, by = STEP)) {
+  for (j in s:min(s + STEP - 1L, n_draws)) {
+    d <- ext$draws[j, ]
+    tau2 <- exp(2 * (d["a_tau"] + d["b_tau"] * x_ext))
+    acc_m <- acc_m + games$sd_hist^2 / tau2
+  }
+}
+games[, m_eff := acc_m / n_draws]
 
-cat(sprintf("Extended-model effective m: median %.2f (IQR %.2f-%.2f) over %d games\n",
+eff <- games
+cat(sprintf("Extended-model effective m: median %.3f (IQR %.3f-%.3f) over %d games, %d draws\n",
             median(eff$m_eff), quantile(eff$m_eff, 0.25), quantile(eff$m_eff, 0.75),
-            nrow(eff)))
+            nrow(eff), n_draws))
 eff[, band := cut(n_2022, c(30, 100, 1000, 10000, Inf),
                   labels = c("30-99", "100-999", "1,000-9,999", "10,000+"),
                   right = FALSE)]
@@ -128,7 +149,7 @@ fwrite(usable[, .(id, name, n_2022, raw_average, bgg_bayes_average, m_implied)],
        file.path(OUTDIR, "bgg_implied_m_by_game.csv"))
 fwrite(excluded[, .(id, name, n_2022, raw_average, bgg_bayes_average, m_implied)],
        file.path(OUTDIR, "bgg_implied_m_excluded.csv"))
-fwrite(eff[, .(id, name, n_2022, raw_average, theta_mean, m_eff)],
+fwrite(eff[, .(id, name, n_2022, raw_average, sd_hist, theta_mean, m_eff)],
        file.path(OUTDIR, "ranking_model_effective_m.csv"))
 fwrite(eff_by_band, file.path(OUTDIR, "ranking_model_effective_m_by_band.csv"))
 
@@ -155,7 +176,7 @@ p1 <- ggplot(plot_dt, aes(x = log10_m)) +
            vjust = -0.5) +
   annotate("text", x = x_model, y = 1500, hjust = -0.12, size = 3.5,
            colour = P6_BLUE,
-           label = sprintf("sampling noise only\nm = %.1f", m_post["mean"])) +
+           label = sprintf("our model\nm = %.1f", m_post["mean"])) +
   annotate("segment", x = x_bgg + 0.02, xend = 3.78, y = 2150, yend = 2150,
            colour = P6_ORANGE, linewidth = 0.4) +
   annotate("text", x = 3.84, y = 2150, hjust = 0, size = 3.5, colour = P6_ORANGE,
@@ -164,8 +185,8 @@ p1 <- ggplot(plot_dt, aes(x = log10_m)) +
                      labels = c("1", "10", "100", "1,000", "10,000")) +
   coord_cartesian(ylim = c(0, 3600)) +
   labs(
-    title = "BGG's rule adds about 1,870 dummy votes.\nSampling noise alone justifies about 12.",
-    subtitle = sprintf("Implied pseudo-vote count m for %s games (log scale); blue line is the M1a posterior mean of m = s²/τ²",
+    title = "BGG's adjusted score is equivalent to about 1,870 dummy votes.\nOur model implies about 12.",
+    subtitle = sprintf("Implied pseudo-vote count m for %s games (log scale); the blue line is the M1a posterior mean of m = s²/τ²",
                        format(nrow(usable), big.mark = ",")),
     x = "Implied number of dummy votes at 5.5 (m, log scale)",
     y = "Games",
@@ -191,10 +212,10 @@ p2 <- ggplot(by_band, aes(x = band, y = median_m)) +
   scale_y_log10(breaks = c(1, 10, 100, 1000, 10000),
                 labels = c("1", "10", "100", "1,000", "10,000")) +
   labs(
-    title = "BGG's implied m is almost constant across rating counts",
-    subtitle = "Median and interquartile range of the implied m within each band of n (log scale)",
+    title = "The implied m varies little across rating counts",
+    subtitle = "Median and interquartile range of implied m within each band of n (log scale)",
     x = "Number of ratings (2022)", y = "Implied m (log scale)",
-    caption = "A fixed number of dummy votes implies a flat median across bands. Only the 10,000+ band is noticeably higher."
+    caption = "A constant-m benchmark implies a similar median in every band. The 10,000+ band is noticeably higher, so the rule is not exactly constant."
   ) +
   theme_p6()
 
