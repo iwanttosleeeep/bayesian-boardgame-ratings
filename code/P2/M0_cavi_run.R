@@ -124,6 +124,8 @@ print(cmp[, c("parameter", "gibbs_mean", "jags_mean", "cavi_mean",
 png(file.path(FIG_DIR, "M0_three_method_intervals.png"),
     width = 1600, height = 1000, res = 300)
 par(mar = c(5.1, 6.1, 4.1, 2.1))
+# Reserve an empty strip below the smallest interval width for a horizontal legend.
+# This avoids occluding beta7/sigma2 points, as happened in the old top-right legend.
 rk <- seq_len(nrow(cmp))
 # Human-readable parameter labels via plotmath (Unicode beta/sigma fails
 # to render in R's PNG device on Windows -> use expressions instead).
@@ -132,15 +134,17 @@ plab <- expression(beta[1], beta[2], beta[3], beta[4], beta[5],
 lo <- min(cmp$gibbs_width95, cmp$jags_width95, cmp$cavi_width95)
 hi <- max(cmp$gibbs_width95, cmp$jags_width95, cmp$cavi_width95)
 pad <- 0.15 * (hi - lo)
-plot(rk, cmp$gibbs_width95, type = "n", ylim = c(lo - pad, hi + pad),
+plot(rk, cmp$gibbs_width95, type = "n",
+     ylim = c(lo - max(0.35 * (hi - lo), 2 * pad), hi + pad),
      xaxt = "n", xlab = "Parameter", ylab = "95% interval width",
      main = "M0 95% interval width by method")
 axis(1, at = rk, labels = plab, cex.axis = 0.9)
 points(rk - 0.22, cmp$gibbs_width95, pch = 16, col = "#1f5f99", cex = 1.2)
 points(rk,        cmp$jags_width95,  pch = 16, col = "#2e8b57", cex = 1.2)
 points(rk + 0.22, cmp$cavi_width95,  pch = 16, col = "#d9534f", cex = 1.2)
-legend("topright", legend = c("Gibbs", "JAGS", "CAVI"),
-       col = c("#1f5f99", "#2e8b57", "#d9534f"), pch = 16, bty = "n")
+legend("bottom", legend = c("Gibbs", "JAGS", "CAVI"), horiz = TRUE,
+       col = c("#1f5f99", "#2e8b57", "#d9534f"), pch = 16,
+       inset = 0.02, bty = "n", cex = 0.9)
 dev.off()
 cat("Saved figures/M0_three_method_intervals.png\n")
 
@@ -177,8 +181,8 @@ runtime <- data.frame(
     1000 * 1276.75 / 4000),
   timed_stage = c(
     "full deterministic fit to ELBO convergence; no warm-up/burn-in",
-    "full run incl. adaptation + 2000 burn-in per chain",
-    "full run incl. adaptation + 2000 burn-in per chain",
+    "full run incl. 2000 burn-in per chain; Gibbs has no adaptation stage",
+    "full run incl. JAGS adaptation + 2000 burn-in per chain",
     "SAMPLING ONLY (excl. 200 adapt + 200 burn-in, warm-up 25.17s reported separately)",
     "full run incl. compile + adaptation + burn-in + batched diagnostics; 4 chains in parallel",
     "full run incl. compile + 2000 adapt + 2000 burn-in + batched diagnostics; 4 chains in parallel"),
