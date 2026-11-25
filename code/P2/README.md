@@ -63,7 +63,7 @@ Gibbs 后验均值应该很接近它们，且真值都落在 95% 区间内。
 
 ## CAVI + 三方法对比 + 运行时间（已完成）
 
-运行 `M0_cavi_run.R`（约 75 秒）：在同一份 6,489 款 development 数据上拟合 CAVI、手写 Gibbs、JAGS，
+运行 `M0_cavi_run.R`（实际耗时依机器而异）：在同一份 6,489 款 development 数据上拟合 CAVI、手写 Gibbs、JAGS，
 计时并对比后验。CAVI 与 Gibbs/JAGS 用**完全相同的先验**（V0=100·I，a0=b0=0.01）；
 均值场假设下 q(β)=N(m,S)、q(τ)=Gamma(a,b)，a 固定为 a0+(n+p)/2，只迭代 rate b 到 ELBO 收敛。
 
@@ -72,8 +72,8 @@ Gibbs 后验均值应该很接近它们，且真值都落在 95% 区间内。
 - **后验均值**：CAVI 与 Gibbs/JAGS 的最大差异约 0.000303（出现在 σ²），三方一致。
 - **95% 区间宽度比**（CAVI/Gibbs）：0.979–1.006，接近 1。Proposal 说"CAVI 低估后验方差"
   是一般预期；本数据 n 大、后验近正态，实测差异可忽略，**按实测报告，不要笼统照抄那句**。
-- **运行时间**：CAVI 0.04s、手写 Gibbs 3.89s、JAGS 70.64s（同机同设置）。
-  CAVI 约比 Gibbs 快 100 倍、比 JAGS 快约 1,700 倍。
+- **运行时间**：CAVI 0.05s、手写 Gibbs 4.01s、JAGS 80.17s（同机同设置）。
+  按最新单次实测，CAVI 约比 Gibbs 快 80 倍、比 JAGS 快 1,600 倍；该倍数不代表跨硬件的普遍性能。
 
 M1b 运行时间（proposal 原定 24 Nov 的 P2 任务）：
 
@@ -82,7 +82,7 @@ M1b 运行时间（proposal 原定 24 Nov 的 P2 任务）：
 - 对照 P4 上传的证据：4 链并行的 pilot 68.48s（500 draws/链，诊断未达标 R-hat 1.03）、
   完整 baseline 1276.75s（4000 draws/链，收敛达标）。
 - ⚠️ 口径不同，不可直接横比：`tables/M0_M1b_runtime_comparison.csv` 的 `timed_stage` 列说明每行计的是什么——
-  M0 三行是完整运行（含 adaptation + burn-in）；P2 的 M1b 探针 52.03s **只算 sampling**
+  M0 Gibbs 不包含 adaptation，仅含 burn-in；M0 JAGS 包含 adaptation 与 burn-in；CAVI 无这两个阶段；P2 的 M1b 探针 52.03s **只算 sampling**
   （warm-up 25.17s 另计）；P4 的 68.48s / 1276.75s 含编译+预热+抽样+分批诊断。
   `chains` 列标明 P2 单链、P4 四链并行；`comparable` 列写明可直接比较的范围。
   报告时必须带上这些限定，不要把 `seconds_per_1000_kept_draws` 当成同一口径直接排名。
@@ -96,7 +96,7 @@ M1b 运行时间（proposal 原定 24 Nov 的 P2 任务）：
 | `outputs/P2/M0_cavi_fit.rds` | CAVI 完整结果（含 ELBO 轨迹、收敛标志） |
 | `outputs/P2/M0_cavi_session_info.txt` | 运行环境与设置 |
 | `figures/M0_cavi_elbo.png` | ELBO 收敛曲线（300 dpi） |
-| `figures/M0_three_method_intervals.png` | 三方法 95% 区间宽度对比：横轴 β1–β7、σ²，纵轴 95% interval width（300 dpi） |
+| `figures/M0_three_method_intervals.png` / `.svg` | 三方法 95% 区间宽度对比：横轴 β1–β7、σ²，纵轴 95% interval width；SVG 为可直接插入幻灯片的矢量版本，PNG 由更新后的 R 脚本重绘（300 dpi） |
 | `tables/M0_three_method_comparison.csv` | 三方法后验均值/SD/95% 区间对比 |
 | `tables/M0_M1b_runtime_comparison.csv` | M0 三方法 + M1b 运行时间对照（含 `timed_stage`、`comparable` 列） |
 | `tables/M1b_P2_timing_probe.csv` | P2 独立 M1b 计时探针 |
@@ -113,6 +113,6 @@ M1b 运行时间（proposal 原定 24 Nov 的 P2 任务）：
 - 以上结果已在本机 R 4.5.1 实跑验证。脚本把结果写到 `outputs/P2/`、`figures/`、`tables/`；
   运行环境细节保存在 `outputs/P2/M0_cavi_session_info.txt`（随结果一起提交）。
   控制台日志只在本地重定向保存，不是交付物，也不在仓库里——复现请直接运行脚本看控制台输出。
-- 复现命令：把工作目录设到脚本所在目录后运行 `Rscript M0_cavi_run.R`（约 75 秒）和
+- 复现命令：把工作目录设到脚本所在目录后运行 `Rscript M0_cavi_run.R`（耗时因机器而异）和
   `Rscript P2_M1b_timing.R`（约 80 秒）；数据路径会自动定位，无需手动改。
 - 按课程 AI 规则：提交前请自己读懂并跑通 `M0_cavi.R` 的变分更新与 ELBO 公式，确保能讲清楚每一步。
