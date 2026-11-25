@@ -179,18 +179,22 @@ p1 <- ggplot(plot_dt, aes(x = log10_m)) +
 save_p6(p1, "figures/P6/fig_bgg_pseudovotes.png", 9.4, 5.6)
 
 # A second panel: is BGG's m really constant across rating counts?
+# Log scale so that both ~1,800 and 11.6 are legible on the same axis.
 p2 <- ggplot(by_band, aes(x = band, y = median_m)) +
-  geom_col(fill = P6_ORANGE, width = 0.62, alpha = 0.85) +
-  geom_errorbar(aes(ymin = q25_m, ymax = q75_m), width = 0.18, colour = P6_INK2) +
+  geom_errorbar(aes(ymin = q25_m, ymax = q75_m), width = 0.0,
+                colour = P6_ORANGE, linewidth = 0.9) +
+  geom_point(colour = P6_ORANGE, size = 3.2) +
   geom_hline(yintercept = m_post["mean"], colour = P6_BLUE, linewidth = 1.1) +
-  annotate("text", x = 0.62, y = m_post["mean"], label = "our model: 11.6",
-           colour = P6_BLUE, hjust = 0, vjust = -0.6, size = 3.3) +
-  coord_cartesian(ylim = c(0, 3000)) +
+  annotate("label", x = 1, y = m_post["mean"] * 2.6,
+           label = sprintf("our model: m = %.1f", m_post["mean"]),
+           colour = P6_BLUE, size = 3.3, hjust = 0, fill = P6_SURF, label.size = 0) +
+  scale_y_log10(breaks = c(1, 10, 100, 1000, 10000),
+                labels = c("1", "10", "100", "1,000", "10,000")) +
   labs(
-    title = "BGG's implied m is close to constant across rating counts",
-    subtitle = "Median (bar) and interquartile range (whisker) of implied m within each band of n",
-    x = "Number of ratings (2022)", y = "Implied m",
-    caption = "A rule that applies the same number of dummy votes to every game should show a flat median across bands. Note the y-axis is truncated; the blue line sits at 11.6."
+    title = "BGG's implied m is almost constant across rating counts",
+    subtitle = "Median and interquartile range of the implied m within each band of n (log scale)",
+    x = "Number of ratings (2022)", y = "Implied m (log scale)",
+    caption = "A fixed number of dummy votes implies a flat median across bands. Only the 10,000+ band is noticeably higher."
   ) +
   theme_p6()
 
