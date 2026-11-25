@@ -1,0 +1,2 @@
+"owner","model","games","predictors","designers","chains","adapt","burn","sample_iter","warmup_seconds","sample_seconds","seconds_per_1000_iter","engine","note"
+"P2 independent","M1b",6489,56,3221,1,200,200,1000,25.17,52.03,52.03,"JAGS glm via rjags, single chain","timing probe only; no convergence claim; posterior package not required"
