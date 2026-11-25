@@ -1,22 +1,60 @@
 # STAT6106 P5 -- presentation-ready figures, using existing results only.
-# Run from the root of the updated GitHub repository (source this script).
+# Run in the SAME RStudio working directory as Script 13, or a full repo clone.
 # Base R only. No model fitting, downloads, JAGS, or modification of existing results.
+# Local mode uses the three original input files plus embedded, archived summary CSVs.
 # The six PNGs and plotting checks are saved to figures/P5/.
 options(stringsAsFactors=FALSE)
 root <- normalizePath(getwd(), winslash="/", mustWork=TRUE)
-while (!file.exists(file.path(root,"outputs/P5/M1a_Baseline/parameter_draws.rds"))) {
+repo_ok <- function(p) file.exists(file.path(p,"outputs/P5/M1a_Baseline/parameter_draws.rds"))
+local_ok <- function(p) file.exists(file.path(p,"P5_external_SD/Model_A_same_6416/parameter_draws.rds"))
+while (!repo_ok(root) && !local_ok(root)) {
   parent <- dirname(root)
-  if (identical(parent,root)) stop("Set RStudio working directory to the downloaded repository root (contains code/ and outputs/).")
+  if (identical(parent,root)) stop("Use the same RStudio working directory as Script 13 (parent of P5_external_SD), or the repository root.")
   root <- parent
 }
+repo_mode <- repo_ok(root)
 p5 <- file.path(root,"outputs/P5")
+base <- file.path(root,"P5_external_SD")
 out <- file.path(root,"figures/P5")
 dir.create(out,recursive=TRUE,showWarnings=FALSE)
-rd <- function(p) read.csv(file.path(p5,p),check.names=FALSE)
-rds <- function(p) readRDS(file.path(p5,p))
-A <- rds("M1a_Baseline/parameter_draws.rds")
-D <- rds("M1a_Extended_ExternalSD/parameter_draws.rds")
-tr <- rd("M1a_Extended_ExternalSD/P5_SD_matched.csv")
+# Exact text of seven validated GitHub CSVs; no network access needed in local mode.
+# These are the archived November 2026 comparisons, not synthetic data.
+archived <- list(
+  # GitHub blob 0ff324ec409e2f7b0afc522e1054d28215ccd7ff
+  "M1a_Model_Comparison/shrinkage_summary.csv" = "\"metric\",\"value\"\n\"development_games_each\",6416\n\"Baseline_median_abs_adjustment\",0.0359955663193721\n\"Extended_median_abs_adjustment\",0.00950903637682421\n\"median_abs_rating_difference\",0.0255837579362366\n\"p95_abs_rating_difference\",0.239352892449841\n\"max_abs_rating_difference\",0.867188321721243\n\"Baseline_median_shrinkage_weight\",0.915041081366871\n\"Extended_median_shrinkage_weight\",0.978602491693122\n\"development_top50_overlap\",36",
+  # GitHub blob 006550e6fafde8d47b4fe027d0b4e0c47f539a22
+  "M1a_Model_Comparison/holdout_grouped_PPC.csv" = "\"model\",\"group\",\"games\",\"observed_mean\",\"pred_mean_median\",\"pred_mean_low\",\"pred_mean_high\",\"mean_in_95_interval\",\"observed_variance\",\"pred_variance_median\",\"pred_variance_low\",\"pred_variance_high\",\"variance_in_95_interval\",\"individual_95_coverage\"\n\"M1a_Baseline\",\"30-40\",398,6.11768844221106,6.42675735210097,6.32945215645426,6.5264445558758,FALSE,1.01633570117591,1.00999336479255,0.882127814477412,1.1557267197608,TRUE,0.942211055276382\n\"M1a_Baseline\",\"100-200\",600,6.36781666666667,6.4295635739083,6.34985013055338,6.50455834543458,TRUE,0.802528614079021,0.818000877391657,0.729112503500767,0.908113269693048,TRUE,0.951666666666667\n\"M1a_Baseline\",\"1000-5000\",312,6.87522435897436,6.43104397136368,6.33758103215545,6.52722609900287,FALSE,0.424190303198945,0.756741357738677,0.651121114148201,0.883077465943034,FALSE,0.977564102564103\n\"M1a_Baseline\",\"5000+\",110,7.30918181818182,6.4230492972983,6.26528471923602,6.59148649174465,FALSE,0.240618590492077,0.751811246059145,0.561466408947955,0.986827141073817,FALSE,0.981818181818182\n\"M1a_Extended_ExternalSD\",\"30-40\",398,6.11768844221106,6.1019852315772,5.99556496221878,6.20813289866032,TRUE,1.01633570117591,1.10173937735967,0.94812328823966,1.28153134780161,TRUE,0.949748743718593\n\"M1a_Extended_ExternalSD\",\"100-200\",600,6.36781666666667,6.361443746337,6.27893262462451,6.43712947049153,TRUE,0.802528614079021,0.800269672459724,0.713949693176705,0.896880527491302,TRUE,0.945\n\"M1a_Extended_ExternalSD\",\"1000-5000\",312,6.87522435897436,6.84612373454858,6.75994295753794,6.93036420304602,TRUE,0.424190303198945,0.472899939053655,0.402653077712412,0.563619273379382,TRUE,0.971153846153846\n\"M1a_Extended_ExternalSD\",\"5000+\",110,7.30918181818182,7.16394124108478,7.04270349621114,7.28571767249817,FALSE,0.240618590492077,0.350202667778181,0.26333796489531,0.465716099163695,FALSE,0.972727272727273",
+  # GitHub blob a84b948a1a834fcc56ab67d10709fc35c7b1ed16
+  "Sensitivity_Analysis/External_SD/SD_sensitivity_summary.csv" = "\"sd_factor\",\"games\",\"median_abs_adjustment\",\"p90_abs_adjustment\",\"count_abs_adjust_gt_0_05\",\"count_abs_adjust_gt_0_10\",\"median_shrinkage_weight\",\"median_effective_pseudo_votes\"\n0.8,6416,0.00606863013724412,0.0399562250108181,438,84,0.986398872020477,1.9316569304859\n1,6416,0.00952935504209496,0.0619597365567279,869,270,0.97858209233192,3.0617691709618\n1.2,6416,0.0137643483005552,0.0884983353238833,1299,533,0.969008246386679,4.46710709416599",
+  # GitHub blob 07f5dfb10cc53693b2c596dd3b75c28ba0a25152
+  "Sensitivity_Analysis/Priors/prior_sensitivity_summary.csv" = "\"scenario\",\"games\",\"median_abs_adjustment\",\"games_abs_adjust_gt_0_05\",\"games_abs_adjust_gt_0_10\",\"median_shrinkage_weight\",\"median_effective_pseudo_votes\",\"median_abs_change_from_baseline\",\"p95_abs_change_from_baseline\",\"max_abs_change_from_baseline\",\"games_change_gt_0_05\",\"top50_overlap_with_baseline\"\n\"baseline\",6416,0.00952611342336862,869,270,0.978578362628769,3.06233354050912,0,0,0,0,50\n\"tau_tighter\",6416,0.00952208140098953,869,270,0.978594322119564,3.05970548732767,7.43233932309906e-06,4.69560158793403e-05,0.000252081515271563,0,50\n\"tau_wider\",6416,0.00952096209659326,869,269,0.978602812934442,3.0585781154037,1.08815780666127e-05,0.000131703727465515,0.000799757699644132,0,50\n\"gamma_tighter\",6416,0.00952311697349595,869,269,0.978593396050894,3.06017255798743,7.3282167516453e-06,0.000121055672851367,0.000784369354557946,0,50\n\"gamma_wider\",6416,0.00951514198519865,869,269,0.97861584555661,3.05686732810641,1.57470522732517e-05,0.000205089430691086,0.00122132381171092,0,50",
+  # GitHub blob a752c933e34f15b8ca4b468f310c43ac99a6e796
+  "Holdout_Comparison_3209/holdout_four_model_summary.csv" = "model,games,posterior_draws,ELPD,mean_log_predictive_density,coverage_95\nM1a_Baseline,3209,1000,-4347.827980015384,-1.3548856279262649,0.9460891243377999\nM1a_Extended,3209,1000,-4126.124994400551,-1.2857977545654569,0.9432845123091306\nM1b_Baseline,3209,16000,-3009.6388695977043,-0.9378743750694,0.943596135867872\nM1b_ExternalSD,3209,16000,-3024.698181891765,-0.9425672115586679,0.943596135867872\n",
+  # GitHub blob 0fdb62b80d6b15244d119db367d2ad2e8ace48b5
+  "Holdout_Comparison_3209/holdout_pairwise_differences.csv" = "model_A,model_B,delta_ELPD_A_minus_B,SE_cluster_approx,approx95_lower,approx95_upper,clusters\nM1a_Extended,M1a_Baseline,221.70298561484051,20.596548179161164,181.33375118368463,262.0722200459964,2226\nM1b_Baseline,M1a_Baseline,1338.1891104176834,52.72154151467528,1234.8548890489199,1441.523331786447,2226\nM1b_ExternalSD,M1a_Baseline,1323.1297981236291,51.15511199102371,1222.8657786212227,1423.3938176260356,2226\nM1b_Baseline,M1a_Extended,1116.4861248028456,54.69648259813527,1009.2810189105004,1223.6912306951906,2226\nM1b_ExternalSD,M1a_Extended,1101.426812508788,53.92134741474428,995.7409715758893,1207.112653441687,2226\nM1b_ExternalSD,M1b_Baseline,-15.059312294060447,8.33580110696237,-31.39748246370669,1.2788578755857962,2226\n",
+  # GitHub blob f65f21f36468a2dbaeccd7ee723839eaf2b03e6e
+  "WAIC_Comparison_6416/WAIC_four_model_summary.csv" = "\"model\",\"games\",\"posterior_draws\",\"lppd\",\"p_waic\",\"elpd_waic\",\"WAIC\",\"SE_WAIC_gamewise_approx\",\"max_pointwise_p_waic\",\"n_pointwise_p_waic_gt_0_4\",\"fraction_pointwise_p_waic_gt_0_4\",\"delta_WAIC\"\n\"M1b_ExternalSD\",6416,500,-4476.34548840693,1402.91363473512,-5879.25912314203,11758.5182462841,161.893114619785,6.55117662675026,948,0.147755610972569,0\n\"M1b_Baseline\",6416,500,-4551.29953352094,1332.04820707733,-5883.34774059829,11766.6954811966,163.644054378906,9.28423581237983,858,0.133728179551122,8.17723491250581\n\"M1a_Extended\",6416,500,-8248.10200463901,6.41099436760272,-8254.51299900662,16509.0259980132,146.933742634258,0.411453071147129,2,0.000311720698254364,4750.50775172917\n\"M1a_Baseline\",6416,500,-8608.45392316497,2.5533986688963,-8611.00732183387,17222.0146436677,132.063971360318,0.0897920713502988,0,0,5463.49639738367\n"
+)
+rd <- function(p) {
+  if (repo_mode && file.exists(file.path(p5,p))) return(read.csv(file.path(p5,p),check.names=FALSE))
+  if (!p %in% names(archived)) stop("Missing summary: ",p)
+  read.csv(text=archived[[p]],check.names=FALSE)
+}
+if (repo_mode) {
+  a_path <- file.path(p5,"M1a_Baseline/parameter_draws.rds")
+  d_path <- file.path(p5,"M1a_Extended_ExternalSD/parameter_draws.rds")
+  tr_path <- file.path(p5,"M1a_Extended_ExternalSD/P5_SD_matched.csv")
+} else {
+  a_path <- file.path(base,"Model_A_same_6416/parameter_draws.rds")
+  d_path <- file.path(base,"Model_D_calibrated/parameter_draws.rds")
+  tr_path <- file.path(base,"P5_SD_matched.csv")
+}
+required <- c(a_path,d_path,tr_path)
+if (!all(file.exists(required))) stop("Missing original inputs:\n",paste(required[!file.exists(required)],collapse="\n"))
+A <- readRDS(a_path)
+D <- readRDS(d_path)
+tr <- read.csv(tr_path,check.names=FALSE)
+if (!repo_mode) stopifnot(identical(unname(A$input_md5),unname(tools::md5sum(tr_path))))
 sh <- rd("M1a_Model_Comparison/shrinkage_summary.csv")
 pp <- rd("M1a_Model_Comparison/holdout_grouped_PPC.csv")
 ss <- rd("Sensitivity_Analysis/External_SD/SD_sensitivity_summary.csv")
@@ -199,7 +237,7 @@ text(pct,yy,labels=paste0(fmt(pct,2),"% (",ws$n_pointwise_p_waic_gt_0_4,")"),pos
 closefig("M1b has lower numerical WAIC, but many reliability warnings",
          "Same 6,416 development games | 500 draws/model | M1b conditions on learned named-designer effects; prioritize holdout.")
 checks <- c("P5 figure generation checks",
-  paste("Source:",root),paste("Baseline posterior draws:",nrow(za)),
+  paste("Source:",root),paste("Input mode:",if(repo_mode) "repository CSVs (embedded fallback)" else "original local RDS/CSV + embedded archived summaries"),paste("Baseline posterior draws:",nrow(za)),
   paste("Extended posterior draws:",nrow(zd)),
   "Development IDs and order (Baseline vs matched data): PASS",
   "Extended training centering: PASS (saved object has no independent ID vector)",
