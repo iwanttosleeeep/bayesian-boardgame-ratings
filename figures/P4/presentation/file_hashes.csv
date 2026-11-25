@@ -1,0 +1,10 @@
+path,bytes,sha256,hash_convention
+designer_plot_data.csv,7379,c4fd7ca3aea1be0c59c1d1b345403474e15e8f2f9a3f76b2aaab7f9bd05a4443,Git LF for text; exact binary otherwise
+fig1_shrinkage_by_rating_count.pdf,41470,def00664fda4aef81035a209473cee5af97c6cbf484a5736457e67d1309ddf3f,Git LF for text; exact binary otherwise
+fig1_shrinkage_by_rating_count.png,257851,d7dbdaac8d2bf716301f0d0c11beb17e74c0944232f828e67effcad686663d07,Git LF for text; exact binary otherwise
+fig2_designer_effects.pdf,43244,ddb5eeaccb1d98bba519a392988c99f125f5ed650c1634065c1ad5dd7c0b78c9,Git LF for text; exact binary otherwise
+fig2_designer_effects.png,301435,55cccb1dfbb4ae7f9ec527471cbbb887cb38835e1a75033aa1e92a590e5499b9,Git LF for text; exact binary otherwise
+README.md,4796,ac21b8ff525a0202e1ace352ad0a53b25994a541784ce40706964039a258cf14,Git LF for text; exact binary otherwise
+shrinkage_plot_data.csv,1159,4a23d3478f90eb47dae00e0a9039920e3bd84b536dd1441862ef7004378a3e70,Git LF for text; exact binary otherwise
+source_hashes.csv,931,bfe68176294520c47c4cbe09557933aa6a0024c4faaee063365c312442c8ccd6,Git LF for text; exact binary otherwise
+validation.txt,824,27b5a318d99802e52f2cc9a91bbcda6cc7cb44a507aa48d732be70008c95589f,Git LF for text; exact binary otherwise
