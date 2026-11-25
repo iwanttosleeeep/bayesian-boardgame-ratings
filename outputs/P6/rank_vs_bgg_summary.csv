@@ -1,0 +1,9 @@
+quantity,value
+games_ranked,21375
+joint_draws,500
+spearman_vs_bgg_adjusted,0.776283598558148
+top10_overlap,0
+top50_overlap,1
+median_90pct_rank_interval_width,2575.55
+median_90pct_width_top10_candidates,71.025
+games_with_p_top10_above_005,28
