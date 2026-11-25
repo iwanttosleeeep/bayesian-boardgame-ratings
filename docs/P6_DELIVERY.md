@@ -93,6 +93,25 @@ voting.
 assistance and must be rewritten in the author's own words. The course guidance allows
 AI support but expects each member to be able to explain and defend every number.
 
+## 4b. Group deck (rebuilt 26 Nov)
+
+`slides/Group_deck_draft.pptx` now uses the figures committed by every owner, in the
+order agreed in review — RQ1 shrinkage, RQ2 designer effects, RQ3 ranking, with M0
+and M2 as supporting analyses. 17 slides:
+
+| Slides | Content | Figures |
+|---|---|---|
+| 1–4 | Question, data, why shrink | P1 EDA |
+| 5 | Model map (three for the rating, one for popularity) | table |
+| 6–8 | RQ1: s at its prior bound, shrinkage, PPC failure | P5 fig01/fig02, P1 PPC |
+| 9–10 | RQ2: designer effects, adjustment by rating count | P4 PR #8 figures |
+| 11 | Robustness of the priors tested | P5 fig04 |
+| 12–13 | Supporting: three samplers, popularity model | P2, P3 |
+| 14 | Model comparison (WAIC vs ELPD disagree) | P5 fig05/fig06 |
+| 15–17 | RQ3: benchmark, ranking uncertainty, divergence | P6 |
+
+Every slide carries its source in a credit line and in the speaker notes.
+
 ## 5. Open items
 
 - Slide integration needs every member's final figures (28 Nov freeze).
