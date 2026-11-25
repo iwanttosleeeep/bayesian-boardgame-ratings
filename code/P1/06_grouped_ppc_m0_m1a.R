@@ -1,47 +1,11 @@
-# ============================================================
-# P1 — Grouped posterior predictive checks (PPC) for M0 and M1a
-# ------------------------------------------------------------
-# Purpose: preliminary grouped PPC on the 6,489-game development set,
-# P1's outstanding deliverable for the 27 Nov checkpoint.
-#
-# Inputs (all committed in the repository):
-#   dev_subsample.csv                          P1 development data (root)
-#   code/P2/M0_prepare.R                       P2's M0 design-matrix builder
-#                                              (sourced, so X is identical
-#                                              to the one M0 was fitted on)
-#   outputs/P2/M0_gibbs_draws.rds              M0 Gibbs posterior (mcmc.list,
-#                                              4 chains x 2000, beta1..beta7
-#                                              + sigma2)
-#   outputs/P2/M0_train_game_ids.csv           M0 training-game ID order
-#   outputs/P5/M1a_WAIC_6489/parameter_draws.rds   M1a 6,489-refit draws
-#                                              (preferred; see fallback below)
-#   outputs/P5/M1a_Baseline/parameter_draws.rds    M1a 6,416-game draws
-#                                              (fallback; parameter posteriors
-#                                              are numerically almost identical
-#                                              between the two fits)
-#
-# Outputs:
-#   tables/ppc_grouped_summary.csv             long table: model x grouping x
-#                                              group x statistic, with
-#                                              predictive 95% intervals and
-#                                              Bayesian p-values
-#   figures/ppc_m0_rating_count_bands.png      observed vs predictive, M0
-#   figures/ppc_m1a_rating_count_bands.png     observed vs predictive, M1a
-#   figures/ppc_m0_category.png / ppc_m1a_category.png
-#   figures/ppc_m0_density.png / ppc_m1a_density.png  overall density overlays
-#
-# Models as documented by P2/P5:
-#   M0 : y_i ~ N(x_i' beta, sigma2)                      (constant variance)
-#   M1a: y_i ~ N(alpha, tau^2 + s^2 / n_i),  n_i = users_rated
-#        (game effect integrated out; intercept-only shrinkage)
-# ============================================================
+
 
 library(readr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 
-# ---- Paths (repo-relative; clean-clone safe) -----------------------------
+
 get_script_dir <- function() {
   file_arg <- grep("^--file=", commandArgs(trailingOnly = FALSE), value = TRUE)
   if (length(file_arg) > 0)
@@ -61,11 +25,7 @@ theme_set(theme_minimal(base_size = 11))
 BLUE <- "#2a78d6"; ORANGE <- "#eb6834"
 
 set.seed(20261125)
-N_DRAWS <- 500          # posterior draws used for PPC (matches WAIC convention)
-
-# ---- 1. Development data + M0 design matrix ------------------------------
-# Source P2's own preparation script so the X used here is by construction
-# the same X M0 was fitted on (same cleaning, imputation, standardization).
+N_DRAWS <- 500          
 source(file.path(REPO_ROOT, "code", "P2", "M0_prepare.R"))
 prep <- m0_prepare(file.path(REPO_ROOT, "dev_subsample.csv"))
 y  <- prep$y
@@ -91,7 +51,7 @@ stopifnot(all(c(paste0("beta", 1:7), "sigma2") %in% colnames(m0_draws_all)))
 pick <- round(seq(1, nrow(m0_draws_all), length.out = N_DRAWS))
 m0_draws <- m0_draws_all[pick, , drop = FALSE]
 
-# M1a: prefer the 6,489-game refit draws; fall back to the 6,416-game file.
+
 m1a_draws_path <- file.path(REPO_ROOT, "outputs", "P5", "M1a_WAIC_6489",
                             "parameter_draws.rds")
 if (!file.exists(m1a_draws_path)) {
@@ -107,8 +67,8 @@ stopifnot(all(c("alpha", "s", "tau") %in% colnames(m1a_all)))
 m1a_draws <- m1a_all[round(seq(1, nrow(m1a_all), length.out = N_DRAWS)),
                      c("alpha", "s", "tau"), drop = FALSE]
 
-# ---- 3. Posterior predictive replicates -----------------------------------
-# y_rep[s, i]: N_DRAWS x 6,489 matrix per model.
+
+
 simulate_m0 <- function(draws) {
   mu <- tcrossprod(draws[, paste0("beta", 1:7)], X)          # S x n
   mu + matrix(rnorm(length(mu)), nrow(mu)) * sqrt(draws[, "sigma2"])
@@ -123,8 +83,7 @@ yrep_m0  <- simulate_m0(m0_draws)
 yrep_m1a <- simulate_m1a(m1a_draws)
 cat("Replicate matrices:", nrow(yrep_m0), "draws x", ncol(yrep_m0), "games\n")
 
-# ---- 4. Grouped PPC summary ----------------------------------------------
-# Rating-count bands: identical to P5's grouped PPC so results are comparable.
+
 bands <- list(
   "30-40"    = function(n) n >= 30  & n <= 40,
   "40-100"   = function(n) n >  40  & n <  100,
@@ -134,7 +93,7 @@ bands <- list(
   "5000+"    = function(n) n >  5000
 )
 
-# Top categories by game count (each game may belong to several).
+
 cat_cols <- grep("^cat_", names(dev), value = TRUE)
 top_cats <- dev %>% summarise(across(all_of(cat_cols), ~ sum(.x == 1, na.rm = TRUE))) %>%
   pivot_longer(everything(), names_to = "cat", values_to = "n") %>%
@@ -148,7 +107,6 @@ group_index <- c(
     gsub("^cat_", "", top_cats))
 )
 
-# Discrepancy statistics per group: mean and variance (as in P5's PPC).
 summarise_group <- function(y_obs, yrep, idx, model, grouping, gname) {
   stopifnot(length(idx) >= 2)
   t_obs <- c(mean = mean(y_obs[idx]), var = var(y_obs[idx]))
@@ -178,7 +136,6 @@ ppc_table <- bind_rows(lapply(names(group_index), function(gn) {
 write_csv(ppc_table, file.path(TAB_DIR, "ppc_grouped_summary.csv"))
 cat("saved ", file.path(TAB_DIR, "ppc_grouped_summary.csv"), "\n", sep = "")
 
-# ---- 5. Figures ------------------------------------------------------------
 plot_grouped <- function(tbl, model_name, grouping_name, file, w = 8, h = 4.8) {
   d <- tbl %>% filter(model == model_name, grouping == grouping_name) %>%
     mutate(group = factor(group, levels = unique(group)))
@@ -221,7 +178,6 @@ plot_grouped(ppc_table, "M1a", "category", "ppc_m1a_category.png", h = 5.2)
 plot_density(yrep_m0,  "M0",  "ppc_m0_density.png")
 plot_density(yrep_m1a, "M1a", "ppc_m1a_density.png")
 
-# ---- 6. Console summary ----------------------------------------------------
 cat("\n== Bayesian p-values outside [0.05, 0.95] (possible misfit) ==\n")
 flag <- ppc_table %>%
   filter(p_mean < 0.05 | p_mean > 0.95 | p_variance < 0.05 | p_variance > 0.95)
