@@ -96,7 +96,8 @@ M1b 运行时间（proposal 原定 24 Nov 的 P2 任务）：
 | `outputs/P2/M0_cavi_fit.rds` | CAVI 完整结果（含 ELBO 轨迹、收敛标志） |
 | `outputs/P2/M0_cavi_session_info.txt` | 运行环境与设置 |
 | `figures/M0_cavi_elbo.png` | ELBO 收敛曲线（300 dpi） |
-| `figures/M0_three_method_intervals.png` / `.svg` | 三方法 95% 区间宽度对比：横轴 β1–β7、σ²，纵轴 95% interval width；SVG 为可直接插入幻灯片的矢量版本，PNG 由更新后的 R 脚本重绘（300 dpi） |
+| `figures/M0_three_method_intervals.svg` | **目前推荐用于 PPT 的修正版矢量图**：横轴 β1–β7、σ²，纵轴 95% interval width；图例置于绘图区上方，不遮挡数据点。直接用当前已归档的 `tables/M0_three_method_comparison.csv` 数字绘制。 |
+| `figures/M0_three_method_intervals.png` | **仓库内 PNG 仍是上次上传的旧图**；新的 `M0_cavi_run.R` 已调整图例位置，重新执行后会替换这张 PNG（300 dpi）。在 PNG 更新前请选用上方 SVG。 |
 | `tables/M0_three_method_comparison.csv` | 三方法后验均值/SD/95% 区间对比 |
 | `tables/M0_M1b_runtime_comparison.csv` | M0 三方法 + M1b 运行时间对照（含 `timed_stage`、`comparable` 列） |
 | `tables/M1b_P2_timing_probe.csv` | P2 独立 M1b 计时探针 |
