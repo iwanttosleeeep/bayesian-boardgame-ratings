@@ -1,0 +1,13 @@
+P5 figure generation checks
+Source: [local workdir redacted]
+Input mode: original local RDS/CSV + embedded archived summaries
+Baseline posterior draws: 12000
+Extended posterior draws: 12000
+Development IDs and order (Baseline vs matched data): PASS
+Extended training centering: PASS (saved object has no independent ID vector)
+Script 07 shrinkage recomputation, Baseline median: 0.03599556631937206
+Script 07 shrinkage recomputation, Extended median: 0.009509036376824209
+Both match archived shrinkage summary within 1e-8: PASS
+Four-model holdout and WAIC sample sizes: PASS
+No model fitted; inputs not changed.
+Figures: fig01_prior_posterior_s.png, fig02_rating_shrinkage.png, fig03_grouped_holdout_ppc.png, fig04_sensitivity.png, fig05_four_model_holdout.png, fig06_four_model_waic.png
