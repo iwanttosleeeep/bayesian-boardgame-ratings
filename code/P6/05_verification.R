@@ -118,6 +118,32 @@ add("p_top10_le_p_top50", all(out$p_top_10 <= out$p_top_50 + 1e-12),
 add("p_top50_le_p_top100", all(out$p_top_50 <= out$p_top_100 + 1e-12),
     sum(out$p_top_50 > out$p_top_100 + 1e-12))
 
+# --------------------------------------------------------------- tie-breaking --
+# Median ranks can tie even though no single draw has a tie, so both orderings use
+# an explicit key. Check that the stored ranks reproduce that key exactly.
+add("rank_model_is_a_permutation",
+    setequal(out$rank_model, seq_len(nrow(out))), length(unique(out$rank_model)))
+by_key <- out[order(rank_median, rank_mean, id), id]
+by_rank <- out[order(rank_model), id]
+add("rank_model_matches_key_median_then_mean_then_id",
+    identical(by_key, by_rank), identical(by_key, by_rank))
+
+by_key_bgg <- out[order(-bgg_bayes_average, id), id]
+by_rank_bgg <- out[order(rank_bgg_adjusted), id]
+add("rank_bgg_is_a_permutation",
+    setequal(out$rank_bgg_adjusted, seq_len(nrow(out))),
+    length(unique(out$rank_bgg_adjusted)))
+add("rank_bgg_matches_key_score_then_id",
+    identical(by_key_bgg, by_rank_bgg), identical(by_key_bgg, by_rank_bgg))
+
+cut_median <- out[rank_model == 10, rank_median]
+n_tied_median <- sum(out$rank_median == cut_median)
+cut_bayes <- out[rank_bgg_adjusted == 10, bgg_bayes_average]
+n_tied_bgg <- sum(out$bgg_bayes_average == cut_bayes)
+add("cutoff_tie_count_reported", TRUE,
+    sprintf("median rank %g shared by %d games; BGG score %g shared by %d games",
+            cut_median, n_tied_median, cut_bayes, n_tied_bgg))
+
 # Monte Carlo precision at B = 500: largest standard error is at p = 0.5
 B <- ncol(draws)
 mc_se <- sqrt(0.25 / B)

@@ -35,3 +35,8 @@ p_top_100_in_unit_interval,TRUE,0-1
 p_top_100_sums_to_100,TRUE,100
 p_top10_le_p_top50,TRUE,0
 p_top50_le_p_top100,TRUE,0
+rank_model_is_a_permutation,TRUE,21375
+rank_model_matches_key_median_then_mean_then_id,TRUE,TRUE
+rank_bgg_is_a_permutation,TRUE,21375
+rank_bgg_matches_key_score_then_id,TRUE,TRUE
+cutoff_tie_count_reported,TRUE,median rank 14 shared by 2 games; BGG score 8.136 shared by 1 games

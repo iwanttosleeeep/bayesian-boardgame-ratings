@@ -84,7 +84,7 @@ text(s, Inches(8.35), Inches(1.95), Inches(4.5), Inches(4.6), [
     f"{S['median_90pct_width_top10_candidates']:.0f} for top-ten candidates",
     "Monte Carlo SE of a probability is at most 0.022 at 500 draws",
 ], size=13.5, space_after=13)
-note(s, "36 structural checks pass: unique ids in the same order, finite draws, "
+note(s, "41 structural checks pass: unique ids in the same order, finite draws, "
         "draw numbers 1-500, sums of P(top k) equal to 10/50/100.")
 
 # ----------------------------------------------------------------- slide 4 ---

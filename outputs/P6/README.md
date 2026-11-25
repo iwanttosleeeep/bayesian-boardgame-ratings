@@ -84,6 +84,12 @@ the same aggregation as `code/P5/05_Extended_SD_sensitivity.R`. All 12,000 param
 draws are used, in batches, and no game is filtered out. The median is 3.02; P5's
 independently computed 3.06 on 6,416 development games is consistent with it.
 
+The Extended model does **not** inherit the Baseline's prior on `s`. It replaces
+`s²/n` with a per-game `sd_hist²/n` plug-in, keeps no shared `s`, and has its own
+priors on `a_tau` and `b_tau`. Its own prior- and SD-sensitivity runs are in
+`outputs/P5/Sensitivity_Analysis/`; the numbers above should be read as that model's
+result, not as a re-parameterisation of the Baseline.
+
 ## 3. Ranking under posterior shrinkage
 
 P5 exports 500 **joint** posterior draws of each game's latent rating, in five RDS
@@ -110,7 +116,7 @@ predict an average, M1a is the model from which a pseudo-vote count is defined.
 
 Top-k lists compared with BGG are ordered by **posterior median rank**, not by
 P(top k). At 500 draws the Monte Carlo standard error of a probability is at most
-0.022 (at p = 0.5). All 36 structural and numerical checks in
+0.022 (at p = 0.5). All 41 structural and numerical checks in
 `rank_verification_checks.md` pass.
 
 ### The rankings disagree at the top
@@ -123,8 +129,18 @@ P(top k). At 500 draws the Monte Carlo standard error of a probability is at mos
 | Median rating count, top 100 | 76 | 20,767 |
 
 A game with 43 ratings and a 9.56 average keeps almost all of that average under our
-shrinkage, so it outranks everything; BGG's rule pulls the same game back toward 5.5,
-which is why the familiar titles lead its list.
+shrinkage, so it has the highest posterior median rank in this set; BGG's rule pulls
+the same game back toward 5.5, which is why the familiar titles lead its list.
+
+**Tie-breaking.** No single posterior draw contains a tie, but the summarised median
+ranks do: the 10th and 11th games both have a median rank of 14. Both orderings
+therefore use a fully determined key — our ranking by median rank, then mean rank,
+then game id; BGG's by adjusted score, then game id — so the top-k lists do not depend
+on input row order. At the 10/11 boundary the key puts **Urgency** in (mean rank
+19.13) and leaves **Flip & Fish** out (mean rank 20.39), even though Flip & Fish
+appears in the top 10 slightly more often (P(top 10) 0.374 against 0.300). The choice
+of secondary key is arbitrary and the boundary is genuinely uncertain; the top-ten
+statistics in the table above are reported with that caveat.
 
 **What can and cannot be said.** The divergence at the top is consistent with the
 much smaller shrinkage our model applies. It should not be attributed to m alone:
@@ -170,7 +186,7 @@ P(top 10), P(top 50), P(top 100) lie in [0, 1], are monotone per game, and sum t
 | `rank_uncertainty_all_games.csv` | Median rank, 5th/95th rank, P(top 10/50/100), BGG rank |
 | `top10_posterior_probabilities.csv` | Top 30 games by P(top 10) |
 | `rank_vs_bgg_summary.csv` | Spearman, overlaps, interval widths |
-| `rank_verification_checks.csv` / `.md` | The 36 checks |
+| `rank_verification_checks.csv` / `.md` | The 41 checks |
 
 ## 7. Scope and limitations
 

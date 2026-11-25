@@ -1,9 +1,12 @@
 # =============================================================================
 # P6 — Step 1: the BGG pseudo-vote benchmark
 #
-# BGG's "Geek Rating" (bayes_average) behaves like a Bayesian average that adds a
-# fixed number of dummy votes at a fixed prior mean. If that number is m and the
-# prior mean is C, then for a game with raw average ybar and n ratings
+# BGG's "Geek Rating" (bayes_average) is consistent with a Bayesian average that adds
+# a fixed number of dummy votes at a fixed prior mean. C = 5.5 and a constant m are
+# working assumptions of this benchmark, not documented BGG parameters; the fit below
+# shows how well that assumption reproduces the published scores, not how BGG
+# actually computes them. If the number of dummy votes is m and the prior mean is C,
+# then for a game with raw average ybar and n ratings
 #
 #     bayes_average = (n * ybar + m * C) / (n + m)
 #
@@ -24,7 +27,7 @@
 suppressPackageStartupMessages(library(data.table))
 source("code/P6/00_theme.R")
 
-C_PRIOR <- 5.5          # BGG's assumed prior mean for the Geek Rating
+C_PRIOR <- 5.5          # benchmark assumption, NOT a documented BGG constant
 HANDOFF <- "outputs/P5/P6_Full_Handoff/P6_all_games_posterior_ratings.csv"
 M1A     <- "outputs/P5/M1a_Baseline/parameter_draws.rds"
 OUTDIR  <- "outputs/P6"

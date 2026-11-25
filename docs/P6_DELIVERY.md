@@ -13,7 +13,7 @@ Status at 25 Nov 2026, revised after the first PR review. Full method and caveat
 | Ranking uncertainty over 500 joint draws | `outputs/P6/rank_uncertainty_all_games.csv` | done |
 | Top-10 probabilities | `outputs/P6/top10_posterior_probabilities.csv` | done |
 | Ranking comparison with BGG | `outputs/P6/rank_vs_bgg_summary.csv` | done |
-| Verification log (36 checks, all pass) | `outputs/P6/rank_verification_checks.md` | done |
+| Verification log (41 checks, all pass) | `outputs/P6/rank_verification_checks.md` | done |
 | Figures (5) | `figures/P6/` | done |
 | Slide material | section 3 below | done |
 | English report section | section 4 below | **draft, needs rewriting** |
@@ -54,9 +54,11 @@ constant-m approximation, not BGG's published algorithm.
 
 **Slide B — What the model implies.**
 Under M1a the pseudo-vote count is `m = s²/τ²` with posterior mean 11.6 (95% CI
-10.7 – 12.3). The ranking export uses the Extended model, whose effective per-game
-count has median 3.0. Both numbers depend on the prior for `s`, which the data
-inform only weakly — `s` sits near the top of its prior.
+10.7 – 12.3). That value depends on the prior for `s`, which the data inform only
+weakly — `s` sits near the top of its prior. The ranking export uses the Extended
+model instead, which has no shared `s`: it plugs in each game's historical SD and has
+its own priors on `a_tau` and `b_tau`. Its effective per-game count has median 3.0,
+from its own model and sensitivity runs.
 
 **Slide C — The consequence for the ranking.**
 Ranking inside each of 500 joint posterior draws, our top ten has a median of 46
@@ -76,9 +78,10 @@ voting.
 > fixed number of dummy votes at a prior mean of 5.5. Inverting that formula on
 > 20,694 games gives an equivalent count of 1,874 dummy votes (per-game median
 > 1,841), with little variation across rating counts. Under the M1a model the same
-> quantity, m = s²/τ², has a posterior mean of 11.6 (95% CI 10.7–12.3), and the
-> model behind the ranking has an effective per-game count of about 3. Both are
-> model-based quantities that depend on the prior for the weakly identified rater SD.
+> quantity, m = s²/τ², has a posterior mean of 11.6 (95% CI 10.7–12.3); that estimate
+> depends on the prior for the weakly identified rater SD. The model behind the
+> ranking is a different specification, which replaces that shared SD with a per-game
+> historical SD plug-in and has an effective per-game count of about 3.
 > Ranking 21,375 games inside each of 500 joint posterior draws shows that the top of
 > the list is sensitive to that choice: the model's top ten has a median of 46
 > ratings against 25,535 for BGG's, and the two top tens do not intersect, although
@@ -93,6 +96,6 @@ AI support but expects each member to be able to explain and defend every number
 ## 5. Open items
 
 - Slide integration needs every member's final figures (28 Nov freeze).
-- P4 and P5 have no presentation figures committed yet; their slides currently carry
-  numbers only.
+- P5 has since uploaded six figures to `figures/P5/` on main; they can be used when the
+  deck is rebuilt. P4 still has only diagnostic figures, so its slide carries numbers.
 - If P5 re-exports draws with a different model, all three P6 scripts must be rerun.

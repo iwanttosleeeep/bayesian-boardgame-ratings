@@ -90,22 +90,48 @@ out <- merge(ranks, games[, .(id, n_2022, raw_average, bgg_bayes_average,
 # bgg_rank is the site-wide rank, which includes games outside our 21,375.
 # For a like-for-like comparison we re-rank BGG's adjusted score WITHIN the same
 # set of games we ranked.
-out[, rank_bgg_adjusted := frank(-bgg_bayes_average, ties.method = "average")]
-out[, rank_gap := rank_median - rank_bgg_adjusted]
+#
+# Tie-breaking. Within a single posterior draw no two games tie, but the SUMMARISED
+# median ranks can. The 10th and 11th games both have a median rank of 14, so
+# ordering on rank_median alone would let the row order decide who is in the top
+# ten. Both orderings therefore use an explicit, fully determined key:
+#
+#   our ranking : rank_median, then rank_mean, then id
+#   BGG ranking : bgg_bayes_average (descending), then id
+#
+# With this key every game has a unique position and the top-k lists are
+# reproducible regardless of input row order.
+setorder(out, rank_median, rank_mean, id)
+out[, rank_model := .I]
 
-spearman_rho <- cor(out$rank_median, out$rank_bgg_adjusted, method = "spearman")
+setorder(out, -bgg_bayes_average, id)
+out[, rank_bgg_adjusted := .I]
 
-top10_model <- out[order(rank_median)][1:10]
-top10_bgg   <- out[order(rank_bgg_adjusted)][1:10]
+setorder(out, id)                      # stable order for the saved file
+out[, rank_gap := rank_model - rank_bgg_adjusted]
+
+spearman_rho <- cor(out$rank_model, out$rank_bgg_adjusted, method = "spearman")
+
+top10_model <- out[rank_model <= 10]
+top10_bgg   <- out[rank_bgg_adjusted <= 10]
 top10_overlap <- length(intersect(top10_model$id, top10_bgg$id))
 
-top50_model <- out[order(rank_median)][1:50]
-top50_bgg   <- out[order(rank_bgg_adjusted)][1:50]
+top50_model <- out[rank_model <= 50]
+top50_bgg   <- out[rank_bgg_adjusted <= 50]
 top50_overlap <- length(intersect(top50_model$id, top50_bgg$id))
+
+# How many games share the cut-off value? If more than one, the secondary key is
+# what decides membership, and that has to be reported rather than hidden.
+cut_median <- out[rank_model == 10, rank_median]
+n_tied_at_median_cut <- sum(out$rank_median == cut_median)
+cut_bayes <- out[rank_bgg_adjusted == 10, bgg_bayes_average]
+n_tied_at_bgg_cut <- sum(out$bgg_bayes_average == cut_bayes)
 
 cat(sprintf("Spearman(our median rank, BGG adjusted rank) = %.3f\n", spearman_rho))
 cat(sprintf("Top-10 overlap: %d/10 | Top-50 overlap: %d/50\n",
             top10_overlap, top50_overlap))
+cat(sprintf("Cut-off ties: %d games share median rank %g (10th place); %d games share BGG adjusted score %g\n",
+            n_tied_at_median_cut, cut_median, n_tied_at_bgg_cut, cut_bayes))
 
 # How wide is the 90% rank interval? Report it for the whole ranking and for
 # games that are plausible top-10 candidates.
@@ -117,13 +143,16 @@ summary_tbl <- data.table(
                "top10_overlap", "top50_overlap",
                "median_90pct_rank_interval_width",
                "median_90pct_width_top10_candidates",
-               "games_with_p_top10_above_005"),
+               "games_with_p_top10_above_005",
+               "median_rank_at_top10_cutoff",
+               "n_games_tied_at_median_cutoff", "n_games_tied_at_bgg_cutoff"),
   value = c(nrow(out), ncol(draws), spearman_rho, top10_overlap, top50_overlap,
-            median_width, top_width, sum(out$p_top_10 > 0.05))
+            median_width, top_width, sum(out$p_top_10 > 0.05),
+            cut_median, n_tied_at_median_cut, n_tied_at_bgg_cut)
 )
 
 # ------------------------------------------------------------------ outputs ---
-setorder(out, rank_median)
+setorder(out, rank_model)
 fwrite(out, file.path(OUTDIR, "rank_uncertainty_all_games.csv"))
 
 fwrite(out[order(-p_top_10)][1:30, .(id, name, rank_median, rank_q05, rank_q95,
@@ -159,7 +188,7 @@ p3 <- ggplot(top20, aes(x = p_top_10, y = name)) +
 save_p6(p3, "figures/P6/fig_top10_probability.png", 11, 7)
 
 # Fig 4: 90% rank intervals for the 15 games with the best median rank.
-top15 <- out[order(rank_median)][1:15][order(-rank_median)]
+top15 <- out[order(rank_model)][1:15][order(-rank_model)]
 top15[, name := factor(wrap_name(name), levels = wrap_name(name))]
 p4 <- ggplot(top15, aes(y = name)) +
   geom_segment(aes(x = rank_q05, xend = rank_q95, yend = name),
@@ -176,7 +205,7 @@ p4 <- ggplot(top15, aes(y = name)) +
 save_p6(p4, "figures/P6/fig_rank_intervals.png", 11, 6.6)
 
 # Fig 5: our order against BGG's, on the same games.
-p5 <- ggplot(out, aes(x = rank_bgg_adjusted, y = rank_median)) +
+p5 <- ggplot(out, aes(x = rank_bgg_adjusted, y = rank_model)) +
   geom_abline(slope = 1, intercept = 0, colour = P6_MUTED, linewidth = 0.6) +
   geom_point(alpha = 0.18, size = 0.7, colour = P6_BLUE) +
   scale_x_log10(breaks = c(1, 10, 100, 1000, 10000)) +
