@@ -7,19 +7,30 @@ library(ggplot2)
 library(scales)
 
 
-DATA_DIR <- "C:/Users/LINVI/Downloads"
+# Resolve paths relative to the repository root so the script runs from a
+# clean clone, regardless of the working directory it is launched from.
+get_script_dir <- function() {
+  file_arg <- grep("^--file=", commandArgs(trailingOnly = FALSE), value = TRUE)
+  if (length(file_arg) > 0)
+    return(dirname(normalizePath(sub("^--file=", "", file_arg[1]))))
+  if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable())
+    return(dirname(normalizePath(rstudioapi::getActiveDocumentContext()$path)))
+  getwd()
+}
 
-
-OUT_DIR <- file.path(DATA_DIR, "eda_output")   # all outputs go here
-dir.create(file.path(OUT_DIR, "figures"), recursive = TRUE, showWarnings = FALSE)
-dir.create(file.path(OUT_DIR, "tables"),  recursive = TRUE, showWarnings = FALSE)
+REPO_ROOT <- normalizePath(file.path(get_script_dir(), "..", ".."))  # code/P1 -> repo root
+DATA_DIR  <- REPO_ROOT                       # CSVs live at the repository root
+FIG_DIR   <- file.path(REPO_ROOT, "figures") # committed figures location
+TAB_DIR   <- file.path(REPO_ROOT, "tables")  # committed tables location
+dir.create(FIG_DIR, recursive = TRUE, showWarnings = FALSE)
+dir.create(TAB_DIR, recursive = TRUE, showWarnings = FALSE)
 
 theme_set(theme_minimal(base_size = 11))
 BLUE <- "#2a78d6"; ORANGE <- "#eb6834"; GREEN <- "#1baf7a"
 
 save_fig <- function(p, name, w = 8, h = 4.8) {
-  ggsave(file.path(OUT_DIR, "figures", name), p, width = w, height = h, dpi = 200, bg = "white")
-  cat("saved ", file.path(OUT_DIR, "figures", name), "\n", sep = "")
+  ggsave(file.path(FIG_DIR, name), p, width = w, height = h, dpi = 200, bg = "white")
+  cat("saved ", file.path(FIG_DIR, name), "\n", sep = "")
 }
 
 # ---- Load data --------------------------------------------------------
@@ -45,8 +56,8 @@ summary_tbl <- df %>%
                    .names = "{.col}___{.fn}")) %>%
   pivot_longer(everything(), names_to = c("variable", "stat"), names_sep = "___") %>%
   pivot_wider(names_from = stat, values_from = value)
-write_csv(summary_tbl, file.path(OUT_DIR, "tables", "eda_descriptive_summary.csv"))
-cat("saved ", file.path(OUT_DIR, "tables", "eda_descriptive_summary.csv"), "\n", sep = "")
+write_csv(summary_tbl, file.path(TAB_DIR, "eda_descriptive_summary.csv"))
+cat("saved ", file.path(TAB_DIR, "eda_descriptive_summary.csv"), "\n", sep = "")
 
 # ---- 1. Distribution of raw average rating ----------------------------
 p1 <- ggplot(df, aes(average)) +
@@ -174,4 +185,4 @@ p9b <- ggplot(both, aes(users_rated, fill = sample)) +
 save_fig(p9a, "eda_09a_dev_vs_holdout_average.png")
 save_fig(p9b, "eda_09b_dev_vs_holdout_users.png")
 
-cat("\nAll EDA outputs written to", OUT_DIR, "\n")
+cat("\nAll EDA outputs written to", FIG_DIR, "and", TAB_DIR, "\n")
