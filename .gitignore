@@ -16,3 +16,7 @@ outputs/P4/**/sessionInfo*.txt
 outputs/P4/**/environment_verified.txt
 outputs/P4/**/runtime_versions.txt
 /p4_reproduced/
+
+# Python bytecode from code/P6/*.py
+__pycache__/
+*.pyc

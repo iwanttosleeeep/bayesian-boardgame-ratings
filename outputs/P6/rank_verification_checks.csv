@@ -1,0 +1,42 @@
+check,pass,observed
+part01_rows,TRUE,21375
+part01_cols,TRUE,100
+P6_theta_draws_part_02.rds_rows,TRUE,21375
+P6_theta_draws_part_02.rds_cols,TRUE,100
+P6_theta_draws_part_03.rds_rows,TRUE,21375
+P6_theta_draws_part_03.rds_cols,TRUE,100
+P6_theta_draws_part_04.rds_rows,TRUE,21375
+P6_theta_draws_part_04.rds_cols,TRUE,100
+P6_theta_draws_part_05.rds_rows,TRUE,21375
+P6_theta_draws_part_05.rds_cols,TRUE,100
+all_parts_same_id_order,TRUE,TRUE
+merged_rows,TRUE,21375
+merged_cols,TRUE,500
+ids_unique,TRUE,21375
+draw_numbers_unique,TRUE,500
+draw_numbers_cover_1_500,TRUE,1-500
+draws_all_finite,TRUE,0
+handoff_id_order_matches_draws,TRUE,TRUE
+theta_mean_matches_handoff,TRUE,5.33e-15
+theta_ci_matches_handoff,TRUE,5.33e-15
+no_ties_within_any_draw,TRUE,0
+exactly_10_games_in_top_10_each_draw,TRUE,10-10
+exactly_50_games_in_top_50_each_draw,TRUE,50-50
+exactly_100_games_in_top_100_each_draw,TRUE,100-100
+rank_median_matches_recomputed,TRUE,0
+p_top10_matches_recomputed,TRUE,0
+rank_bounds_ok,TRUE,1 21375
+rank_interval_ordered,TRUE,q05 <= q75 <= q95 and q05 <= median <= q95
+p_top_10_in_unit_interval,TRUE,0-0.982
+p_top_10_sums_to_10,TRUE,10
+p_top_50_in_unit_interval,TRUE,0-1
+p_top_50_sums_to_50,TRUE,50
+p_top_100_in_unit_interval,TRUE,0-1
+p_top_100_sums_to_100,TRUE,100
+p_top10_le_p_top50,TRUE,0
+p_top50_le_p_top100,TRUE,0
+rank_model_is_a_permutation,TRUE,21375
+rank_model_matches_key_median_then_mean_then_id,TRUE,TRUE
+rank_bgg_is_a_permutation,TRUE,21375
+rank_bgg_matches_key_score_then_id,TRUE,TRUE
+cutoff_tie_count_reported,TRUE,median rank 14 shared by 2 games; BGG score 8.136 shared by 1 games
