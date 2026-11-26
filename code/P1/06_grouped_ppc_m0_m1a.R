@@ -54,15 +54,13 @@ m0_draws <- m0_draws_all[pick, , drop = FALSE]
 
 m1a_draws_path <- file.path(REPO_ROOT, "outputs", "P5", "M1a_WAIC_6489",
                             "parameter_draws.rds")
-if (!file.exists(m1a_draws_path)) {
-  m1a_draws_path <- file.path(REPO_ROOT, "outputs", "P5", "M1a_Baseline",
-                              "parameter_draws.rds")
-  cat("NOTE: 6,489-refit parameter draws not in repo; using the 6,416-game\n",
-      "      M1a Baseline draws. Parameter posteriors are nearly identical\n",
-      "      (alpha 6.429 vs 6.435; s 2.963 vs 2.966; tau 0.870 vs 0.874),\n",
-      "      but re-run with the 6,489 draws once P5 uploads them.\n")
-}
-m1a_all <- readRDS(m1a_draws_path)$draws
+stopifnot(file.exists(m1a_draws_path))   # P5 uploaded the 6,489-game refit draws
+m1a_obj <- readRDS(m1a_draws_path)
+# The draws must come from the same 6,489 development games, in the same row
+# order as y / X; the RDS carries its own ID sequence, so verify directly.
+stopifnot(identical(as.integer(m1a_obj$ids), ids))
+cat("M1a draws verified against", length(ids), "development game IDs (order match)\n")
+m1a_all <- m1a_obj$draws
 stopifnot(all(c("alpha", "s", "tau") %in% colnames(m1a_all)))
 m1a_draws <- m1a_all[round(seq(1, nrow(m1a_all), length.out = N_DRAWS)),
                      c("alpha", "s", "tau"), drop = FALSE]
@@ -177,6 +175,34 @@ plot_grouped(ppc_table, "M0",  "category", "ppc_m0_category.png",  h = 5.2)
 plot_grouped(ppc_table, "M1a", "category", "ppc_m1a_category.png", h = 5.2)
 plot_density(yrep_m0,  "M0",  "ppc_m0_density.png")
 plot_density(yrep_m1a, "M1a", "ppc_m1a_density.png")
+
+# ---- Variance PPC comparison: M0 vs M1a by rating-count band -----------
+# Motivation for the Extended model: M0's constant residual variance
+# under-predicts spread for low-count bands and over-predicts it for
+# high-count bands, while M1a's tau^2 + s^2/n structure adapts with n.
+plot_variance_comparison <- function(tbl, file, w = 8, h = 5) {
+  d <- tbl %>%
+    filter(grouping == "rating_count") %>%
+    mutate(group = factor(group, levels = unique(group)))
+  obs <- d %>% distinct(group, observed_variance)
+  pd  <- position_dodge(width = 0.55)
+  p <- ggplot(d, aes(group, color = model)) +
+    geom_pointrange(aes(y = pred_variance_median, ymin = pred_variance_low,
+                        ymax = pred_variance_high),
+                    position = pd, size = 0.5) +
+    geom_point(data = obs, aes(y = observed_variance),
+               color = "black", shape = 18, size = 3.5, position = pd) +
+    scale_color_manual(values = c(M0 = BLUE, M1a = ORANGE), name = NULL) +
+    labs(title = "Variance PPC by rating-count band: M0 vs M1a",
+         subtitle = paste0("Bars = 95% posterior predictive intervals for group variance; black diamonds = observed.\n",
+                           "M0's constant variance under-predicts low-count spread and over-predicts high-count spread."),
+         x = "Ratings per game", y = "Group variance of average rating") +
+    theme(legend.position = "top",
+          axis.text.x = element_text(angle = 30, hjust = 1))
+  ggsave(file.path(FIG_DIR, file), p, width = w, height = h, dpi = 200, bg = "white")
+  cat("saved ", file.path(FIG_DIR, file), "\n", sep = "")
+}
+plot_variance_comparison(ppc_table, "ppc_variance_comparison_rating_count.png")
 
 cat("\n== Bayesian p-values outside [0.05, 0.95] (possible misfit) ==\n")
 flag <- ppc_table %>%
