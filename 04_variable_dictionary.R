@@ -1,5 +1,5 @@
 ## ============================================================================
-## 04_varibale_dictionary.R
+## 04_variable_dictionary.R
 ## STAT6106 Project — BoardGameGeek data
 ## (regenerated 2026-11-21: emits the enriched dictionary matching the
 ##  delivered variable_dictionary.csv — type / missingness / range / definition;
@@ -11,7 +11,7 @@
 ## Input   : data/processed/big_features.rds   (from 02_feature_engineering.R)
 ## Output  : output/variable_dictionary.csv
 ## Run from the project root directory, e.g.:
-##   Rscript script/04_varibale_dictionary.R
+##   Rscript 04_variable_dictionary.R
 ## ============================================================================
 
 suppressMessages(library(dplyr))

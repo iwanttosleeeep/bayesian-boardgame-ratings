@@ -17,14 +17,14 @@ stopifnot(identical(input$prep$data,m1b_prepare(dev)$data),
   identical(unname(tools::md5sum("dev_subsample.csv")),hash("training_worktree","md5")))
 peers <- c(P2_JAGS="outputs/P2/M0_loglik_jags_share.rds",
            P2_Gibbs="outputs/P2/M0_loglik_gibbs_share.rds",
-           P5="outputs/P5/M1a_WAIC_6489/pointwise_loglik_share.rds")
+           P5="archive/outputs/P5/M1a_WAIC_6489/pointwise_loglik_share.rds")
 alignment <- lapply(names(peers),function(who) {
   z<-readRDS(peers[[who]])
   stopifnot(identical(dim(z$loglik),c(500L,6489L)),all(is.finite(z$loglik)),
     identical(as.character(ids),as.character(z$ids)),
     identical(colnames(z$loglik),as.character(ids)),
     identical(z$train_md5,hash("training_git_lf","md5")))
-  idfile<-if(who=="P5")"outputs/P5/M1a_WAIC_6489/train_game_ids.csv" else "outputs/P2/M0_train_game_ids.csv"
+  idfile<-if(who=="P5")"archive/outputs/P5/M1a_WAIC_6489/train_game_ids.csv" else "outputs/P2/M0_train_game_ids.csv"
   stopifnot(identical(as.character(ids),as.character(read.csv(idfile)$id)))
   data.frame(peer=who,games=length(z$ids),same_order=TRUE,finite=TRUE,peer_train_md5=z$train_md5)
 })

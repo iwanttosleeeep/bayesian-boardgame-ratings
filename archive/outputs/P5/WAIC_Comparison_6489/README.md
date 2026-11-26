@@ -4,11 +4,11 @@
 
 ## Inputs and reproducibility
 
-- Script: [code/P5/10_Compare_M0_M1a_M1b_WAIC_6489.R](../../../code/P5/10_Compare_M0_M1a_M1b_WAIC_6489.R)
-- M0 JAGS (primary): [outputs/P2/M0_loglik_jags_share.rds](../../P2/M0_loglik_jags_share.rds)
-- M0 Gibbs (same-model sampler verification): [outputs/P2/M0_loglik_gibbs_share.rds](../../P2/M0_loglik_gibbs_share.rds)
-- M1a (6,489-game Baseline refit): [outputs/P5/M1a_WAIC_6489/pointwise_loglik_share.rds](../M1a_WAIC_6489/pointwise_loglik_share.rds)
-- M1b (designer-conditional): [outputs/P4/M1b_WAIC_6489/pointwise_loglik_share.rds](../../P4/M1b_WAIC_6489/pointwise_loglik_share.rds)
+- Script: [code/P5/10_Compare_M0_M1a_M1b_WAIC_6489.R](../../../../code/P5/10_Compare_M0_M1a_M1b_WAIC_6489.R)
+- M0 JAGS (primary): [outputs/P2/M0_loglik_jags_share.rds](../../../../outputs/P2/M0_loglik_jags_share.rds)
+- M0 Gibbs (same-model sampler verification): [outputs/P2/M0_loglik_gibbs_share.rds](../../../../outputs/P2/M0_loglik_gibbs_share.rds)
+- M1a (6,489-game Baseline refit): [archive/outputs/P5/M1a_WAIC_6489/pointwise_loglik_share.rds](../M1a_WAIC_6489/pointwise_loglik_share.rds)
+- M1b (designer-conditional): [outputs/P4/M1b_WAIC_6489/pointwise_loglik_share.rds](../../../../outputs/P4/M1b_WAIC_6489/pointwise_loglik_share.rds)
 
 All matrices are 500 posterior draws × 6,489 games. IDs and column order were validated before WAIC calculations. M1a reproduces its independently calculated WAIC 17,496.14838. M0 Gibbs versus JAGS differs in WAIC by 0.01998.
 

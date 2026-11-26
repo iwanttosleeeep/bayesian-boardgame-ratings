@@ -20,7 +20,7 @@ Reproduce with `05_eda.R` at the repository root.
 
 ## P1 grouped PPC figures (code/P1/06_grouped_ppc_m0_m1a.R, updated 26 Nov 2026)
 
-Run with the 6,489-game M1a refit draws (`outputs/P5/M1a_WAIC_6489/parameter_draws.rds`);
+Run with the 6,489-game M1a refit draws (`archive/outputs/P5/M1a_WAIC_6489/parameter_draws.rds`);
 see [docs/P1_PPC_NOTES.md](../docs/P1_PPC_NOTES.md) for conclusions.
 
 | File | Content |

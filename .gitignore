@@ -20,3 +20,6 @@ outputs/P4/**/runtime_versions.txt
 # Python bytecode from code/P6/*.py
 __pycache__/
 *.pyc
+
+# macOS metadata
+.DS_Store

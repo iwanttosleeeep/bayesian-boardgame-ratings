@@ -52,7 +52,7 @@ pick <- round(seq(1, nrow(m0_draws_all), length.out = N_DRAWS))
 m0_draws <- m0_draws_all[pick, , drop = FALSE]
 
 
-m1a_draws_path <- file.path(REPO_ROOT, "outputs", "P5", "M1a_WAIC_6489",
+m1a_draws_path <- file.path(REPO_ROOT, "archive", "outputs", "P5", "M1a_WAIC_6489",
                             "parameter_draws.rds")
 stopifnot(file.exists(m1a_draws_path))   # P5 uploaded the 6,489-game refit draws
 m1a_obj <- readRDS(m1a_draws_path)

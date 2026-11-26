@@ -27,12 +27,12 @@ get_input <- function(path) {
 files <- c(
   M0_JAGS="outputs/P2/M0_loglik_jags_share.rds",
   M0_Gibbs="outputs/P2/M0_loglik_gibbs_share.rds",
-  M1a="outputs/P5/M1a_WAIC_6489/pointwise_loglik_share.rds",
+  M1a="archive/outputs/P5/M1a_WAIC_6489/pointwise_loglik_share.rds",
   M1b="outputs/P4/M1b_WAIC_6489/pointwise_loglik_share.rds"
 )
 id_files <- c(
   M0_JAGS="outputs/P2/M0_train_game_ids.csv",
-  M1a="outputs/P5/M1a_WAIC_6489/train_game_ids.csv",
+  M1a="archive/outputs/P5/M1a_WAIC_6489/train_game_ids.csv",
   M1b="outputs/P4/M1b_WAIC_6489/train_game_ids.csv"
 )
 cat("Loading pointwise likelihood files; no fitting...\n")

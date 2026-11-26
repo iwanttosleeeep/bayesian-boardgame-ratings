@@ -3,7 +3,7 @@
 # Full loglik files are ~360MB each (8000 draws x 6489 games);
 # GitHub's web uploader rejects any single file over 25MB. We keep
 # 500 of the 8000 draws -> ~22MB each (under 25MB).
-# Output format matches P5's M1a_WAIC_6489 handoff: a list with
+# Output format matches P5's archive/outputs/P5/M1a_WAIC_6489 handoff: a list with
 # ids, draw_index, loglik (500 x 6489), convention, train_md5.
 # Run: open in RStudio -> Ctrl+A -> Ctrl+Enter.
 # ============================================================
