@@ -4,11 +4,16 @@ Reads the figures and CSVs produced by 01_bgg_benchmark.R and
 02_rank_uncertainty.R, so the slides always match the saved results.
 Run from the repository root:
 
-    python code/P6/03_make_slides.py
+    python archive/code/P6/03_make_slides.py
 """
 
 import csv
 import os
+import sys
+from pathlib import Path
+
+# Layout helpers remain with the current group-deck code.
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "code" / "P6"))
 
 from pptx import Presentation
 from pptx.enum.text import PP_ALIGN
@@ -18,7 +23,7 @@ from pptx_helpers import (INK, INK2, MUTED, W, H, blank, header, note,
                           picture, text)
 
 FIG = "figures/P6"
-OUT = "slides/P6_slides.pptx"
+OUT = "archive/slides/P6_slides.pptx"
 
 
 def read_summary():
