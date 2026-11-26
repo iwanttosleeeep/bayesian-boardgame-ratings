@@ -20,15 +20,15 @@ The public raw inputs are the [TidyTuesday 2022-01-25](https://github.com/rforda
 | 1 | [`01_data_cleaning.R`](../01_data_cleaning.R) | Read `data/raw/details.csv` and `ratings.csv`; merge and clean; save `data/processed/big_clean.rds` |
 | 2 | [`02_feature_engineering.R`](../02_feature_engineering.R) | Add categories, mechanics, designer IDs, standardized and capped predictors; save `big_features.rds` |
 | 3 | [`03_sampling.R`](../03_sampling.R) | Fixed random split; exports 3 CSVs to local `output/` |
-| 4 | [`04_varibale_dictionary.R`](../04_varibale_dictionary.R) | Generate `output/variable_dictionary.csv` |
+| 4 | [`04_variable_dictionary.R`](../04_variable_dictionary.R) | Generate `output/variable_dictionary.csv` |
 
-`04_varibale_dictionary.R` retains its original filename (including spelling) to avoid breaking existing references. The script headers may mention `script/`, but **the committed R scripts are at the repository root**. In RStudio, set the project root as working directory. Once the two original raw CSVs have been placed in `data/raw/`, run in order:
+The script headers may mention `script/`, but **the committed R scripts are at the repository root**. In RStudio, set the project root as working directory. Once the two original raw CSVs have been placed in `data/raw/`, run in order:
 
 ```bash
 Rscript 01_data_cleaning.R
 Rscript 02_feature_engineering.R
 Rscript 03_sampling.R
-Rscript 04_varibale_dictionary.R
+Rscript 04_variable_dictionary.R
 ```
 
 These commands generate intermediate objects under `data/processed/` and files under local `output/`; the copies currently shared on GitHub are at **root**. P1's original README reports byte-for-byte reproducibility after running the four scripts in R 4.5.3 (Windows), with seed **20261122**. This documentation did not independently rerun the pipeline.

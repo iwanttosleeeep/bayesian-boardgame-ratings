@@ -7,7 +7,7 @@
                               indicators, designer identifiers, capped / log /
                               standardized variables -> big_features.rds
 3. 03_sampling.R            — construct dev_subsample and comparison_sample
-4. 04_varibale_dictionary.R — export variable_dictionary.csv (83 variables)
+4. 04_variable_dictionary.R — export variable_dictionary.csv (83 variables)
 
 ## Reproducibility (verified 2026-11-22)
 The full pipeline 01-04 was rerun end-to-end in R 4.5.3 (Windows): the
