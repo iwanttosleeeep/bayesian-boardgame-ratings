@@ -7,6 +7,65 @@ We examine Bayesian shrinkage of BoardGameGeek (BGG) average ratings, how assump
 
 **Key dates:** 28 Nov — freeze **presentation results**; 1 Dec — ~15-minute presentation; **18 Dec — final report, code and data**. The presentation freeze is not the final analysis deadline.
 
+## Storyline — final version for the 1 Dec presentation (26 Nov)
+
+This section is the agreed narrative for the presentation and the report. Every number below links to a committed file. Where the older status sections further down differ, **this section and its linked files take precedence**.
+
+**Central conclusion.** Under our extended Bayesian model, sampling uncertainty in average ratings implies a median effective shrinkage of about **3 pseudo-votes**, compared with about **1,900** under a constant-weight approximation to BGG's adjusted score. The gap shows that statistical estimation of a game's rating and the design of a public ranking answer different questions.
+
+### Act I — The ranking problem (P1, P6; ~2 min)
+
+- BGG's adjusted score is well approximated by adding **1,874** dummy votes at 5.5 to every game (RMSE 0.020; 20,694 games) — [`outputs/P6/bgg_benchmark_summary.csv`](outputs/P6/bgg_benchmark_summary.csv). This is a fitted approximation, not BGG's published algorithm.
+- In the data, games with more ratings have higher averages (6.19 for 30–40 ratings to 7.22 for 5,000+) and smaller spread (variance 1.172 to 0.365) — [`tables/ppc_grouped_summary.csv`](tables/ppc_grouped_summary.csv), 6,489 development games.
+- Question: how much should an average rating be shrunk, statistically?
+
+### Act II — Why simple shrinkage is not enough (P1, P2, P4, P5; ~3 min)
+
+- **M0** (regression, no measurement error) cannot reproduce the fall in variance with rating count — grouped PPC in [`tables/ppc_grouped_summary.csv`](tables/ppc_grouped_summary.csv).
+- **M1a Baseline**: the rater SD `s` sits at its prior upper bound (2.96), giving m ≈ 11.6 — [`outputs/P5/M1a_Baseline/parameter_summary.csv`](outputs/P5/M1a_Baseline/parameter_summary.csv).
+- **M1b Baseline**: `s` = 2.98, also at the bound; widening the prior to U(0.5, 6) moves it to 4.03 and raises the median adjustment by 78% — [`outputs/P4/README.md`](outputs/P4/README.md).
+- **Message:** with averages only, the data cannot separate rater noise from genuine between-game spread. m ≈ 11.6 is a **diagnostic intermediate result** showing weak identification and prior dependence, not an alternative answer.
+
+### Act III — Separating noise from heterogeneity (P5, P4; ~3 min)
+
+- External information: each game's historical rating SD (median **1.49**; rating counts match the 2022 data closely, median ratio 0.998, but the snapshot date is unverified) — [`outputs/P5/M1a_Extended_ExternalSD/P5_SD_matched.csv`](outputs/P5/M1a_Extended_ExternalSD/P5_SD_matched.csv).
+- **M1a Extended** (per-game SD; mean and between-game SD vary with log rating count): median effective pseudo-votes **3.02** (IQR 2.36–3.84) over 21,375 SD-matched games — [`outputs/P6/ranking_model_effective_m.csv`](outputs/P6/ranking_model_effective_m.csv). On the 6,416 development games, scaling the SD by 0.8 or 1.2 gives a median of 1.93 to 4.47 — [`outputs/P5/Sensitivity_Analysis/External_SD/`](outputs/P5/Sensitivity_Analysis/External_SD/). Priors on the mean and variance parameters have negligible effect.
+- Exploratory holdout (3,209 games): Extended beats Baseline by **ΔELPD 221.7** (cluster SE 20.6) — [`outputs/P5/Holdout_Comparison_3209/`](outputs/P5/Holdout_Comparison_3209/). PPC: development 4/4 groups, holdout 3/4.
+- **Key point:** in M1b, replacing `s` with the external SD shows no predictive gain (ΔELPD −15.1, SE 8.3, approximate 95% interval −31.4 to 1.3). Predictive scores depend on the predictive mean and total variance; shrinkage depends on how that variance is split. **Prediction cannot choose the split — the measured rater SDs (≈1.5) are what rule out s ≈ 3.** Extended changes the mean, the variance structure and the noise term together, so its predictive gain is not attributed to any one of them.
+
+### Act IV — What explains ratings and popularity? (P4, P3; ~3 min)
+
+- **M1b-ExternalSD** (6,416 games) predicts far better than M1a Extended (ΔELPD 1,101, SE 54). Designer effects account for about half of the **residual latent-rating variance** (σ_d 0.464, τ 0.473) — [`outputs/P4/ExternalSD_6416/comparison/scales.csv`](outputs/P4/ExternalSD_6416/comparison/scales.csv).
+- Conditional effects on true rating — [`outputs/P4/ExternalSD_6416/comparison/coefficients.csv`](outputs/P4/ExternalSD_6416/comparison/coefficients.csv): log(1+age) −0.38 per SD; log playing time +0.16 per SD; log rating count +0.21 per SD; wargame +0.26, miniatures +0.40, roll-and-move −0.33, uncredited designer −0.33 (rating points, indicators).
+- **M2** (19,440 games; NB decisively preferred over Poisson, residual PPC misfit remains) — [`tables/P3/`](tables/P3/): conditional rate ratios for the number of ratings: wargame 0.23, economic 3.13, deduction 2.67, party 1.79; log(1+age) 1.53 per SD.
+- **Link to the story:** wargames are rated higher yet attract far fewer raters. This pattern is **consistent with** niche games being rated mainly by enthusiasts; it does not establish a self-selection mechanism.
+
+### Act V — Rethinking the rankings (P6; ~3 min)
+
+- Ranking 21,375 SD-matched games in each of 500 joint posterior draws under M1a Extended — [`outputs/P6/`](outputs/P6/): our top 10 has a median of **46 ratings** versus **25,535** for BGG's; top-10 overlap 0, top-50 overlap 1; Spearman 0.78 over the whole list; median 90% rank interval for top-10 candidates ≈ 71 places; 6 games have P(top 10) > 0.5.
+- Interpretation: shrinking only for sampling noise lets games with few, very favourable ratings reach the top. BGG's much larger shrinkage may serve other goals (stable rankings, resistance to strategic voting); our data cannot test that. Neither ranking is "wrong": they answer different questions.
+- Prepared answer to "why rank with M1a Extended, not M1b?": M1a Extended shrinks only by rating count, the same kind of rule as BGG's, so the comparison is direct. M1b shrinks toward a designer- and feature-based prediction, a different target. Note also that M1a Extended's target varies with rating count, whereas BGG's is fixed at 5.5.
+
+### Methods woven through the acts
+
+- **M0, three ways:** JAGS, hand-written Gibbs and mean-field CAVI agree (maximum posterior-mean gap 0.000303; CAVI 95% widths 0.98–1.01 × Gibbs) — [`tables/M0_three_method_comparison.csv`](tables/M0_three_method_comparison.csv).
+- **Model comparison:** exploratory holdout ELPD on 3,209 games is primary; WAIC is secondary because 13.4% (M1b Baseline) and 14.8% (M1b-ExternalSD) of games have pointwise p_WAIC > 0.4 — [`outputs/P5/WAIC_Comparison_6416/`](outputs/P5/WAIC_Comparison_6416/).
+- **Prior sensitivity:** the `s` prior in M1a/M1b Baseline (Act II), external-SD scaling (Act III), and M2 prior widths ([`tables/P3/M2_prior_sensitivity.csv`](tables/P3/M2_prior_sensitivity.csv)).
+
+### Wording rules
+
+- Self-selection: "consistent with", never "shows" or "confirms".
+- m ≈ 11.6: diagnostic of weak identification, not an answer. 1,874: a constant-m approximation, not BGG's algorithm.
+- 1.93–4.47 is an SD-scaling sensitivity range on 6,416 games, not a credible interval.
+- Designer share is of residual latent variance under M1b's assumptions, not of all rating variation. M2 rate ratios are conditional on the other covariates.
+- The holdout was consulted during exploration: all holdout results are exploratory. Rankings cover the 21,375 SD-matched games, not the whole BGG catalogue.
+
+### Not added before the presentation (optional, by 6 Dec)
+
+- M0 refitted on the same 6,416 games and scored on the same 3,209 holdout games (P2).
+- M1b-ExternalSD with between-game SD varying with rating count (P4); requires fresh diagnostics, PPC and holdout scoring, and its superiority cannot be assumed.
+- Earlier exploratory models (A–F, Student-t), P4 resource and simulation checks, and the 6,489-game WAIC table move to the appendix; their substantive limitations stay in the main text.
+
 ## Repository guide
 
 | Where | What you will find |
