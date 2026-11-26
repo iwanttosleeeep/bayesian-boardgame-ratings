@@ -36,7 +36,7 @@ Rscript code/P3/run_all.R . saved
 
 The default `saved` mode does not refit either model. It prepares the modelling data, uses the saved posteriors, regenerates analysis outputs, and writes the report and presentation. If the large log-likelihood caches are absent, their first regeneration requires substantial time and memory.
 
-JAGS and `rjags` are required only for the optional JAGS refitting mode. See `P3_REPRODUCE.md` for all modes, overwrite behaviour and environment details.
+JAGS and `rjags` are required only for the optional JAGS refitting mode. See [reproduction guide](../../docs/P3_REPRODUCE.md) for all modes, overwrite behaviour and environment details.
 
 ## Optional refitting
 

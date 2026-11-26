@@ -32,11 +32,11 @@ P3 只使用 P1 的 `data_clean.csv`，共 21,631 行。删除协变量缺失的
 - 同模型 JAGS 实现：`02_fit_M2.R`，作为独立实现，不声称产生相同随机抽样
 - 先验敏感性：`04_prior_sensitivity.R`
 - 报告与展示稿生成：`05_write_report.R`
-- 复现说明：`P3_REPRODUCE.md`
+- 复现说明：[复现说明](P3_REPRODUCE.md)
 - 英文报告：`report/sections/P3_M2_popularity.md`，由 `05_write_report.R` 本地生成，单独交付，不随 PR 提交
 - 两页展示稿：`slides/P3/P3_presentation.md`，由 `05_write_report.R` 本地生成，单独交付，不随 PR 提交
 - 表格：`tables/P3`，其中 `M2_DIC.csv` 为讲义版 DIC，`M2_prior_sensitivity.csv` 为先验对照，`M2_WAIC_stability.csv` 为 400 与 4,000 次抽样的 WAIC 对照
 - 图片：`figures/P3`
 - 后验与建模数据：`outputs/P3`；两个全量 pointwise log-likelihood 缓存各约 427–430 MiB，只保留本地，不上传 GitHub，可由 `03_analyze_M2.R` 根据正式后验重算
 
-默认安全重建命令为 `Rscript code/P3/run_all.R . saved`，不会重新拟合主模型。`M2_WAIC_difference.csv` 使用两个模型逐点 `elpd_waic_i = lppd_i - Var_draw(loglik_i)` 的差计算配对标准误 `2 * sqrt(N * var(diff))`。从头运行、覆盖范围、环境依赖和大文件处理见 `P3_REPRODUCE.md`。`data_clean.csv` 属于 P1，需保留在共享项目根目录。
+默认安全重建命令为 `Rscript code/P3/run_all.R . saved`，不会重新拟合主模型。`M2_WAIC_difference.csv` 使用两个模型逐点 `elpd_waic_i = lppd_i - Var_draw(loglik_i)` 的差计算配对标准误 `2 * sqrt(N * var(diff))`。从头运行、覆盖范围、环境依赖和大文件处理见 [复现说明](P3_REPRODUCE.md)。`data_clean.csv` 属于 P1，需保留在共享项目根目录。

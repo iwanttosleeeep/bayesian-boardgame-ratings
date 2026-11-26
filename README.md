@@ -89,7 +89,7 @@ The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), buil
 | **[P1 original technical notes](docs/P1_PIPELINE_NOTES_2026-11-22.md)** | Detailed data preparation and reproducibility notes |
 | **[Team plan and progress](docs/TEAM_PLAN_AND_STATUS.md)** | P1–P6 status, remaining handoffs, checkpoints and limitations |
 | **[P2 M0 code](code/P2/README.md)** | Gibbs/JAGS code, development-sample inference and shared likelihoods |
-| **[P3 M2 workflow](code/P3/README.md)** and **[handoff](P3_HANDOFF.md)** | Truncated Poisson/NB models, PPC, comparisons and report-generation instructions; [PR #4 merged](https://github.com/iwanttosleeeep/bayesian-boardgame-ratings/pull/4) |
+| **[P3 M2 workflow](code/P3/README.md)** and **[handoff](docs/P3_HANDOFF.md)** | Truncated Poisson/NB models, PPC, comparisons and report-generation instructions; [PR #4 merged](https://github.com/iwanttosleeeep/bayesian-boardgame-ratings/pull/4) |
 | **[P4 M1b delivery](docs/P4_DELIVERY.md)** and **[WAIC handoff](outputs/P4/M1b_WAIC_6489/README.md)** | Full development fit, diagnostics, sensitivity, shared likelihood; [PR #1](https://github.com/iwanttosleeeep/bayesian-boardgame-ratings/pull/1) and [PR #2](https://github.com/iwanttosleeeep/bayesian-boardgame-ratings/pull/2) merged |
 | **[P5 results](outputs/P5/README.md)** | M1a Baseline and External-SD extension; exploratory holdout, PPC and sensitivity |
 | **[P5 6,489-game M1a refit](outputs/P5/M1a_WAIC_6489/)** | Matched-game Baseline likelihood and diagnostic artifacts (RDS uploaded; older folder README has a stale pending note) |
