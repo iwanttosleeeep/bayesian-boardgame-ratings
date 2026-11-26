@@ -105,7 +105,7 @@ M1b 运行时间（proposal 原定 24 Nov 的 P2 任务）：
 ## 关键约束（Proposal 明确要求）
 
 - 4 条链，seed 42，记录 burn-in / thinning；R-hat ≤ 1.01、ESS ≥ 400 才报结果，不达标如实说明。
-- M0/M1a/M1b 的 WAIC 已在 6,489 同一批 ID 上完成（见 `outputs/P5/WAIC_Comparison_6489/`，
+- M0/M1a/M1b 的 WAIC 已在 6,489 同一批 ID 上完成（见 `archive/outputs/P5/WAIC_Comparison_6489/`，
   M0 Gibbs vs JAGS 的 WAIC 仅差 0.020）；三方 predictive target 不同，报告须注明。
 - CAVI 与 MCMC 的差异如实报告，按实测数字，不预设立场。
 

@@ -1,7 +1,7 @@
 # STAT6106 P5: four-model holdout comparison; base R, no fitting.
 # Run from repository root. Outputs go to a new local reproduction directory.
 rd <- function(p) read.csv(p,stringsAsFactors=FALSE,fileEncoding="UTF-8")
-a <- rd("outputs/P5/M1a_Model_Comparison/comparison_holdout_per_game.csv")
+a <- rd("archive/outputs/P5/M1a_Model_Comparison/comparison_holdout_per_game.csv")
 b <- rd("outputs/P5/M1a_Extended_ExternalSD/holdout/holdout_game_predictions.csv")
 c <- rd("outputs/P4/Holdout_3209/holdout_metadata.csv")
 d <- rd("outputs/P4/Holdout_3209/paired_log_predictive_density.csv")

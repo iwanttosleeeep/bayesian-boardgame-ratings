@@ -1,11 +1,11 @@
 # P1 — Grouped PPC notes for M0 and M1a (updated 26 Nov 2026)
 
 Re-ran `code/P1/06_grouped_ppc_m0_m1a.R` with the **6,489-game M1a refit draws**
-(`outputs/P5/M1a_WAIC_6489/parameter_draws.rds`). The earlier 6,416-game
+(`archive/outputs/P5/M1a_WAIC_6489/parameter_draws.rds`). The earlier 6,416-game
 fallback is removed; the script now stops unless the draw file's own ID
 sequence matches the 6,489 development games in row order (verified against
 both `outputs/P2/M0_train_game_ids.csv` and
-`outputs/P5/M1a_WAIC_6489/train_game_ids.csv` — 6,489 IDs, identical order).
+`archive/outputs/P5/M1a_WAIC_6489/train_game_ids.csv` — 6,489 IDs, identical order).
 
 Outputs: `tables/ppc_grouped_summary.csv` and `figures/ppc_*.png`, including
 the new `ppc_variance_comparison_rating_count.png`.
@@ -54,4 +54,4 @@ effects are a candidate extension but out of scope for the current models.
 **Caveats.** All checks are within the 6,489 development games (descriptive
 model checking, not held-out validation). M1a's `s` posterior sits near its
 prior upper bound, and pseudo-votes `m` are prior-sensitive — see
-`outputs/P5/M1a_WAIC_6489/README.md`.
+`archive/outputs/P5/M1a_WAIC_6489/README.md`.

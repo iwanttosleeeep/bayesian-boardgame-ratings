@@ -3,7 +3,7 @@
 Completed 24 November 2026; postprocessing only. All four fits use the same 6,416 training games. Direct checks of the four published CSVs confirm identical ordered 3,209 unique holdout IDs, observed averages, counts and historical SD where available. No refitting or tuning.
 
 - [Summary](holdout_four_model_summary.csv) and [six paired differences](holdout_pairwise_differences.csv).
-- Inputs: [P5 same-sample per-game comparison](../M1a_Model_Comparison/comparison_holdout_per_game.csv), [P5 original Extended holdout metadata](../M1a_Extended_ExternalSD/holdout/holdout_game_predictions.csv), [P4 metadata](../../P4/Holdout_3209/holdout_metadata.csv), [P4 paired LPD](../../P4/Holdout_3209/paired_log_predictive_density.csv), [P4 summary](../../P4/Holdout_3209/holdout_summary.csv).
+- Inputs: [P5 same-sample per-game comparison](../../../archive/outputs/P5/M1a_Model_Comparison/comparison_holdout_per_game.csv), [P5 original Extended holdout metadata](../M1a_Extended_ExternalSD/holdout/holdout_game_predictions.csv), [P4 metadata](../../P4/Holdout_3209/holdout_metadata.csv), [P4 paired LPD](../../P4/Holdout_3209/paired_log_predictive_density.csv), [P4 summary](../../P4/Holdout_3209/holdout_summary.csv).
 - Reproduce from repository root using [14_Compare_Four_Models_Holdout_3209.R](../../../code/P5/14_Compare_Four_Models_Holdout_3209.R) (base R; no fitting).
 
 ELPD (higher is better): M1b Baseline -3009.639, M1b ExternalSD -3024.698, M1a Extended -4126.125, M1a Baseline -4347.828. P5 uses 1,000 posterior draws per model in script 07, P4 uses 16,000. Do not substitute the earlier standalone Extended validation for the paired P5 comparison.

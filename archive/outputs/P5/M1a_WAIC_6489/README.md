@@ -4,8 +4,8 @@
 
 ## Reproduction and uploaded artifacts
 
-- [R script](../../../code/P5/09_M1a_Baseline_WAIC_6489.R) — run from any directory where your RStudio session can find the local development CSV, or let it download the GitHub root CSV; it saves results to local `P5_external_SD/M1a_WAIC_6489/`.
-- [train_game_ids.csv](train_game_ids.csv) — 6,489 unique ordered game IDs. **Full ID sequence independently matched** the 6,489 rows in [P4 baseline's uploaded training IDs](../../P4/baseline_development/train_game_ids.csv).
+- [R script](../../../../code/P5/09_M1a_Baseline_WAIC_6489.R) — run from any directory where your RStudio session can find the local development CSV, or let it download the GitHub root CSV; it saves results to local `P5_external_SD/M1a_WAIC_6489/`.
+- [train_game_ids.csv](train_game_ids.csv) — 6,489 unique ordered game IDs. **Full ID sequence independently matched** the 6,489 rows in [P4 baseline's uploaded training IDs](../../../../outputs/P4/baseline_development/train_game_ids.csv).
 - [convergence.csv](convergence.csv) — R-hat and ESS, all pass preset thresholds.
 - [parameter_summary.csv](parameter_summary.csv) — posterior mean and 95% credible intervals.
 - [M1a_6489_WAIC_summary.csv](M1a_6489_WAIC_summary.csv) — standalone WAIC from the uploaded-by-user 500 × 6,489 log-likelihood (the matrix was checked and evaluated separately).

@@ -4,18 +4,18 @@
 
 ## Final comparison deliverables (24 November)
 
-- [6,489-game M0/M1a/M1b WAIC](WAIC_Comparison_6489/README.md) — complete, separate sample.
+- [Archived 6,489-game M0/M1a/M1b WAIC](../../archive/outputs/P5/WAIC_Comparison_6489/README.md) — complete, separate sample.
 - [6,416-game four-model WAIC](WAIC_Comparison_6416/README.md) — complete; substantial M1b pointwise WAIC warnings.
 - [3,209-game four-model exploratory holdout](Holdout_Comparison_3209/README.md) — complete; primary predictive evidence.
 - [Full-scope P6 handoff](P6_Full_Handoff/README.md) — 21,375 games × 500 draws, uploaded and owner-validated; 256 unmatched games excluded.
 - P4's [matched ExternalSD extension](../P4/ExternalSD_6416/README.md) and [holdout validation](../P4/Holdout_3209/README.md) are merged (PRs #5 and #6). No additional fitting required for these comparisons.
 
-## Additional M1a Baseline refit for M0/M1a/M1b WAIC (6,489 games)
+## Archived additional M1a Baseline refit for M0/M1a/M1b WAIC (6,489 games)
 
 This is a **separate, same-specification baseline refit**, not a replacement for the matched 6,416-game Baseline-vs-Extended experiment described below. It uses **all 6,489 P1 development games** and never reads the 3,244-game holdout.
 
 - Reproduction script: [09_M1a_Baseline_WAIC_6489.R](../../code/P5/09_M1a_Baseline_WAIC_6489.R).
-- Handoff files and upload status: [M1a_WAIC_6489/README.md](M1a_WAIC_6489/README.md).
+- Handoff files and upload status: [archived M1a WAIC handoff](../../archive/outputs/P5/M1a_WAIC_6489/README.md).
 - Four MCMC chains, 3,000 retained samples/chain; all reported R-hat <=1.01 and ESS >=400.
 - Posterior mean `s` = 2.9655, close to the U(0.5,3) upper boundary; this parameter is **not** a reliably identified individual-rater SD.
 - **Single-model** WAIC = **17,496.15** (`p_WAIC` = 2.2385), calculated from a 500 × 6,489 game-level log-likelihood matrix with latent game rating integrated out. This is **in-sample**, not holdout ELPD, and does not yet establish which of M0/M1a/M1b performs best.
@@ -70,7 +70,7 @@ This is **holdout ELPD, not WAIC**. The separate 6,489-game M0/M1a/M1b WAIC exer
 - `code/P5/09_M1a_Baseline_WAIC_6489.R` — new separate 6,489-development-game M1a fit for formal WAIC handoff
 - `outputs/P5/M1a_Baseline/` — updated same-sample baseline parameter, convergence and PPC CSVs
 - `outputs/P5/M1a_Extended_ExternalSD/` — matched SD, posterior rating summaries, convergence and PPC, holdout summaries
-- `outputs/P5/M1a_Model_Comparison/` — matched baseline/extended held-out predictive and shrinkage summaries
+- `archive/outputs/P5/M1a_Model_Comparison/` — matched baseline/extended held-out predictive and shrinkage summaries
 - `outputs/P5/Sensitivity_Analysis/` — extended-model SD and prior robustness summaries
 
 The earlier full-21,831-game Model A outputs and **old common-s D vs external-SD D** comparison files have been removed from the **current** P5 tree. They remain recoverable via Git history. This does not erase the old experiments or mean they were invalid; they simply do not belong in the current two-model report.
