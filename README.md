@@ -13,34 +13,48 @@ This section is the agreed narrative for the presentation and the report. Every 
 
 **Central conclusion.** Under our extended Bayesian model, sampling uncertainty in average ratings implies a median effective shrinkage of about **3 pseudo-votes**, compared with about **1,900** under a constant-weight approximation to BGG's adjusted score. The gap shows that statistical estimation of a game's rating and the design of a public ranking answer different questions.
 
-### Act I — The ranking problem (P1, P6; ~2 min)
+### Presentation running order (12 minutes, every member speaks once)
+
+The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), built by [`code/P6/04_make_group_deck.py`](code/P6/04_make_group_deck.py). Speaker labels are on each slide; caveats and prepared answers are in the speaker notes.
+
+| Order | Speaker | Time | Slides | Content |
+| --- | --- | --- | --- | --- |
+| 1 | P1 | 2 min | 2–4 | Act I: the question, rating-count patterns, BGG's ≈1,900 dummy votes |
+| 2 | P2 | 1.5 min | 5–6 | Act II: model overview; M0 misses the variance pattern (three-method check in one line) |
+| 3 | P5 | 3 min | 7–9 | Acts II–III: s not identified from averages; measured SDs give ≈3 pseudo-votes; prediction cannot choose the variance split |
+| 4 | P4 | 2 min | 10–11 | Act IV: smaller shrinkage with real SDs; designer and covariate effects |
+| 5 | P3 | 1.5 min | 12 | Act IV: what drives the number of ratings; the wargame pattern |
+| 6 | P6 | 2 min | 13–15 | Act V: ranking uncertainty, top-ten divergence, conclusion |
+| — | — | — | B1–B4 | Backup: sensitivity, WAIC, M0 three ways, holdout PPC |
+
+### Act I — The ranking problem
 
 - BGG's adjusted score is well approximated by adding **1,874** dummy votes at 5.5 to every game (RMSE 0.020; 20,694 games) — [`outputs/P6/bgg_benchmark_summary.csv`](outputs/P6/bgg_benchmark_summary.csv). This is a fitted approximation, not BGG's published algorithm.
 - In the data, games with more ratings have higher averages (6.19 for 30–40 ratings to 7.22 for 5,000+) and smaller spread (variance 1.172 to 0.365) — [`tables/ppc_grouped_summary.csv`](tables/ppc_grouped_summary.csv), 6,489 development games.
 - Question: how much should an average rating be shrunk, statistically?
 
-### Act II — Why simple shrinkage is not enough (P1, P2, P4, P5; ~3 min)
+### Act II — Why simple shrinkage is not enough
 
 - **M0** (regression, no measurement error) cannot reproduce the fall in variance with rating count — grouped PPC in [`tables/ppc_grouped_summary.csv`](tables/ppc_grouped_summary.csv).
 - **M1a Baseline**: the rater SD `s` sits at its prior upper bound (2.96), giving m ≈ 11.6 — [`outputs/P5/M1a_Baseline/parameter_summary.csv`](outputs/P5/M1a_Baseline/parameter_summary.csv).
 - **M1b Baseline**: `s` = 2.98, also at the bound; widening the prior to U(0.5, 6) moves it to 4.03 and raises the median adjustment by 78% — [`outputs/P4/README.md`](outputs/P4/README.md).
 - **Message:** with averages only, the data cannot separate rater noise from genuine between-game spread. m ≈ 11.6 is a **diagnostic intermediate result** showing weak identification and prior dependence, not an alternative answer.
 
-### Act III — Separating noise from heterogeneity (P5, P4; ~3 min)
+### Act III — Separating noise from heterogeneity
 
 - External information: each game's historical rating SD (median **1.49**; rating counts match the 2022 data closely, median ratio 0.998, but the snapshot date is unverified) — [`outputs/P5/M1a_Extended_ExternalSD/P5_SD_matched.csv`](outputs/P5/M1a_Extended_ExternalSD/P5_SD_matched.csv).
 - **M1a Extended** (per-game SD; mean and between-game SD vary with log rating count): median effective pseudo-votes **3.02** (IQR 2.36–3.84) over 21,375 SD-matched games — [`outputs/P6/ranking_model_effective_m.csv`](outputs/P6/ranking_model_effective_m.csv). On the 6,416 development games, scaling the SD by 0.8 or 1.2 gives a median of 1.93 to 4.47 — [`outputs/P5/Sensitivity_Analysis/External_SD/`](outputs/P5/Sensitivity_Analysis/External_SD/). Priors on the mean and variance parameters have negligible effect.
 - Exploratory holdout (3,209 games): Extended beats Baseline by **ΔELPD 221.7** (cluster SE 20.6) — [`outputs/P5/Holdout_Comparison_3209/`](outputs/P5/Holdout_Comparison_3209/). PPC: development 4/4 groups, holdout 3/4.
 - **Key point:** in M1b, replacing `s` with the external SD shows no predictive gain (ΔELPD −15.1, SE 8.3, approximate 95% interval −31.4 to 1.3). Predictive scores depend on the predictive mean and total variance; shrinkage depends on how that variance is split. **Prediction cannot choose the split — the measured rater SDs (≈1.5) are what rule out s ≈ 3.** Extended changes the mean, the variance structure and the noise term together, so its predictive gain is not attributed to any one of them.
 
-### Act IV — What explains ratings and popularity? (P4, P3; ~3 min)
+### Act IV — What explains ratings and popularity?
 
 - **M1b-ExternalSD** (6,416 games) predicts far better than M1a Extended (ΔELPD 1,101, SE 54). Designer effects account for about half of the **residual latent-rating variance** (σ_d 0.464, τ 0.473) — [`outputs/P4/ExternalSD_6416/comparison/scales.csv`](outputs/P4/ExternalSD_6416/comparison/scales.csv).
 - Conditional effects on true rating — [`outputs/P4/ExternalSD_6416/comparison/coefficients.csv`](outputs/P4/ExternalSD_6416/comparison/coefficients.csv): log(1+age) −0.38 per SD; log playing time +0.16 per SD; log rating count +0.21 per SD; wargame +0.26, miniatures +0.40, roll-and-move −0.33, uncredited designer −0.33 (rating points, indicators).
 - **M2** (19,440 games; NB decisively preferred over Poisson, residual PPC misfit remains) — [`tables/P3/`](tables/P3/): conditional rate ratios for the number of ratings: wargame 0.23, economic 3.13, deduction 2.67, party 1.79; log(1+age) 1.53 per SD.
 - **Link to the story:** wargames are rated higher yet attract far fewer raters. This pattern is **consistent with** niche games being rated mainly by enthusiasts; it does not establish a self-selection mechanism.
 
-### Act V — Rethinking the rankings (P6; ~3 min)
+### Act V — Rethinking the rankings
 
 - Ranking 21,375 SD-matched games in each of 500 joint posterior draws under M1a Extended — [`outputs/P6/`](outputs/P6/): our top 10 has a median of **46 ratings** versus **25,535** for BGG's; top-10 overlap 0, top-50 overlap 1; Spearman 0.78 over the whole list; median 90% rank interval for top-10 candidates ≈ 71 places; 6 games have P(top 10) > 0.5.
 - Interpretation: shrinking only for sampling noise lets games with few, very favourable ratings reach the top. BGG's much larger shrinkage may serve other goals (stable rankings, resistance to strategic voting); our data cannot test that. Neither ranking is "wrong": they answer different questions.
