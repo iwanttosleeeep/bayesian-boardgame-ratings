@@ -1,5 +1,7 @@
 # Team project plan and progress — P1–P6
 
+> **Historical record — 24 November 2026.** The root [README](../README.md) is the current team status source. The body below preserves the 24 Nov record; file references have been updated after repository housekeeping.
+
 **Verified repository status as of 24 November 2026**, reconciled against merged PRs and existing files. This records implementation status, **not a replacement for the original 20 Nov proposal**. “Not in repo” does not imply that a member has not worked locally.
 
 ## Ownership, evidence, next handoff
