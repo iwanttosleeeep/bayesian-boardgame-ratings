@@ -173,7 +173,7 @@ P(top 10), P(top 50), P(top 100) lie in [0, 1], are monotone per game, and sum t
 | [fig_bgg_m_only.png](../../figures/P6/fig_bgg_m_only.png) | Fitted BGG approximation assuming target 5.5, without a model overlay; main slide 4 |
 | [fig_pseudovotes_comparison.png](../../figures/P6/fig_pseudovotes_comparison.png) | M1a Extended effective counts versus the fitted BGG approximation; main slide 15 |
 
-All seven PNGs are committed. The two presentation-specific figures are produced by [06_fig_pseudovotes.py](../../code/P6/06_fig_pseudovotes.py); this audit did not run it. The current [group deck](../../slides/Group_deck_draft.pptx) contains 15 main slides and 4 backup slides, assembled by [04_make_group_deck.py](../../code/P6/04_make_group_deck.py). The retired standalone P6 presentation files are no longer part of the repository.
+All seven PNGs are committed. The two presentation-specific figures are produced by [06_fig_pseudovotes.py](../../code/P6/06_fig_pseudovotes.py); this audit did not run it. The current [group deck](../../slides/Group_deck_draft.pptx) contains 15 main slides and 4 backup slides, assembled by [04_make_group_deck.py](../../code/P6/04_make_group_deck.py). The retired standalone P6 presentation files are no longer part of the repository. The group builder and PPTX now use the qualified model-dependent shrinkage and historical-SD wording in the README; the cleanup changed text/notes only, preserving the existing layout, figures, numbers and speaker assignments.
 
 ## 6. Data files
 
