@@ -28,7 +28,7 @@ source(.repo_helper, local=TRUE)
 repo_check_paths(c(p5_input("train", required=FALSE),
   p5_input("d_draws", required=FALSE),
   repo_path("data_clean.csv"),
-  file.path(.p5_cache,"source_cache","historical_games.csv")))
+  p5_historical_source(required=FALSE)))
 
 options(timeout=max(600, getOption("timeout", 60)))
 set.seed(20261126)
@@ -80,9 +80,7 @@ dat_path <- get_file(
   paste0(repo_base, "data_clean.csv"), "full_data_clean.csv"
 )
 # A live URL may now contain a different snapshot: require the original source.
-hist_path <- repo_existing(c(file.path(root,"source_cache","historical_games.csv"),
-                             file.path(.launch_dir,"historical_games.csv")),
-                           "original historical snapshot for the P6 handoff")
+hist_path <- p5_historical_source()
 param_path <- get_file(
   c(file.path(root, "Model_D_calibrated", "parameter_draws.rds"),
     "outputs/P5/M1a_Extended_ExternalSD/parameter_draws.rds",

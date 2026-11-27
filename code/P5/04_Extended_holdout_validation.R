@@ -2,7 +2,7 @@
 # Run AFTER 01_prepare_historical_SD.R and 03_M1a_Extended_ExternalSD.R.
 # Does NOT rerun JAGS and does NOT download the full raw BGG dataset.
 # Only comparison_sample.csv (3,244 games) is downloaded once and cached.
-# Reuses previously cached historical_games.csv and parameter_draws.rds.
+# Reuses the original cached or committed historical source and saved parameter draws.
 # IMPORTANT: These holdout games were used in earlier project model exploration,
 # so this is a held-out-games diagnostic, NOT a pristine untouched test set.
 
@@ -26,7 +26,7 @@ for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
 if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
 source(.repo_helper, local=TRUE)
 repo_check_paths(c(p5_input("d_draws", required=FALSE),
-  file.path(.p5_cache,"source_cache","historical_games.csv"),
+  p5_historical_source(required=FALSE),
   repo_path("comparison_sample.csv")))
 
 set.seed(610603)
@@ -37,7 +37,7 @@ out_dir <- file.path(base_dir, "holdout_validation")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 param_path <- p5_input("d_draws", required=FALSE)
-hist_path <- file.path(cache_dir, "historical_games.csv")
+hist_path <- p5_historical_source()
 compare_path <- repo_existing(c(file.path(cache_dir,"comparison_sample.csv"), repo_path("comparison_sample.csv")), "holdout CSV", required=FALSE)
 stopifnot(file.exists(param_path), file.exists(hist_path))
 

@@ -7,7 +7,7 @@ results=[]
 with tempfile.TemporaryDirectory() as outside:
  env=os.environ.copy();env['P5_CACHE_DIR']=str(Path(outside)/'empty-P5-cache')
  for p in scripts:
-  expected=2 if p.name.startswith(('04_Extended_holdout','11_Export')) else 0
+  expected=0
   for cwd in (root,p.parent,Path(outside)):
    r=subprocess.run(['Rscript',str(p),'--check-paths'],cwd=cwd,capture_output=True,text=True,timeout=25,env=env)
    row={'script':str(p.relative_to(root)),'cwd':str(cwd),'exit':r.returncode,'expected':expected}
@@ -18,5 +18,5 @@ with tempfile.TemporaryDirectory() as outside:
   if r.returncode!=expected: row['output']=r.stdout+r.stderr
   results.append(row)
 errors=[r for r in results if r['exit']!=r['expected']]
-print(json.dumps({'runs':len(results),'errors':errors,'expected_missing_historical_cache':sum(r['exit']==2 for r in results)},indent=2))
+print(json.dumps({'runs':len(results),'errors':errors,'successful_path_checks':sum(r['exit']==0 for r in results)},indent=2))
 assert not errors
