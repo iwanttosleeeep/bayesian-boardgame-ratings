@@ -4,7 +4,7 @@
 
 | Script | Purpose | Committed outputs / notes |
 | --- | --- | --- |
-| [01_data_cleaning.R](../../01_data_cleaning.R) | Merge and clean raw BGG data | [Data guide](../../docs/P1_DATA_GUIDE.md); raw inputs and intermediate RDS are local reproduction files |
+| [01_data_cleaning.R](../../01_data_cleaning.R) | Merge and clean raw BGG data | Committed raw [details](../../data/raw/details.csv) and [ratings](../../data/raw/ratings.csv); [provenance](../../data/raw/README.md); intermediate RDS remain local |
 | [02_feature_engineering.R](../../02_feature_engineering.R) | Features and designer IDs | Shared [data_clean.csv](../../data_clean.csv) |
 | [03_sampling.R](../../03_sampling.R) | Fixed development/holdout split | [dev_subsample.csv](../../dev_subsample.csv), [comparison_sample.csv](../../comparison_sample.csv) |
 | [04_variable_dictionary.R](../../04_variable_dictionary.R) | Export variable definitions | [variable_dictionary.csv](../../variable_dictionary.csv) |
@@ -16,3 +16,5 @@ Scripts 05–06 resolve the repository root from the script location when run wi
 Script 06 reads P2's [Gibbs draws](../../outputs/P2/M0_gibbs_draws.rds) and [training IDs](../../outputs/P2/M0_train_game_ids.csv), plus the archived [6,489-game M1a refit draws](../../archive/outputs/P5/M1a_WAIC_6489/parameter_draws.rds). The 6,416-game M1a draws are a separate fit and must not be substituted.
 
 See [the P1 data guide](../../docs/P1_DATA_GUIDE.md) for input paths, local pipeline outputs, sampling rules and downstream use. P1's original technical notes are [preserved](../../docs/P1_PIPELINE_NOTES_2026-11-22.md).
+
+The two original TidyTuesday inputs are pinned to upstream commit `84c6abbadd5a038b99ca01da5aa377a07c8b46a7` and retain their original bytes. `python3 code/tests/test_p1_raw_sources.py` performs read-only checksum/schema/ID/source-field checks from the repository root; it does not execute the data-preparation pipeline or generate intermediate outputs.

@@ -23,7 +23,7 @@ for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
 if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
 source(.repo_helper, local=TRUE)
 repo_check_paths(if ("--rebuild-lookup" %in% commandArgs(TRUE))
-  c(repo_path("dev_subsample.csv"),file.path(.p5_cache,"source_cache","historical_games.csv"))
+  c(repo_path("dev_subsample.csv"),p5_historical_source(required=FALSE))
   else p5_input("train",required=FALSE))
 
 out_dir <- .p5_cache
@@ -40,7 +40,7 @@ if (!file.exists(matched_path)) {
   hist_url <- "https://raw.githubusercontent.com/AgeOfWar/AgeOfWar.github.io/master/games.csv"
 
   dev_path <- repo_existing(c(file.path(cache_dir,"dev_subsample.csv"), repo_path("dev_subsample.csv")), "P1 development CSV")
-  hist_path <- repo_existing(file.path(cache_dir,"historical_games.csv"), "original historical SD snapshot")
+  hist_path <- p5_historical_source()
 
   dev <- read.csv(dev_path, stringsAsFactors = FALSE, check.names = FALSE)
   hist <- read.csv(hist_path, stringsAsFactors = FALSE, check.names = FALSE)

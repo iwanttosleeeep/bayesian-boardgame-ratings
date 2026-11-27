@@ -47,6 +47,14 @@ p5_input <- function(key, required=TRUE) {
     return(repo_existing(local_path,paste("original local P5 fit component",key),required))
   repo_existing(c(local_path,repo_path(paths[2])),paste("P5",key),required)
 }
+# Frozen historical source only; never replace it with a download of today's URL.
+# Keep the original cache and Script 11's flat launch-directory cache compatible.
+p5_historical_source <- function(required=TRUE) {
+  repo_existing(c(file.path(.p5_cache,"source_cache","historical_games.csv"),
+                  file.path(.launch_dir,"historical_games.csv"),
+                  repo_path("data/raw/historical_games.csv")),
+                "original historical SD snapshot",required)
+}
 p5_training_provenance <- function(fit, path) {
   observed <- unname(tools::md5sum(path)); expected <- unname(fit$input_md5)
   if (!identical(observed,expected))
