@@ -15,7 +15,7 @@ This section is the agreed narrative for the presentation and the report. Every 
 
 ### Presentation running order (12 minutes, every member speaks once)
 
-The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), built by [`code/P6/04_make_group_deck.py`](code/P6/04_make_group_deck.py). It contains **15 main slides and 4 backup slides**. Speaker labels are on each slide; caveats and prepared answers are in the speaker notes.
+The deck is [`slides/STAT6106_Presentation.pptx`](slides/STAT6106_Presentation.pptx). It contains **15 main slides and 6 backup slides**. Speaker assignments, caveats and prepared answers are in the speaker notes.
 
 | Order | Speaker | Time | Slides | Content |
 | --- | --- | --- | --- | --- |
@@ -25,7 +25,7 @@ The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), buil
 | 4 | P4 | 2 min | 10–11 | Act IV: smaller shrinkage with real SDs; designer and covariate effects |
 | 5 | P3 | 1.5 min | 12 | Act IV: what drives the number of ratings; the wargame pattern |
 | 6 | P6 | 2 min | 13–15 | Act V: ranking uncertainty, top-ten divergence, conclusion |
-| — | — | — | B1–B4 | Backup: sensitivity, WAIC, M0 three ways, holdout PPC |
+| — | — | — | B1–B6 | Backup: sensitivity, WAIC, M0 three ways, holdout PPC, model specifications & diagnostics, rank intervals |
 
 ### Act I — The ranking problem
 
@@ -91,7 +91,7 @@ Current structure and entry points as of **27 November 2026**. The [archive inde
 | `code/P3/`, `outputs/P3/` — P3 | [M2 workflow](code/P3/README.md), [handoff](docs/P3_HANDOFF.md), [reproduction guide](docs/P3_REPRODUCE.md) | Truncated Poisson/NB popularity models, posteriors, PPC and sensitivity |
 | `code/P4/`, `outputs/P4/` — P4 | [ExternalSD delivery](docs/P4_EXTERNALSD.md), [holdout results](outputs/P4/Holdout_3209/README.md) | M1b Baseline/ExternalSD, diagnostics, sensitivity, resources and comparison evidence |
 | `code/P5/`, `outputs/P5/` — P5 | [P5 results index](outputs/P5/README.md), [four-model holdout script](code/P5/14_Compare_Four_Models_Holdout_3209.R) | Current `M1a_Baseline/`, `M1a_Extended_ExternalSD/`, `WAIC_Comparison_6416/`, `Holdout_Comparison_3209/`, `Sensitivity_Analysis/` and `P6_Full_Handoff/` |
-| `code/P6/`, `outputs/P6/`, `slides/` — P6 | [Ranking results](outputs/P6/README.md), [group deck builder](code/P6/04_make_group_deck.py) | BGG benchmark, posterior ranking uncertainty and the [group deck](slides/Group_deck_draft.pptx) (15 main + 4 backup slides) |
+| `code/P6/`, `outputs/P6/`, `slides/` — P6 | [Ranking results](outputs/P6/README.md), [group deck builder](code/P6/04_make_group_deck.py) | BGG benchmark, posterior ranking uncertainty and the [group deck](slides/STAT6106_Presentation.pptx) (15 main + 6 backup slides) |
 | `data/raw/` — P1/P5 sources | [Original inputs and checksums](data/raw/README.md), [TidyTuesday provenance](data/raw/tidytuesday_2022-01-25_manifest.json) | Original P1 `details.csv` / `ratings.csv` at a pinned upstream commit; original P5 historical SD source (collection date unverified). Processed CSVs remain at root |
 | `figures/`, `tables/` | [Figure index](figures/README.md), [table index](tables/README.md) | Committed EDA, model, diagnostic and presentation artifacts, including member subfolders |
 | `docs/` | [Data guide](docs/P1_DATA_GUIDE.md), [24 Nov status record](docs/TEAM_PLAN_AND_STATUS.md) | Handoffs, reproduction instructions and methodological evidence; this README is the current team status source |
@@ -116,7 +116,7 @@ Current comparisons are in [6,416-game WAIC](outputs/P5/WAIC_Comparison_6416/) a
 
 ## Team status — 27 November 2026
 
-All six members have completed their core analytical deliverables. The assembled group deck has **15 main slides and 4 backup slides** and follows the agreed running order above. Report writing, optional extensions and final submission checks remain; optional analyses are not marked complete.
+All six members have completed their core analytical deliverables. The assembled group deck ([`slides/STAT6106_Presentation.pptx`](slides/STAT6106_Presentation.pptx)) has **15 main slides and 6 backup slides** and follows the agreed running order above. Report writing, optional extensions and final submission checks remain; optional analyses are not marked complete.
 
 | Member | Delivered | Main output folder(s) |
 | --- | --- | --- |
