@@ -1,6 +1,6 @@
-# Repository reference audit — historical source follow-up, 27 November 2026
+# Repository reference audit — raw source follow-up, 27 November 2026
 
-PR #14 fixed code-path resolution and synchronised the group presentation wording. This follow-up adds the recovered historical SD source and its repository fallback. All six members' core analytical deliverables remain complete. No MCMC, parameter refit or analytical figure generation was run. PR #14 rebuilt the group PPTX from unchanged committed figures/tables with text and speaker-note edits only; it retains 15 main slides and 4 backups. This source addition does not rebuild the deck or rerun postprocessing.
+PR #14 fixed code-path resolution and synchronised the group presentation wording. This follow-up adds the recovered historical SD source and its repository fallback, plus P1's original TidyTuesday inputs at a pinned upstream commit. All six members' core analytical deliverables remain complete. No MCMC, parameter refit or analytical figure generation was run. PR #14 rebuilt the group PPTX from unchanged committed figures/tables with text and speaker-note edits only; it retains 15 main slides and 4 backups. This source addition does not rebuild the deck or rerun postprocessing.
 
 ## Fixed references and behaviour
 
@@ -15,6 +15,7 @@ PR #14 fixed code-path resolution and synchronised the group presentation wordin
 | P5 compact lookup / handoff | Script 01 reuses the committed lookup without requiring a missing full source audit cache. Explicit `--rebuild-lookup` targets only a missing local lookup. Script 08's `--validate-only` validates the original development handoff without copying/writing files. |
 | P5 figure scripts | Script 15 supports both a complete original local cache and committed artifacts; no figure was regenerated. Script 16 locates root inputs from its file and has a presence-only `--check-paths` option before plotting imports. |
 | P6 builder / PPTX | Main slides 8, 9, 13 and 15 and their notes now qualify the historical-SD evidence and model-dependent effective shrinkage. Benchmark wording on slide 4, in notes 4/14 and on slide 14 is also clarified. All geometry, styling, embedded images, slide order, visible numerical results and speaker labels are preserved; 5.5 is now explicit as the benchmark assumption on slide 15. |
+| P1 original raw inputs | Original [details.csv](../data/raw/details.csv) (21,631 × 23) and [ratings.csv](../data/raw/ratings.csv) (21,831 × 10) now occupy Script 01's existing paths. The [manifest](../data/raw/tidytuesday_2022-01-25_manifest.json) records URLs, upstream commit `84c6abbadd5a038b99ca01da5aa377a07c8b46a7`, byte sizes, MD5/SHA-256, Git blob hashes and column names. Downloads match the original upstream blobs. No P1 script or processed dataset was changed. |
 | Existing structure | Root data files, renamed P1 scripts, relocated P3 guides, archived P5 results, current figure manifests and group presentation references still resolve. Removed standalone P6 files remain absent. No results were moved or deleted. |
 
 ## Validation performed
@@ -25,20 +26,28 @@ PR #14 fixed code-path resolution and synchronised the group presentation wordin
 - PR #14: all **73 R files** parsed, and Python sources compiled. [Analysis-invariant checks](../code/tests/test_analysis_invariants.R) confirmed unchanged model strings, fitting/RNG calls and sampler settings across **22 edited R files**. No sampler was executed by these tests.
 - PR #14: the [deck package comparison](../code/tests/test_group_deck_wording.py) permits text-node values to differ and requires all other XML/media/package members to match. Twelve slide/notes XML parts changed; numerical result text and speaker labels match. The added visible 5.5 is an existing benchmark assumption, not a changed result. The changed slides were also rendered and visually compared with the original; no clipping was found.
 - PR #14: **425 other protected data, result, figure and model files** match the original Git blob hashes. The sole authorised CSV restoration adds its original final LF, with no changed data values. No posterior draws, numerical tables, analytical figures or model specifications were overwritten. The four root CSVs and the historical [24 Nov team record](TEAM_PLAN_AND_STATUS.md) are unchanged. Deadlines, assignments and the optional-analysis list are unchanged; optional analyses are not marked complete.
-- All **374 relative links across 40 Markdown files**, including **10 heading fragments**, resolve after the source addition. The focused **95 source-path references** also resolve; missing local prerequisites are reported separately rather than counted as committed artifacts. See [reproduction instructions](REPRODUCTION.md) for commands and the distinction between presence checks and full reproduction.
+- All **396 relative links across 40 Markdown files**, including **11 heading fragments**, resolve after the raw-source additions. The focused **95 source-path references** also resolve; missing local prerequisites are reported separately rather than counted as committed artifacts. See [reproduction instructions](REPRODUCTION.md) for commands and the distinction between presence checks and full reproduction.
 
-## Validation for this source addition
+## Validation for the historical source addition
 
 - [Historical-source validation](../code/tests/test_historical_source.R) checks exact size/MD5, 21,925 unique source IDs and 48 columns, and reconciles historical fields with committed matching records at tolerance `1e-12`: identical ordered cohorts of 6,416 development and 3,209 holdout games, plus the 21,631-game audit with 21,375 usable matches. No analytical result is generated.
 - All 84 launch-location path checks pass. Script 01's explicit `--rebuild-lookup --check-paths` also passes and exits before rebuilding. Helper tests cover original `source_cache/`, legacy flat files and committed-source fallback using temporary byte copies of the real source. Three additional preflights of Scripts 01/04/11 from an unrelated directory selected the owner's actual original `P5_external_SD/source_cache/historical_games.csv` and passed.
 - All **74 R files** parse and Python sources compile. Analysis-invariant checks cover the three edited analytical entrypoints and confirm unchanged model strings, fitting/RNG calls and sampler settings. The original model, seed, posterior-provenance checks and calculations are preserved.
 - Hash checks verify every one of the 362 previously committed CSV, RDS, PNG, PDF and PPTX files is unchanged. The sole data addition is the original raw source; its working-tree and staged Git-blob bytes match the supplied cache. The root data contract and historical team checklist are unchanged.
 
+## Validation for the P1 raw-source addition
+
+- The [P1 source test](../code/tests/test_p1_raw_sources.py) passes: exact upstream byte hashes and dimensions, unique IDs, and a 21,631-game shared ID set identical to the existing processed table. Nine unchanged numeric source fields agree in the full/development/holdout data, including zero differences in `average` and `users_rated`.
+- Source counts match the preserved P1 notes: 302 invalid publication years; structural zeros 44 (`minplayers`), 164 (`maxplayers`), 774 (`playingtime`), 1,301 (`minage`). This is input reconciliation, not re-execution of cleaning or feature engineering.
+- The two files retain upstream Git blob identities, including in the staged index and with Git automatic line-ending conversion enabled. Both are below the GitHub 100 MiB Git file limit. File-specific `-text` attributes protect the bytes.
+- All 363 artifacts present before this follow-up (CSV/RDS/PNG/PDF/PPTX), including the recovered P5 historical source, remain byte-identical. P1 Scripts 01–04, processed datasets, the team historical checklist, figures and posterior draws were not modified or rerun. Python syntax and relative Markdown links were checked after the documentation edits.
+
 ## Remaining issues
 
 | Requirement | Status and next step |
 | --- | --- |
 | Historical source date / full postprocessing | The exact recovered cache is now committed and matches saved development, holdout and full-data matching records. Its original collection date and upstream snapshot provenance remain unverified. Scripts 04/11 passed input/path checks, but their prediction and latent-draw generation workflows were not rerun. |
+| P1 intermediate objects / full pipeline | Original raw inputs are now available at the documented paths, but `big_clean.rds` / `big_features.rds` remain local. This retrieval did not rerun Scripts 01–04, regenerate any features/samples, or establish fresh end-to-end pipeline reproduction. |
 | Original full P2/P4 intermediates | Full likelihood matrices and P4 chain/input RDS files cannot be reconstructed from 500-draw shared artifacts. Existing shares are reusable; new export from original sources remains untested until those sources are restored. Fresh MCMC would produce a separate reproduction, not recover the original draws. |
 | Full fitting / sensitivity / historical regeneration | Matching R/JAGS packages and original sources are still required. No expensive fit, sensitivity rerun or historical-source regeneration was performed. Read-only path tests do not establish runtime convergence, cross-platform numerical identity or complete offline reproduction. Rscript and `source()` launches were tested; an interactive RStudio session was not tested. |
 

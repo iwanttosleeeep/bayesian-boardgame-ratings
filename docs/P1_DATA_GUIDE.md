@@ -11,7 +11,9 @@
 | [`dev_subsample.csv`](../dev_subsample.csv) | 6,489 games (30%) | Fixed game-level training/development sample |
 | [`comparison_sample.csv`](../comparison_sample.csv) | 3,244 games (15%) | Fixed *holdout*, disjoint from development by game ID |
 
-The public raw inputs are the [TidyTuesday 2022-01-25](https://github.com/rfordatascience/tidytuesday/tree/master/data/2022/2022-01-25) BGG `ratings.csv` (21,831 rows) and `details.csv` (21,631 rows). The inner join yields 21,631 games. **Raw inputs and intermediate RDS are not committed to this repository.**
+The original public inputs are now committed unchanged: [details.csv](../data/raw/details.csv) (**21,631 × 23**) and [ratings.csv](../data/raw/ratings.csv) (**21,831 × 10**) from TidyTuesday 2022-01-25, pinned to upstream commit `84c6abbadd5a038b99ca01da5aa377a07c8b46a7`. Their shared ID set contains the same 21,631 games as the processed table. The [source record](../data/raw/README.md) and [provenance manifest](../data/raw/tidytuesday_2022-01-25_manifest.json) contain original URLs, upstream commit/date, byte sizes, MD5/SHA-256 and Git blob hashes. Raw files retain their upstream bytes; intermediate RDS files remain local and uncommitted.
+
+The [read-only input check](../code/tests/test_p1_raw_sources.py) confirms nine unchanged numeric fields across the existing full/development/holdout datasets, including zero differences in `average` and `users_rated`. Source counts of 302 invalid years and structural zeros agree with P1's original notes. This retrieval did not execute Scripts 01–04, regenerate features or samples, or independently verify byte-for-byte end-to-end pipeline reproduction.
 
 ## P1 scripts and reproduction
 
@@ -22,7 +24,7 @@ The public raw inputs are the [TidyTuesday 2022-01-25](https://github.com/rforda
 | 3 | [`03_sampling.R`](../03_sampling.R) | Fixed random split; exports 3 CSVs to local `output/` |
 | 4 | [`04_variable_dictionary.R`](../04_variable_dictionary.R) | Generate `output/variable_dictionary.csv` |
 
-The script headers may mention `script/`, but **the committed R scripts are at the repository root**. In RStudio, set the project root as working directory. Once the two original raw CSVs have been placed in `data/raw/`, run in order:
+The script headers may mention `script/`, but **the committed R scripts are at the repository root**. In RStudio, set the project root as working directory. Both original raw CSVs are now in `data/raw/`, matching Script 01's existing paths. For an explicitly requested pipeline reproduction, the documented order is below; these commands were **not run** for the source retrieval:
 
 ```bash
 Rscript 01_data_cleaning.R

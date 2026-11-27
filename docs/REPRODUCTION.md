@@ -12,6 +12,12 @@ The P2 entrypoints, numbered P5 R scripts and P4 likelihood exporter load [code/
 - P5 generated outputs retain their original cache subfolders. Existing repository artifacts are read in place, not moved, copied back or overwritten by the input resolver.
 - P2 generated outputs use `outputs/P2/`, `figures/` and `tables/` under the checkout by default. Set `BOARDGAME_OUTPUT_ROOT=/absolute/new-output-root` for an isolated reproduction. The likelihood exporter also recognises original full caches under `outputs/`; it does not require them when the committed shares already exist.
 
+## Original P1 raw inputs now available
+
+[details.csv](../data/raw/details.csv) (21,631 rows × 23 columns) and [ratings.csv](../data/raw/ratings.csv) (21,831 × 10) are committed at Script 01's existing `data/raw/` paths. Both were downloaded without conversion from TidyTuesday upstream commit `84c6abbadd5a038b99ca01da5aa377a07c8b46a7` (25 January 2022). The [source record](../data/raw/README.md) and [manifest](../data/raw/tidytuesday_2022-01-25_manifest.json) record pinned URLs, sizes, checksums, Git blob identities and dimensions; file-specific Git attributes prevent text conversion.
+
+Run `python3 code/tests/test_p1_raw_sources.py` for a read-only check. It verifies upstream-byte hashes, schema, unique IDs, the 21,631-game overlap, nine unchanged numeric fields in the existing full/development/holdout CSVs, and P1's documented invalid-year/zero counts. No cleaning, feature engineering, sampling or processed-data write occurs. Scripts 01–04 were not rerun; P1's end-to-end byte-reproduction claim remains the owner's historical verification. Intermediate `data/processed/big_clean.rds` and `big_features.rds` remain local. The [P1 data guide](P1_DATA_GUIDE.md#p1-scripts-and-reproduction) retains the pipeline order for a separately requested reproduction.
+
 ## Read-only checks and reuse
 
 Run these examples from the repository root; absolute script paths also work from another working directory:
@@ -120,6 +126,7 @@ The first command runs the existing `MODE = "real"` MCMC configuration. These co
 
 ```sh
 python3 code/tests/smoke_paths.py
+python3 code/tests/test_p1_raw_sources.py
 Rscript code/tests/test_historical_source.R .
 Rscript code/tests/test_repo_paths.R .
 python3 code/tests/test_group_deck_wording.py
