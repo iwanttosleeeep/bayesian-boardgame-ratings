@@ -82,7 +82,7 @@ The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), buil
 
 ## Repository guide
 
-Current structure and entry points as of **26 November 2026**. The [archive index](archive/README.md) records superseded decks and P5 comparisons without discarding their evidence.
+Current structure and entry points as of **26 November 2026**. The [archive index](archive/README.md) records superseded P5 comparisons without discarding their evidence.
 
 | Folder / owner | Key file or entry point | Contents |
 | --- | --- | --- |
@@ -94,7 +94,7 @@ Current structure and entry points as of **26 November 2026**. The [archive inde
 | `code/P6/`, `outputs/P6/`, `slides/` — P6 | [Ranking results](outputs/P6/README.md), [group deck builder](code/P6/04_make_group_deck.py) | BGG benchmark, posterior ranking uncertainty and the 19-slide [group deck](slides/Group_deck_draft.pptx) |
 | `figures/`, `tables/` | [Figure index](figures/README.md), [table index](tables/README.md) | Committed EDA, model, diagnostic and presentation artifacts, including member subfolders |
 | `docs/` | [Data guide](docs/P1_DATA_GUIDE.md), [24 Nov status record](docs/TEAM_PLAN_AND_STATUS.md) | Handoffs, reproduction instructions and methodological evidence; this README is the current team status source |
-| `archive/` | [Archive index](archive/README.md) | Retired standalone P6 deck/builder and superseded P5 results, with working references for scripts that still need them |
+| `archive/` | [Archive index](archive/README.md) | Superseded P5 results, with working references for scripts that still need them |
 
 **P1's scripts and the four shared CSVs remain at the repository root** for compatibility; the dictionary script is now [04_variable_dictionary.R](04_variable_dictionary.R). The EDA script still has machine-specific input/output paths; its committed figures can be inspected without rerunning it. P4's evidence remains at its established paths.
 

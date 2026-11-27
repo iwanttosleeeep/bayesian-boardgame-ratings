@@ -1,8 +1,7 @@
-"""Shared layout helpers for the P6 and group slide decks.
+"""Shared layout helpers for the group slide deck.
 
 Kept in one place so every slide in the deck uses the same colours, margins
-and type sizes. Imported by archive/code/P6/03_make_slides.py and
-code/P6/04_make_group_deck.py.
+and type sizes. Imported by code/P6/04_make_group_deck.py.
 """
 
 from PIL import Image
