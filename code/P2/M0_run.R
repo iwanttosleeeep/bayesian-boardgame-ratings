@@ -5,35 +5,37 @@
 #                       Verifies the hand-written Gibbs recovers truth.
 #                       Use this tonight -- no external data needed.
 #   MODE = "real"      : real BGG data. Training sample is
-#                       data/dev_subsample.csv (agreed formal training set).
+#                       dev_subsample.csv at repository root (agreed formal training set).
 # See README.md for the run checklist.
 # ============================================================
+
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(vapply(c("dev_subsample.csv","code/P2/M0_functions.R","code/P2/M0_prepare.R"), repo_path, ""))
 
 suppressPackageStartupMessages({
   library(coda)
 })
 
-# Auto-locate this script's folder, so all relative paths below work
-# no matter where R was started. Falls back to the known local path.
-# Locate this script's folder without any machine-specific absolute path.
-# Works when sourced from RStudio or run from the repo root.
-.script_dir <- tryCatch(
-  normalizePath(dirname(sys.frame(1)$ofile)),
-  error = function(e) NA_character_
-)
-if (is.na(.script_dir) || !file.exists(file.path(.script_dir, "M0_functions.R"))) {
-  # Fallback: common repo layout <repo>/code/P2_m0
-  cand <- file.path(getwd(), "code", "P2_m0")
-  .script_dir <- if (file.exists(file.path(cand, "M0_functions.R"))) {
-    normalizePath(cand)
-  } else {
-    getwd()  # last resort: current directory
-  }
-}
-setwd(.script_dir)
-cat("Working directory:", getwd(), "\n")
 
-source("M0_functions.R")
+source(repo_path("code", "P2", "M0_functions.R"))
 
 # ---- USER SETTINGS -------------------------------------------
 MODE     <- "real"         # "selftest" or "real"
@@ -44,14 +46,14 @@ THIN     <- 5              # thinning
 N_CHAINS <- 4              # Proposal: 4 chains
 
 # Settings for MODE = "real"
-DATA_PATH <- "../../data/dev_subsample.csv"   # relative to code/P2_m0
+DATA_PATH <- repo_path("dev_subsample.csv")
 Y_COL     <- "average"    # outcome
 X_COLS    <- NULL         # NULL = auto-detect (see below). Or e.g. c("log_n", "year_scaled")
 
 # Where outputs go (repo layout)
-OUT_DIR <- "../../outputs"
-FIG_DIR <- "../../figures"
-TAB_DIR <- "../../tables"
+OUT_DIR <- repo_output_path("outputs", "P2")
+FIG_DIR <- repo_output_path("figures")
+TAB_DIR <- repo_output_path("tables")
 for (d in c(OUT_DIR, FIG_DIR, TAB_DIR)) dir.create(d, recursive = TRUE, showWarnings = FALSE)
 
 # ---- HELPER: convergence summary printed to console ----------
@@ -139,7 +141,7 @@ if (MODE == "selftest") {
 # ============================================================
 if (MODE == "real") {
   cat("\n########## REAL DATA ##########\n")
-  source("M0_prepare.R")
+  source(repo_path("code", "P2", "M0_prepare.R"))
 
   # Defensive cleaning: P1's file is a raw join, so apply Proposal
   # cleaning rules here instead of feeding dirty values into the model.
@@ -150,7 +152,7 @@ if (MODE == "real") {
   # Save the exact game IDs used, for cross-model WAIC alignment.
   ids_df <- data.frame(id = prep$ids)
   write.csv(ids_df, file.path(OUT_DIR, "M0_train_game_ids.csv"), row.names = FALSE)
-  cat(sprintf("Saved %d training game IDs to outputs/M0_train_game_ids.csv\n",
+  cat(sprintf("Saved %d training game IDs to outputs/P2/M0_train_game_ids.csv\n",
               nrow(ids_df)))
   cat(sprintf("Data used for this fit: %s (n = %d)\n", DATA_PATH, length(y)))
 

@@ -1,6 +1,6 @@
 # ============================================================
 # M0 data preparation - cleaning + mean imputation on the training file.
-# Source: data/dev_subsample.csv (the 6,489 development games).
+# Source: repository-root dev_subsample.csv (the 6,489 development games).
 # Zeros and out-of-range years are first turned into NA, then each
 # transformed covariate is mean-imputed so NO game is dropped. That
 # keeps training IDs identical across M0 / M1a / M1b for WAIC.

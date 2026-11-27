@@ -2,7 +2,7 @@
 
 P2 的 M0 全部代码：JAGS + 手写 Gibbs + mean-field CAVI，以及三方法结果对比和运行时间对照。
 正式拟合使用 `dev_subsample.csv` 全部 6,489 款 development 游戏（协变量缺失均值插补，不删行）。
-数据文件在仓库根目录。`M0_cavi_run.R` 和 `P2_M1b_timing.R` 会查找根目录数据并支持下载后备；旧版 `M0_run.R` / `M0_make_share_loglik.R` 仍有路径限制，见下方说明及[路径审计](../../docs/REPOSITORY_REFERENCE_AUDIT.md)。
+所有活动入口现在从执行/被 source 的脚本定位仓库，使用根目录 `dev_subsample.csv` 和绝对输入路径；不再依赖 `code/P2_m0/` 或启动工作目录。原始本地 likelihood 缓存仍受支持；具体见[复现说明](../../docs/REPRODUCTION.md)。
 
 ## 依赖（在你自己的 R 上装）
 
@@ -28,11 +28,11 @@ install.packages(c("coda", "rjags"))   # rjags 还需系统装 JAGS 运行时
 | `P4_M1b_prepare_local.R` / `P4_M1b_baseline_local.bug` | P4 原始模型与预处理的本地副本（未改动，仅供计时脚本调用） |
 | `README.md` | 本文件 |
 
-## 复现入口与已知路径限制
+## 复现入口与只读路径检查
 
 ### 第一步：自测
 
-1. 把 R 的工作目录设到脚本所在目录 `code/P2/`；旧版入口的根目录回退仍指向不存在的 `code/P2_m0/`，不能假设从根目录直接启动可用。
+1. 可从仓库根目录运行 `Rscript code/P2/M0_run.R --check-paths`，也可使用脚本绝对路径从其他目录启动；`source()` 不会改变调用者工作目录。
 2. 打开 `M0_run.R`，顶部确认 `MODE <- "selftest"`。
 3. 整段运行（Ctrl+A → Ctrl+Enter）。
 
@@ -46,18 +46,18 @@ Gibbs 后验均值应该很接近它们，且真值都落在 95% 区间内。
 ### 第二步：切真实数据（正式训练集）
 
 数据为仓库根目录的 `dev_subsample.csv`（6,489 款 development 游戏；`comparison_sample.csv` 是 holdout，不用于拟合）。
-**旧版入口限制：** `M0_run.R` 的 `DATA_PATH` 实际为 `../../data/dev_subsample.csv`，没有自动下载逻辑；该本地路径在干净检出中不存在。`M0_make_share_loglik.R` 也使用这个数据路径，并读取本地 `outputs/` 下的完整 likelihood 缓存。这次只更新文档，没有改代码或复制根目录数据；相关路径问题仍待处理。
+`M0_run.R` 和 `M0_make_share_loglik.R` 现在直接读取仓库根目录数据，不复制或下载替代文件。共享 likelihood 已存在时，导出脚本校验并复用；只有新导出才需要原始完整 likelihood 缓存。`--check-paths` 仅验证路径并在拟合、下载和写文件之前退出。
 `M0_prepare.R` 按 Proposal 规则清洗并对协变量缺失做均值插补，保留全部 6,489 行。
 
-1. 完成旧入口的数据路径配置后，在 `M0_run.R` 顶部确认 `MODE <- "real"`；仓库已提交的结果可直接查看，无须重跑。
+1. `M0_run.R` 保留原 `MODE <- "real"`、先验和抽样设置；仓库已提交的结果可直接查看，无须重跑。另行重现时可设 `BOARDGAME_OUTPUT_ROOT` 为新输出根目录。
 2. 运行。控制台应显示 `n = 6489`、`Saved 6489 training game IDs`。
-3. 以下是旧版脚本从 `code/P2/` 运行时生成的**本地输出路径**，并不表示同名文件已在仓库该位置提交：
+3. 以下是当前默认输出位置（相对仓库根目录）。设置 `BOARDGAME_OUTPUT_ROOT` 后，相同子路径写入新输出根目录：
 
 | 产物 | 用途 |
 | --- | --- |
-| `outputs/M0_gibbs_draws.rds` | 本地后验；仓库交付在 [outputs/P2/M0_gibbs_draws.rds](../../outputs/P2/M0_gibbs_draws.rds) |
-| `outputs/M0_loglik_gibbs.rds` | 本地完整 likelihood 缓存，未提交；WAIC 共享文件为 [outputs/P2/M0_loglik_gibbs_share.rds](../../outputs/P2/M0_loglik_gibbs_share.rds) |
-| `outputs/M0_jags_draws.rds` | 本地 JAGS 后验；仓库交付在 [outputs/P2/M0_jags_draws.rds](../../outputs/P2/M0_jags_draws.rds) |
+| `outputs/P2/M0_gibbs_draws.rds` | 本地后验；仓库交付在 [outputs/P2/M0_gibbs_draws.rds](../../outputs/P2/M0_gibbs_draws.rds) |
+| `outputs/P2/M0_loglik_gibbs.rds` | 本地完整 likelihood 缓存，未提交；WAIC 共享文件为 [outputs/P2/M0_loglik_gibbs_share.rds](../../outputs/P2/M0_loglik_gibbs_share.rds) |
+| `outputs/P2/M0_jags_draws.rds` | 本地 JAGS 后验；仓库交付在 [outputs/P2/M0_jags_draws.rds](../../outputs/P2/M0_jags_draws.rds) |
 | `tables/M0_method_comparison.csv` | JAGS vs Gibbs 对比表（已提交；脚本使用 TAB_DIR） |
 | `figures/M0_trace_gibbs.png` | 收敛 trace 图（300 dpi） |
 
@@ -87,7 +87,7 @@ M1b 运行时间（proposal 原定 24 Nov 的 P2 任务）：
   `chains` 列标明 P2 单链、P4 四链并行；`comparable` 列写明可直接比较的范围。
   报告时必须带上这些限定，不要把 `seconds_per_1000_kept_draws` 当成同一口径直接排名。
 
-以下产物已提交。`M0_cavi_run.R` 从 `code/P2/` 运行时写入仓库的 `outputs/P2/`、`figures/`、`tables/`，可能覆盖已有 CAVI、比较表和 PNG；无需为查看交付而重跑。下表均为相对**仓库根目录**的路径。
+以下产物已提交。`M0_cavi_run.R` 按绝对路径写入输出根目录的 `outputs/P2/`、`figures/`、`tables/`，可能覆盖已有 CAVI、比较表和 PNG；无需为查看交付而重跑。下表均为相对**仓库根目录**的路径。
 
 | 文件 | 用途 |
 | --- | --- |
@@ -112,6 +112,8 @@ M1b 运行时间（proposal 原定 24 Nov 的 P2 任务）：
 - 以上结果已在本机 R 4.5.1 实跑验证。脚本把结果写到 `outputs/P2/`、`figures/`、`tables/`；
   运行环境细节保存在 `outputs/P2/M0_cavi_session_info.txt`（随结果一起提交）。
   控制台日志只在本地重定向保存，不是交付物，也不在仓库里——复现请直接运行脚本看控制台输出。
-- 复现命令：先进入 `code/P2/`，再运行 `Rscript M0_cavi_run.R`（耗时因机器而异）和
-  `Rscript P2_M1b_timing.R`（约 80 秒）；这两个入口会查找根目录数据；旧版 M0 入口不具备相同路径支持。
+- 复现命令：从仓库根目录运行 `Rscript code/P2/M0_cavi_run.R`（耗时因机器而异）和
+  `Rscript code/P2/P2_M1b_timing.R`（约 80 秒）；也支持从其他目录通过脚本绝对路径启动。两个命令都会拟合/计时，本次未执行。
 - 按课程 AI 规则：提交前请自己读懂并跑通 `M0_cavi.R` 的变分更新与 ELBO 公式，确保能讲清楚每一步。
+
+路径与缓存回归测试见 [code/tests](../tests/)。完整 likelihood 缓存不是新的欠交付项；已提交的两个 500-draw shares 可直接复用。

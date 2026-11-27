@@ -5,42 +5,37 @@
 # Run: Rscript M0_cavi_run.R   (or Ctrl+A, Ctrl+Enter in RStudio)
 # ============================================================
 
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(vapply(c("dev_subsample.csv","code/P2/M0_functions.R","code/P2/M0_prepare.R","code/P2/M0_cavi.R"), repo_path, ""))
+
 suppressPackageStartupMessages(library(coda))
 
-.sd <- tryCatch(normalizePath(dirname(sys.frame(1)$ofile)), error = function(e) getwd())
-if (!file.exists(file.path(.sd, "M0_functions.R"))) .sd <- getwd()
-setwd(.sd)
-cat("Working directory:", getwd(), "\n")
 
-source("M0_functions.R")
-source("M0_cavi.R")
-source("M0_prepare.R")
+cat("Repository:", .repo_root, "\n")
 
-# Locate dev_subsample.csv. Team convention: the CSV sits at the repository
-# root and scripts are run from there. Support that layout, the local
-# workspace layout (data/), and auto-download as a last resort -- same as P5.
-DATA_CANDIDATES <- c(
-  "../../dev_subsample.csv",       # repo root, when run from code/P2
-  "../../data/dev_subsample.csv",  # local workspace layout
-  "dev_subsample.csv",             # run from repo root
-  "../dev_subsample.csv"
-)
-hit <- DATA_CANDIDATES[file.exists(DATA_CANDIDATES)]
-if (length(hit)) {
-  DATA_PATH <- normalizePath(hit[1])
-} else {
-  DATA_PATH <- file.path(tempdir(), "dev_subsample.csv")
-  if (!file.exists(DATA_PATH)) {
-    url <- paste0("https://raw.githubusercontent.com/",
-                  "iwanttosleeeep/bayesian-boardgame-ratings/main/dev_subsample.csv")
-    old_timeout <- getOption("timeout")
-    options(timeout = max(180, old_timeout))
-    tryCatch(utils::download.file(url, destfile = DATA_PATH, mode = "wb"),
-             finally = options(timeout = old_timeout))
-  }
-  if (!file.exists(DATA_PATH)) stop("Could not obtain dev_subsample.csv")
-}
-cat("Input data:", DATA_PATH, "\n")
+source(repo_path("code", "P2", "M0_functions.R"))
+source(repo_path("code", "P2", "M0_cavi.R"))
+source(repo_path("code", "P2", "M0_prepare.R"))
+
+DATA_PATH <- repo_existing(repo_path("dev_subsample.csv"), "P1 development CSV")
 
 SEED      <- 42
 N_ITER    <- 12000
@@ -49,9 +44,9 @@ THIN      <- 5
 N_CHAINS  <- 4
 
 # GitHub layout: M0 deliverables live under outputs/P2/, figures/, tables/.
-OUT_DIR <- "../../outputs/P2"
-FIG_DIR <- "../../figures"
-TAB_DIR <- "../../tables"
+OUT_DIR <- repo_output_path("outputs", "P2")
+FIG_DIR <- repo_output_path("figures")
+TAB_DIR <- repo_output_path("tables")
 for (d in c(OUT_DIR, FIG_DIR, TAB_DIR)) {
   dir.create(d, recursive = TRUE, showWarnings = FALSE)
 }
