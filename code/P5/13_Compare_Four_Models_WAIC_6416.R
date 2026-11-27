@@ -1,11 +1,37 @@
 # STAT6106 P5: four-model development WAIC, 6416 matched games.
-# Postprocessing only; base R; run in the same working directory as P5 scripts.
-base <- "P5_external_SD"
-train_path <- file.path(base, "P5_SD_matched.csv")
-a_path <- file.path(base, "Model_A_same_6416", "parameter_draws.rds")
-d_path <- file.path(base, "Model_D_calibrated", "parameter_draws.rds")
+# Postprocessing only; base R; script-based checkout and original-cache discovery.
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(p5_input("train", required=FALSE),
+  p5_input("a_draws", required=FALSE),
+  p5_input("d_draws", required=FALSE),
+  repo_path("outputs/P4/ExternalSD_6416/matched_baseline/pointwise_loglik_share.rds"),
+  repo_path("outputs/P4/ExternalSD_6416/external_sd/pointwise_loglik_share.rds")))
+
+base <- .p5_cache
+train_path <- p5_input("train", required=FALSE)
+a_path <- p5_input("a_draws", required=FALSE)
+d_path <- p5_input("d_draws", required=FALSE)
 inputs <- c(train_path, a_path, d_path)
 if (!all(file.exists(inputs))) stop("Check working directory. Missing:\n", paste(inputs[!file.exists(inputs)], collapse="\n"))
+p5_training_provenance(readRDS(a_path), train_path)
 train <- read.csv(train_path, stringsAsFactors=FALSE)
 a <- readRDS(a_path)
 d <- readRDS(d_path)
@@ -39,11 +65,8 @@ stopifnot(all(za[,"s"]>0),all(za[,"tau"]>0))
 # Choose local copies of the two PR #5 RDS files, in this order.
 # Use the repository copies automatically if they exist in the working directory.
 load_p4 <- function(mode, label, external) {
-  path <- file.path("outputs","P4","ExternalSD_6416",mode,"pointwise_loglik_share.rds")
-  if (!file.exists(path)) {
-    cat("\nChoose ",label," RDS in the file picker.\n",sep="")
-    path <- file.choose()
-  }
+  path <- repo_path("outputs","P4","ExternalSD_6416",mode,"pointwise_loglik_share.rds")
+  path <- repo_existing(path,paste("P4",mode,"6416 likelihood"))
   obj <- readRDS(path)
   stopifnot(is.list(obj),identical(dim(obj$loglik),c(500L,6416L)),
             identical(as.character(obj$ids),ids),identical(colnames(obj$loglik),ids),

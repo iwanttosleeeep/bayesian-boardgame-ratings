@@ -1,15 +1,41 @@
 # STAT6106 P5 — M1a Baseline vs M1a-Extended (External SD)
 # Fair comparison: SAME 6,416 development game IDs, SAME 3,209 holdout game IDs.
 # Uses saved posterior draws only: NO JAGS refit, NO downloads, NO changes to prior outputs.
-# Run from the same R working directory as 02_M1a_Baseline.R and 03_M1a_Extended_ExternalSD.R.
+# Original cache inputs take priority; exact source provenance is still required.
 
-base <- "P5_external_SD"
-train_path <- file.path(base, "P5_SD_matched.csv")
-a_path <- file.path(base, "Model_A_same_6416", "parameter_draws.rds")
-d_path <- file.path(base, "Model_D_calibrated", "parameter_draws.rds")
-held_path <- file.path(base, "holdout_validation", "holdout_game_predictions.csv")
-a_conv_path <- file.path(base, "Model_A_same_6416", "convergence.csv")
-d_conv_path <- file.path(base, "Model_D_calibrated", "convergence.csv")
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(p5_input("train", required=FALSE),
+  p5_input("a_draws", required=FALSE),
+  p5_input("d_draws", required=FALSE),
+  p5_input("holdout", required=FALSE),
+  p5_input("a_conv", required=FALSE),
+  p5_input("d_conv", required=FALSE)))
+
+base <- .p5_cache
+train_path <- p5_input("train", required=FALSE)
+a_path <- p5_input("a_draws", required=FALSE)
+d_path <- p5_input("d_draws", required=FALSE)
+held_path <- p5_input("holdout", required=FALSE)
+a_conv_path <- p5_input("a_conv", required=FALSE)
+d_conv_path <- p5_input("d_conv", required=FALSE)
 out_dir <- file.path(base, "M1a_A_vs_ExternalSD_Comparison")
 
 inputs <- c(train_path, a_path, d_path, held_path, a_conv_path, d_conv_path)
@@ -17,6 +43,7 @@ missing <- inputs[!file.exists(inputs)]
 if (length(missing)) stop("Missing saved inputs (check your RStudio working directory):\n",
                           paste(missing, collapse = "\n"))
 
+p5_training_provenance(readRDS(a_path), train_path)
 train <- read.csv(train_path, stringsAsFactors = FALSE)
 held <- read.csv(held_path, stringsAsFactors = FALSE)
 a_fit <- readRDS(a_path)

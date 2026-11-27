@@ -9,13 +9,35 @@
 # Expected output is local under P5_external_SD/M1b_ExternalSD_independent.
 # User can run: source(url("https://raw.githubusercontent.com/iwanttosleeeep/bayesian-boardgame-ratings/main/code/P5/12_Fit_M1b_ExternalSD_Independent.R"))
 
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(p5_input("train", required=FALSE),
+  repo_path("dev_subsample.csv")))
+
 suppressPackageStartupMessages({
   library(rjags)
   library(coda)
   library(posterior)
 })
 options(timeout=max(getOption("timeout",60), 600))
-base <- "P5_external_SD"
+base <- .p5_cache
 cache <- file.path(base,"source_cache")
 out <- file.path(base,"M1b_ExternalSD_independent")
 dir.create(cache,recursive=TRUE,showWarnings=FALSE)
@@ -25,6 +47,7 @@ dir.create(out,recursive=TRUE,showWarnings=FALSE)
 repo <- "https://raw.githubusercontent.com/iwanttosleeeep/bayesian-boardgame-ratings/main/"
 
 fetch <- function(repo_path, alternatives=character()) {
+  alternatives <- c(alternatives,file.path(.repo_root,repo_path))
   local <- alternatives[file.exists(alternatives)]
   if(length(local)) { cat("Using local: ",local[1],"\n",sep=""); return(local[1]) }
   dest <- file.path(cache,gsub("/","__",repo_path,fixed=TRUE))

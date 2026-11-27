@@ -1,21 +1,39 @@
 # STAT6106 P5 -- presentation-ready figures, using existing results only.
-# Run in the SAME RStudio working directory as Script 13, or a full repo clone.
+# Full-checkout lookup supports both the original cache and committed input artifacts.
 # Base R only. No model fitting, downloads, JAGS, or modification of existing results.
 # Local mode uses the three original input files plus embedded, archived summary CSVs.
 # The six PNGs and plotting checks are saved to figures/P5/.
-options(stringsAsFactors=FALSE)
-root <- normalizePath(getwd(), winslash="/", mustWork=TRUE)
-repo_ok <- function(p) file.exists(file.path(p,"outputs/P5/M1a_Baseline/parameter_draws.rds"))
-local_ok <- function(p) file.exists(file.path(p,"P5_external_SD/Model_A_same_6416/parameter_draws.rds"))
-while (!repo_ok(root) && !local_ok(root)) {
-  parent <- dirname(root)
-  if (identical(parent,root)) stop("Use the same RStudio working directory as Script 13 (parent of P5_external_SD), or the repository root.")
-  root <- parent
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
 }
-repo_mode <- repo_ok(root)
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(p5_input("train", required=FALSE),
+  p5_input("a_draws", required=FALSE),
+  p5_input("d_draws", required=FALSE)))
+
+options(stringsAsFactors=FALSE)
+root <- .repo_root
+repo_ok <- function(p) file.exists(file.path(p,"outputs/P5/M1a_Baseline/parameter_draws.rds"))
+repo_mode <- repo_ok(root) && !any(dir.exists(file.path(.p5_cache,
+  c("Model_A_same_6416", "Model_D_calibrated"))))
 p5 <- file.path(root,"outputs/P5")
-base <- file.path(root,"P5_external_SD")
-out <- file.path(root,"figures/P5")
+base <- .p5_cache
+out <- file.path(if (repo_mode) root else dirname(.p5_cache),"figures/P5")
 dir.create(out,recursive=TRUE,showWarnings=FALSE)
 # Exact text of seven validated GitHub CSVs; no network access needed in local mode.
 # These are the archived November 2026 comparisons, not synthetic data.

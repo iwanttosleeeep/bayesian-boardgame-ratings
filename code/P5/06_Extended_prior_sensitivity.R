@@ -7,20 +7,44 @@
 # Alternative fits are saved individually and reused if you run this again.
 # ---------------------------------------------------------------------------
 
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(p5_input("train", required=FALSE),
+  p5_input("d_draws", required=FALSE),
+  p5_input("d_ratings", required=FALSE),
+  p5_input("d_conv", required=FALSE)))
+
 suppressPackageStartupMessages({
   library(rjags)
   library(coda)
 })
 
-base_dir <- "P5_external_SD"
-input_csv <- file.path(base_dir, "P5_SD_matched.csv")
+base_dir <- .p5_cache
+input_csv <- p5_input("train", required=FALSE)
 fit_dir <- file.path(base_dir, "Model_D_calibrated")
 output_dir <- file.path(base_dir, "prior_sensitivity")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
-base_fit_path <- file.path(fit_dir, "parameter_draws.rds")
-base_ratings_path <- file.path(fit_dir, "posterior_ratings_development.csv")
-base_conv_path <- file.path(fit_dir, "convergence.csv")
+base_fit_path <- p5_input("d_draws", required=FALSE)
+base_ratings_path <- p5_input("d_ratings", required=FALSE)
+base_conv_path <- p5_input("d_conv", required=FALSE)
 for (p in c(input_csv, base_fit_path, base_ratings_path, base_conv_path)) {
   if (!file.exists(p)) stop("Required local file missing: ", p,
                             "\nRun the earlier scripts from the same working directory.")

@@ -1,18 +1,41 @@
 # STAT6106 P5 — Prepare and validate P6 handoff (no model fitting, no downloads)
-# Run from the same working directory as P5_01 ... P5_05 scripts.
+# Run from the checkout or via an absolute script path; --validate-only writes nothing.
 
-src <- file.path('P5_external_SD', 'Model_D_calibrated')
-dst <- file.path('P5_external_SD', 'P6_handoff')
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(p5_input("d_latent", required=FALSE),
+  p5_input("d_ratings", required=FALSE),
+  p5_input("d_draws", required=FALSE),
+  p5_input("d_conv", required=FALSE),
+  p5_input("d_ppc", required=FALSE)))
+
+dst <- file.path(.p5_cache, 'P6_handoff')
 files <- c('latent_rating_draws_for_P6.rds', 'posterior_ratings_development.csv',
            'parameter_draws.rds', 'convergence.csv', 'grouped_PPC_development.csv')
-missing <- files[!file.exists(file.path(src, files))]
-if (length(missing)) stop('Missing required model files: ', paste(missing, collapse=', '),
-                          '\nPlease locate the saved M1a Extended outputs; do not refit yet.')
+sources <- setNames(vapply(c('d_latent','d_ratings','d_draws','d_conv','d_ppc'),
+                          p5_input, ""), files)
 
-latent <- readRDS(file.path(src, files[1]))
-ratings <- read.csv(file.path(src, files[2]), stringsAsFactors=FALSE,
+latent <- readRDS(sources[files[1]])
+ratings <- read.csv(sources[files[2]], stringsAsFactors=FALSE,
                     check.names=FALSE)
-params <- readRDS(file.path(src, files[3]))
+params <- readRDS(sources[files[3]])
 stopifnot(is.list(latent), all(c('id','name','theta_draws') %in% names(latent)),
           is.matrix(latent$theta_draws), nrow(latent$theta_draws)==length(latent$id),
           length(latent$name)==length(latent$id),
@@ -35,9 +58,14 @@ if (!is.finite(max_discrepancy) || max_discrepancy > 1e-8) {
        'Max difference: ', max_discrepancy)
 }
 
+if ("--validate-only" %in% commandArgs(TRUE)) {
+  cat("Validated the original development handoff; no files written.\n")
+  quit(save="no",status=0L)
+}
+
 dir.create(dst, recursive=TRUE, showWarnings=FALSE)
 for (f in files) {
-  ok <- file.copy(file.path(src,f), file.path(dst,f), overwrite=TRUE)
+  ok <- file.copy(sources[f], file.path(dst,f), overwrite=TRUE)
   if (!ok) stop('Could not copy: ', f)
 }
 readme <- c(

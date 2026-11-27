@@ -79,9 +79,13 @@ The earlier full-21,831-game Model A outputs and **old common-s D vs external-SD
 
 ## Running scripts and legacy local cache paths
 
-Run the R scripts from the **same RStudio working directory** used for the initial P5 analysis. The original modelling workflow (Scripts 01–08 and 13) retains local input/output paths under `P5_external_SD/` (e.g. `Model_A_same_6416/`, `Model_D_calibrated/`, `M1a_A_vs_ExternalSD_Comparison/`) to **avoid moving or invalidating previously generated posterior draws**. These are internal cache paths, **not** the GitHub folder names above. The numbered script names and external documentation are now normalized; no reruns were needed for this repository reorganization.
+Numbered P5 R scripts now locate the checkout independently of the launch directory and use explicit equivalent-file mappings. The original `P5_external_SD/` cache remains first priority; set `P5_CACHE_DIR` to use an external original cache. Generated outputs retain their original cache subfolders; repository artifacts are read in place. A full checkout (or `BOARDGAME_REPO_ROOT`) supplies the shared path helper.
 
-If starting clean: run 01 to prepare external SD; 02 and 03 to fit both models; 04 to construct the holdout prediction cache; 05/06 for sensitivities; 07 for the model comparison; 08 for P6 handoff. R packages `rjags` and `coda` plus JAGS are required.
+Use `--check-paths` for a read-only check before running a workflow. Scripts 04 and 11 still require the uncommitted original historical snapshot. Scripts 07 and 13 now explain a preserved provenance failure: the Baseline RDS expects CSV MD5 `db47f754a7637bca215937c481411cf1`, whereas the uploaded matched CSV is `713f1976d7967b275e31e5c36b991eb0`. Their 6,416 ordered IDs agree, but the exact original CSV must be restored; the checksum assertion is not relaxed. This does not invalidate the already committed comparison artifacts.
+
+Script 01 reuses the committed compact lookup without downloading/rebuilding the missing full audit cache. Explicit `--rebuild-lookup` can create a missing local lookup from the original historical snapshot. Script 08 supports `--validate-only` to check the original development handoff without writing copies. These changes do not substitute the archived 6,489-game refit or the 21,375-game handoff for the original 6,416-game fits.
+
+See [reproduction prerequisites and commands](../../docs/REPRODUCTION.md) for the mapping, exact missing intermediates, read-only checks and owner-run regeneration commands. Original fitting/sensitivity commands still require JAGS and their recorded packages; they were not run in this cleanup.
 
 ## Posterior draws and reproducibility status
 
@@ -92,7 +96,7 @@ If starting clean: run 01 to prepare external SD; 02 and 03 to fit both models; 
 
 All four files are present; their contents were not decoded and no model was refitted in this documentation audit. They belong to the **6,416-game development analysis**. P6's completed **21,375-game** ranking uses the separate [P6_Full_Handoff](P6_Full_Handoff/README.md), including all five uploaded `P6_theta_draws_part_*.rds` files and the full-scope summary CSV. P6 ranks within each of the 500 joint draw columns; the development-only latent files must not replace that handoff.
 
-**Not a complete single-command reproduction package:** the local P5 R scripts still use original working paths under `P5_external_SD/` rather than the GitHub presentation folders. For reuse without refitting, download or copy the RDS and matched CSV into the script-expected local locations. Some source caches and detailed development comparisons are not committed. Both P5 per-game holdout CSVs are now uploaded.
+**Not a complete offline reproduction package:** equivalent committed inputs are located automatically, but exact source-CSV provenance and uncommitted historical snapshots remain requirements for some operations. Both P5 per-game holdout CSVs are committed. No original CSV, posterior or source cache was fabricated to make a workflow pass.
 
 The external historical rating SD snapshot date is not verified, SD is treated as a plug-in value, and holdout data were consulted during exploration; these limitations should remain visible in the final report. Formal cross-model comparisons are complete. Use the separate comparison READMEs for sample definitions and interpretation.
 

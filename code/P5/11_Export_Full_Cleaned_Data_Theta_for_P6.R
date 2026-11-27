@@ -3,12 +3,36 @@
 # It does NOT refit and does NOT use the full set of games to estimate parameters.
 # All theta_i estimates CONDITION ON each game's observed average and n.
 # Coverage is limited to the P1 cleaned 2022 BGG dataset (n=21,631, >=30 ratings).
-# Run from any RStudio working directory: source(url(".../11...R"))
+# Use a full checkout or BOARDGAME_REPO_ROOT when sourcing from another location.
 # Base R only.
+
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(p5_input("train", required=FALSE),
+  p5_input("d_draws", required=FALSE),
+  repo_path("data_clean.csv"),
+  file.path(.p5_cache,"source_cache","historical_games.csv")))
 
 options(timeout=max(600, getOption("timeout", 60)))
 set.seed(20261126)
-root <- "P5_external_SD"
+root <- .p5_cache
 cache_dir <- file.path(root, "source_cache")
 out_dir <- file.path(root, "P6_full_dataset_handoff")
 dir.create(cache_dir, recursive=TRUE, showWarnings=FALSE)
@@ -19,6 +43,7 @@ historical_url <- "https://raw.githubusercontent.com/AgeOfWar/AgeOfWar.github.io
 
 # Prefer existing local files; otherwise cache the exact repository handoffs.
 get_file <- function(candidates, url, cache_name) {
+  candidates <- c(candidates, vapply(candidates,repo_path,""))
   local <- candidates[file.exists(candidates)]
   if (length(local)) {
     cat("Using existing:", local[1], "\n")
@@ -54,11 +79,10 @@ dat_path <- get_file(
   c("data_clean.csv", "../data_clean.csv", "../../data_clean.csv"),
   paste0(repo_base, "data_clean.csv"), "full_data_clean.csv"
 )
-hist_path <- get_file(
-  c(file.path(root, "source_cache", "historical_games.csv"),
-    "historical_games.csv"),
-  historical_url, "historical_games.csv"
-)
+# A live URL may now contain a different snapshot: require the original source.
+hist_path <- repo_existing(c(file.path(root,"source_cache","historical_games.csv"),
+                             file.path(.launch_dir,"historical_games.csv")),
+                           "original historical snapshot for the P6 handoff")
 param_path <- get_file(
   c(file.path(root, "Model_D_calibrated", "parameter_draws.rds"),
     "outputs/P5/M1a_Extended_ExternalSD/parameter_draws.rds",

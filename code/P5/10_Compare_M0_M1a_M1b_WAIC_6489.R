@@ -1,13 +1,37 @@
 # STAT6106 P5: three-model WAIC on 6,489 identical development games
 # Run with base R; no JAGS, model refit, or manual path editing.
 # M0 JAGS is the primary M0; Gibbs is an independent sampler check.
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(repo_path("outputs/P2/M0_loglik_jags_share.rds"),
+  repo_path("outputs/P2/M0_loglik_gibbs_share.rds"),
+  repo_path("archive/outputs/P5/M1a_WAIC_6489/pointwise_loglik_share.rds"),
+  repo_path("outputs/P4/M1b_WAIC_6489/pointwise_loglik_share.rds")))
+
 options(timeout=max(600, getOption("timeout", 60)))
-outdir <- "P5_WAIC_Comparison_6489"
+outdir <- file.path(dirname(.p5_cache), "P5_WAIC_Comparison_6489")
 cachedir <- file.path(outdir, "input_cache")
 dir.create(cachedir, recursive=TRUE, showWarnings=FALSE)
 raw_base <- "https://raw.githubusercontent.com/iwanttosleeeep/bayesian-boardgame-ratings/main/"
 get_input <- function(path) {
-  candidates <- c(path, file.path("..", path), file.path("..", "..", path))
+  candidates <- c(repo_path(path), path, file.path("..", path), file.path("..", "..", path))
   found <- candidates[file.exists(candidates)]
   if (length(found)) return(found[1])
   dest <- file.path(cachedir, gsub("/", "__", path, fixed=TRUE))
