@@ -4,17 +4,38 @@
 # Run all lines in RStudio (or source this file). No manual path editing needed.
 # Packages required: rjags, coda, and a working JAGS installation.
 
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(repo_path("dev_subsample.csv")))
+
 suppressPackageStartupMessages({
   library(rjags)
   library(coda)
 })
 
 # ---- 1. Find the fixed P1 DEVELOPMENT sample; download if absent ----
-out_dir <- file.path("P5_external_SD", "M1a_WAIC_6489")
+out_dir <- file.path(.p5_cache, "M1a_WAIC_6489")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 candidates <- c(
-  "dev_subsample.csv",                         # GitHub project root
+  repo_path("dev_subsample.csv"),                         # GitHub project root
   file.path("output", "dev_subsample.csv"),    # original P1 R export
   file.path("data", "dev_subsample.csv"),
   file.path("..", "dev_subsample.csv")

@@ -112,3 +112,9 @@ readable package files, causing `packageVersion`/rjags loading to fail. The same
 files load and the synthetic test passes under normal user permissions. Run the
 wrapper from a normal PowerShell session (or an approved unsandboxed tool call).
 This is separate from R/JAGS binary compatibility.
+
+## Reusing the original WAIC share
+
+`Rscript code/P4/M1b_export_WAIC_6489.R` now locates the repository from the script and validates/reuses the committed original-prior 6,489-game shared likelihood. It does not require the missing full posterior caches for this read-only reuse. Add `--check-paths` for a presence-only check.
+
+Explicit `--regenerate` requires the **original** baseline `inputs.rds`, full pointwise likelihood, four chain files and training IDs, selected with `P4_BASELINE_DIR`. It also requires a new empty `P4_EXPORT_DIR`; existing evidence is not overwritten. The original source checksums and dataset/model assertions remain. The P5 peer likelihood and IDs are read from their archived locations. See [exact prerequisites and commands](../../docs/REPRODUCTION.md); a fresh posterior is not a replacement for the original chain provenance.

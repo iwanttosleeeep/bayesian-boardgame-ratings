@@ -11,39 +11,35 @@
 # Run: Rscript P2_M1b_timing.R
 # ============================================================
 
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(vapply(c("dev_subsample.csv","code/P2/M0_functions.R","code/P2/M0_prepare.R","code/P2/P4_M1b_prepare_local.R","code/P2/P4_M1b_baseline_local.bug"), repo_path, ""))
+
 suppressPackageStartupMessages(library(rjags))
 
-.sd <- tryCatch(normalizePath(dirname(sys.frame(1)$ofile)), error = function(e) getwd())
-if (!file.exists(file.path(.sd, "P4_M1b_prepare_local.R"))) .sd <- getwd()
-setwd(.sd)
 
-source("P4_M1b_prepare_local.R")
+
+source(repo_path("code", "P2", "P4_M1b_prepare_local.R"))
 load.module("glm", quiet = TRUE)
 
-# Locate dev_subsample.csv: repo root (team convention), local data/ dir,
-# then auto-download -- same candidate list as P5 and M0_cavi_run.R.
-DATA_CANDIDATES <- c(
-  "../../dev_subsample.csv",
-  "../../data/dev_subsample.csv",
-  "dev_subsample.csv",
-  "../dev_subsample.csv"
-)
-hit <- DATA_CANDIDATES[file.exists(DATA_CANDIDATES)]
-if (length(hit)) {
-  DATA_PATH <- normalizePath(hit[1])
-} else {
-  DATA_PATH <- file.path(tempdir(), "dev_subsample.csv")
-  if (!file.exists(DATA_PATH)) {
-    url <- paste0("https://raw.githubusercontent.com/",
-                  "iwanttosleeeep/bayesian-boardgame-ratings/main/dev_subsample.csv")
-    old_timeout <- getOption("timeout")
-    options(timeout = max(180, old_timeout))
-    tryCatch(utils::download.file(url, destfile = DATA_PATH, mode = "wb"),
-             finally = options(timeout = old_timeout))
-  }
-  if (!file.exists(DATA_PATH)) stop("Could not obtain dev_subsample.csv")
-}
-cat("Input data:", DATA_PATH, "\n")
+DATA_PATH <- repo_existing(repo_path("dev_subsample.csv"), "P1 development CSV")
 
 N_ADAPT   <- 200
 N_BURN    <- 200
@@ -57,7 +53,7 @@ d <- prep$data
 cat(sprintf("M1b prep: N=%d, P=%d, J=%d designers, known=%d\n",
             d$N, d$P, d$J, sum(d$known)))
 
-model_txt <- paste(readLines("P4_M1b_baseline_local.bug"), collapse = "\n")
+model_txt <- paste(readLines(repo_path("code", "P2", "P4_M1b_baseline_local.bug")), collapse = "\n")
 
 set.seed(SEED)
 init <- list(.RNG.name = "base::Mersenne-Twister", .RNG.seed = SEED,
@@ -102,5 +98,6 @@ out <- data.frame(
   note = "timing probe only; no convergence claim; posterior package not required",
   row.names = NULL
 )
-write.csv(out, "../../tables/M1b_P2_timing_probe.csv", row.names = FALSE)
+dir.create(repo_output_path("tables"),recursive=TRUE,showWarnings=FALSE)
+write.csv(out, repo_output_path("tables", "M1b_P2_timing_probe.csv"), row.names = FALSE)
 cat("Saved tables/M1b_P2_timing_probe.csv\n")

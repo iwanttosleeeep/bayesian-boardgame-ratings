@@ -5,17 +5,39 @@
 # 1.0x reuses saved posterior draws; 0.8x/1.2x are refitted in JAGS.
 # Compare POSTERIOR SHRINKAGE under the same 6,416 development games.
 
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(p5_input("train", required=FALSE),
+  p5_input("d_draws", required=FALSE)))
+
 library(rjags)
 library(coda)
 set.seed(610604)
 
-base <- "P5_external_SD"
-in_file <- file.path(base, "P5_SD_matched.csv")
+base <- .p5_cache
+in_file <- p5_input("train", required=FALSE)
 fit_dir <- file.path(base, "Model_D_calibrated")
 out_dir <- file.path(base, "SD_sensitivity")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 stopifnot(file.exists(in_file),
-          file.exists(file.path(fit_dir, "parameter_draws.rds")))
+          file.exists(p5_input("d_draws", required=FALSE)))
 
 dat <- read.csv(in_file, stringsAsFactors = FALSE)
 required <- c("id", "name", "average_2022", "n_2022", "sd_hist")
@@ -25,7 +47,7 @@ stopifnot(all(required %in% names(dat)), nrow(dat) == 6416L,
           all(is.finite(dat$n_2022) & dat$n_2022 >= 30),
           all(is.finite(dat$sd_hist) & dat$sd_hist > 0))
 
-original <- readRDS(file.path(fit_dir, "parameter_draws.rds"))
+original <- readRDS(p5_input("d_draws", required=FALSE))
 stopifnot(all(c("draws", "x_center") %in% names(original)))
 center <- original$x_center
 x <- log(dat$n_2022) - center

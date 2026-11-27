@@ -3,32 +3,44 @@
 # Source data: P1 dev_subsample.csv and historical AgeOfWar games.csv.
 # IMPORTANT: Historical SD collection date is not independently verified.
 
-out_dir <- "P5_external_SD"
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(if ("--rebuild-lookup" %in% commandArgs(TRUE))
+  c(repo_path("dev_subsample.csv"),file.path(.p5_cache,"source_cache","historical_games.csv"))
+  else p5_input("train",required=FALSE))
+
+out_dir <- .p5_cache
 cache_dir <- file.path(out_dir, "source_cache")
 dir.create(cache_dir, recursive = TRUE, showWarnings = FALSE)
 
 all_path <- file.path(out_dir, "P5_SD_all_6489.csv")
-matched_path <- file.path(out_dir, "P5_SD_matched.csv")
+matched_path <- if ("--rebuild-lookup" %in% commandArgs(TRUE))
+  file.path(out_dir,"P5_SD_matched.csv") else p5_input("train", required=FALSE)
 
-if (!file.exists(all_path) || !file.exists(matched_path)) {
-
-  get_once <- function(url, filename) {
-    target <- file.path(cache_dir, filename)
-    if (!file.exists(target) || file.info(target)$size < 100) {
-      message("Downloading once: ", filename)
-      if (file.exists(target)) unlink(target)
-      download.file(url, destfile = target, mode = "wb", method = "libcurl", quiet = TRUE)
-    } else {
-      message("Using cached source: ", filename)
-    }
-    target
-  }
+if (!file.exists(matched_path)) {
 
   repo <- "https://raw.githubusercontent.com/iwanttosleeeep/bayesian-boardgame-ratings/main/"
   hist_url <- "https://raw.githubusercontent.com/AgeOfWar/AgeOfWar.github.io/master/games.csv"
 
-  dev_path <- get_once(paste0(repo, "dev_subsample.csv"), "dev_subsample.csv")
-  hist_path <- get_once(hist_url, "historical_games.csv")
+  dev_path <- repo_existing(c(file.path(cache_dir,"dev_subsample.csv"), repo_path("dev_subsample.csv")), "P1 development CSV")
+  hist_path <- repo_existing(file.path(cache_dir,"historical_games.csv"), "original historical SD snapshot")
 
   dev <- read.csv(dev_path, stringsAsFactors = FALSE, check.names = FALSE)
   hist <- read.csv(hist_path, stringsAsFactors = FALSE, check.names = FALSE)

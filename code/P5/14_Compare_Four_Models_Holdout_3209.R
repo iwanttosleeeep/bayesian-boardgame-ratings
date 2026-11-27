@@ -1,6 +1,31 @@
 # STAT6106 P5: four-model holdout comparison; base R, no fitting.
 # Run from repository root. Outputs go to a new local reproduction directory.
-rd <- function(p) read.csv(p,stringsAsFactors=FALSE,fileEncoding="UTF-8")
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(repo_path("archive/outputs/P5/M1a_Model_Comparison/comparison_holdout_per_game.csv"),
+  repo_path("outputs/P5/M1a_Extended_ExternalSD/holdout/holdout_game_predictions.csv"),
+  repo_path("outputs/P4/Holdout_3209/holdout_metadata.csv"),
+  repo_path("outputs/P4/Holdout_3209/paired_log_predictive_density.csv"),
+  repo_path("outputs/P4/Holdout_3209/holdout_summary.csv")))
+
+rd <- function(p) read.csv(repo_path(p),stringsAsFactors=FALSE,fileEncoding="UTF-8")
 a <- rd("archive/outputs/P5/M1a_Model_Comparison/comparison_holdout_per_game.csv")
 b <- rd("outputs/P5/M1a_Extended_ExternalSD/holdout/holdout_game_predictions.csv")
 c <- rd("outputs/P4/Holdout_3209/holdout_metadata.csv")
@@ -34,7 +59,7 @@ pair <- do.call(rbind,lapply(combn(1:4,2,simplify=FALSE),function(p){
     delta_ELPD_A_minus_B=delta,SE_cluster_approx=se,
     approx95_lower=delta-1.96*se,approx95_upper=delta+1.96*se,clusters=G)
 }))
-out <- "P5_Holdout_Comparison_3209_reproduced"
+out <- file.path(dirname(.p5_cache), "P5_Holdout_Comparison_3209_reproduced")
 dir.create(out,showWarnings=FALSE)
 write.csv(summary,file.path(out,"holdout_four_model_summary.csv"),row.names=FALSE)
 write.csv(pair,file.path(out,"holdout_pairwise_differences.csv"),row.names=FALSE)

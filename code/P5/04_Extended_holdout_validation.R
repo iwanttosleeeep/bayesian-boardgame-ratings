@@ -6,16 +6,39 @@
 # IMPORTANT: These holdout games were used in earlier project model exploration,
 # so this is a held-out-games diagnostic, NOT a pristine untouched test set.
 
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
+  }
+  if (!is.null(.repo_helper)) break
+}
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(c(p5_input("d_draws", required=FALSE),
+  file.path(.p5_cache,"source_cache","historical_games.csv"),
+  repo_path("comparison_sample.csv")))
+
 set.seed(610603)
-base_dir <- "P5_external_SD"
+base_dir <- .p5_cache
 cache_dir <- file.path(base_dir, "source_cache")
 model_dir <- file.path(base_dir, "Model_D_calibrated")
 out_dir <- file.path(base_dir, "holdout_validation")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
-param_path <- file.path(model_dir, "parameter_draws.rds")
+param_path <- p5_input("d_draws", required=FALSE)
 hist_path <- file.path(cache_dir, "historical_games.csv")
-compare_path <- file.path(cache_dir, "comparison_sample.csv")
+compare_path <- repo_existing(c(file.path(cache_dir,"comparison_sample.csv"), repo_path("comparison_sample.csv")), "holdout CSV", required=FALSE)
 stopifnot(file.exists(param_path), file.exists(hist_path))
 
 # Cache the independent comparison sample and reject incomplete downloads.
@@ -25,6 +48,8 @@ cached_bytes <- if (file.exists(compare_path)) file.info(compare_path)$size else
 if (is.na(cached_bytes) || cached_bytes != expected_bytes) {
   if (!is.na(cached_bytes)) {
     message("Removing incomplete/outdated cache (", cached_bytes, " bytes)")
+    if (normalizePath(compare_path)==normalizePath(repo_path("comparison_sample.csv")))
+      stop("Committed holdout size differs from the expected source; refusing to overwrite it.")
     unlink(compare_path)
   }
   options(timeout = max(600, getOption("timeout")))

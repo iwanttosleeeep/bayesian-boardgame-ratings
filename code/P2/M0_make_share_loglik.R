@@ -8,40 +8,60 @@
 # Run: open in RStudio -> Ctrl+A -> Ctrl+Enter.
 # ============================================================
 
-.script_dir <- tryCatch(
-  normalizePath(dirname(sys.frame(1)$ofile)),
-  error = function(e) NA_character_
-)
-if (is.na(.script_dir) || !file.exists(file.path(.script_dir, "M0_functions.R"))) {
-  cand <- file.path(getwd(), "code", "P2_m0")
-  .script_dir <- if (file.exists(file.path(cand, "M0_functions.R"))) {
-    normalizePath(cand)
-  } else {
-    getwd()
+
+# Locate the checkout from Rscript, source(), RStudio or an explicit root.
+.launch_dir <- getwd()
+.repo_hints <- c(Sys.getenv("BOARDGAME_REPO_ROOT", unset=""),
+  vapply(rev(sys.frames()), function(f) if (is.null(f$ofile)) "" else dirname(f$ofile), ""),
+  dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value=TRUE))), .launch_dir)
+if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable())
+  .repo_hints <- c(.repo_hints, dirname(rstudioapi::getActiveDocumentContext()$path))
+.repo_helper <- NULL
+for (.start in unique(.repo_hints[nzchar(.repo_hints)])) {
+  .p <- normalizePath(.start, winslash="/", mustWork=FALSE)
+  repeat {
+    .candidate <- file.path(.p, "code", "repo_paths.R")
+    if (file.exists(.candidate)) { .repo_helper <- .candidate; break }
+    .parent <- dirname(.p); if (identical(.parent,.p)) break; .p <- .parent
   }
+  if (!is.null(.repo_helper)) break
 }
-setwd(.script_dir)
-cat("Working directory:", getwd(), "\n\n")
+if (is.null(.repo_helper)) stop("Cannot locate code/repo_paths.R; use a full checkout or set BOARDGAME_REPO_ROOT.")
+source(.repo_helper, local=TRUE)
+repo_check_paths(vapply(c("dev_subsample.csv","code/P2/M0_functions.R","code/P2/M0_prepare.R"), repo_path, ""))
 
-out_dir <- "../../outputs"
-data_path <- "../../data/dev_subsample.csv"
+out_dir <- repo_output_path("outputs", "P2")
+dir.create(out_dir,recursive=TRUE,showWarnings=FALSE)
+data_path <- repo_path("dev_subsample.csv")
 
+# Reuse committed 500-draw shares without requiring uncommitted full caches.
+ids_path <- repo_existing(c(file.path(out_dir,"M0_train_game_ids.csv"), repo_path("outputs/P2/M0_train_game_ids.csv"),
+                           repo_path("outputs/M0_train_game_ids.csv")), "M0 training IDs")
 # IDs actually used for the fit, saved by M0_run.R. They must be the
 # same 6,489 IDs (same order) as P4/P5 before any WAIC comparison.
-ids <- read.csv(file.path(out_dir, "M0_train_game_ids.csv"))$id
+ids <- read.csv(ids_path)$id
 stopifnot(length(ids) == 6489, !anyDuplicated(ids))
 
 # Source MD5 so P5 can verify both models read the same input file.
 train_md5 <- unname(tools::md5sum(data_path))
 
 for (who in c("gibbs", "jags")) {
-  f_in  <- file.path(out_dir, sprintf("M0_loglik_%s.rds", who))
+  f_in <- repo_existing(c(file.path(out_dir, sprintf("M0_loglik_%s.rds", who)),
+                             repo_path("outputs", sprintf("M0_loglik_%s.rds", who))),
+                        paste(who, "full M0 likelihood"), required=FALSE)
   f_out <- file.path(out_dir, sprintf("M0_loglik_%s_share.rds", who))
 
-  if (!file.exists(f_in)) {
-    cat(sprintf("SKIP: %s not found\n", f_in))
+  if (file.exists(f_out)) {
+    share <- readRDS(f_out)
+    stopifnot(identical(dim(share$loglik), c(500L,6489L)),
+              identical(as.character(share$ids),as.character(ids)),
+              all(is.finite(share$loglik)),
+              identical(colnames(share$loglik),as.character(ids)), identical(unname(share$train_md5),train_md5))
+    cat("Using existing", who, "500-draw share:", f_out, "\n")
     next
   }
+  if (!file.exists(f_in)) stop("Missing full likelihood and shared artifact for ",who,
+    ". Recover the original M0 likelihood cache; see docs/REPRODUCTION.md. No refit was started.")
 
   ll <- readRDS(f_in)
   stopifnot(ncol(ll) == length(ids))      # columns align with saved IDs
@@ -70,6 +90,6 @@ for (who in c("gibbs", "jags")) {
 }
 
 cat("\ntrain_md5:", train_md5, "\n")
-cat("Upload the *_share.rds files. Keep the full versions locally.\n")
+cat("Existing shares are ready to use. Full likelihood caches are only needed for a new export.\n")
 cat("Tell P5: 500 draws were kept (thinned); ids are embedded and in",
     "the same order as P4/P5.\n")

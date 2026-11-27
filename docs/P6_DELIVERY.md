@@ -113,7 +113,7 @@ The current [group deck](../slides/Group_deck_draft.pptx) is assembled from the 
 | B3 | Backup | M0 three-method comparison | P2 interval and ELBO figures |
 | B4 | Backup | Exploratory holdout PPC | P5 fig03 |
 
-The retired standalone P6 deck and its builder have been removed; the group deck and builder linked above are the current presentation files. This audit inspected the committed PPTX read-only and did not rebuild it. Some slide text and builder strings still use stronger scientific wording than the revised documentation; see the [audit's remaining issues](REPOSITORY_REFERENCE_AUDIT.md#remaining-issues).
+The retired standalone P6 deck and its builder have been removed; the group deck and builder linked above are the current presentation files. The second cleanup synchronised the builder and PPTX wording on main slides 8, 9, 13 and 15 and their notes, and clarified the BGG benchmark title on slide 4 and the notes for slides 4 and 14. Slide 14 also qualifies its fitted-benchmark interpretation. Geometry, styles, images, numerical results, order and speaker labels are unchanged. The deck remains 15 main slides and 4 backups; see the [reference audit](REPOSITORY_REFERENCE_AUDIT.md).
 
 ## 5. Remaining work
 

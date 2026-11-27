@@ -96,7 +96,7 @@ Current structure and entry points as of **27 November 2026**. The [archive inde
 | `docs/` | [Data guide](docs/P1_DATA_GUIDE.md), [24 Nov status record](docs/TEAM_PLAN_AND_STATUS.md) | Handoffs, reproduction instructions and methodological evidence; this README is the current team status source |
 | `archive/` | [Archive index](archive/README.md) | Superseded P5 results, with working references for scripts that still need them |
 
-**P1's data-preparation scripts 01–04 and the four shared CSVs remain at the repository root** for compatibility; the dictionary script is now [04_variable_dictionary.R](04_variable_dictionary.R). Scripts [05 (EDA)](code/P1/05_eda.R) and [06 (grouped PPC)](code/P1/06_grouped_ppc_m0_m1a.R) resolve inputs relative to the repository and write to `figures/` and `tables/`. P4's evidence remains at its established paths. See the [reference audit](docs/REPOSITORY_REFERENCE_AUDIT.md) for verified paths and unresolved local reproduction requirements.
+**P1's data-preparation scripts 01–04 and the four shared CSVs remain at the repository root** for compatibility; the dictionary script is now [04_variable_dictionary.R](04_variable_dictionary.R). Scripts [05 (EDA)](code/P1/05_eda.R) and [06 (grouped PPC)](code/P1/06_grouped_ppc_m0_m1a.R) resolve inputs relative to the repository and write to `figures/` and `tables/`. P4's evidence remains at its established paths. See the [reference audit](docs/REPOSITORY_REFERENCE_AUDIT.md) for verified fixes and remaining original-source requirements; [reproduction instructions](docs/REPRODUCTION.md) distinguish read-only checks from optional fitting.
 
 ## Fixed data contract
 

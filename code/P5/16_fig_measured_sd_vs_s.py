@@ -12,6 +12,20 @@ Run from the repository root:  python code/P5/16_fig_measured_sd_vs_s.py
 """
 
 import csv
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+INPUTS = (
+    "outputs/P5/M1a_Extended_ExternalSD/P5_SD_matched.csv",
+    "outputs/P5/M1a_Baseline/parameter_summary.csv",
+    "outputs/P4/ExternalSD_6416/comparison/scales.csv",
+)
+if "--check-paths" in sys.argv:
+    missing = [p for p in INPUTS if not (ROOT / p).is_file()]
+    for p in INPUTS:
+        print("MISSING" if p in missing else "OK", ROOT / p)
+    raise SystemExit(2 if missing else 0)
 
 import matplotlib
 matplotlib.use("Agg")
@@ -23,7 +37,7 @@ BLUE, ORANGE = "#2a78d6", "#eb6834"
 
 
 def rows(path):
-    with open(path, newline="") as f:
+    with open(ROOT / path, newline="") as f:
         return list(csv.DictReader(f))
 
 
@@ -78,5 +92,5 @@ fig.text(0.01, 0.01,
          "Orange: posterior mean and 95% interval of s, Uniform(0.5, 3) prior.",
          color=MUTED, fontsize=8)
 fig.tight_layout(rect=(0, 0.03, 1, 1))
-fig.savefig("figures/P5/fig07_measured_sd_vs_s.png", facecolor=SURF)
+fig.savefig(ROOT / "figures/P5/fig07_measured_sd_vs_s.png", facecolor=SURF)
 print(f"saved: median SD {med:.3f}; M1a s {m1a_mean:.3f}; M1b s {m1b_mean:.3f}")

@@ -183,7 +183,7 @@ text(s, Inches(8.4), Inches(1.95), Inches(4.4), Inches(4.4), [
 ], size=15, colour=INK2, space_after=16)
 note(s, "P1. Band statistics from tables/ppc_grouped_summary.csv (6,489 development games).")
 
-s = slide(4, "BGG's answer: about 1,900 dummy votes",
+s = slide(4, "BGG benchmark: about 1,900 dummy votes",
           "Its adjusted score behaves like a Bayesian average with a fixed number of votes at 5.5",
           speaker="P1")
 picture(s, f"{P6F}/fig_bgg_m_only.png", Inches(0.45), Inches(1.75),
@@ -195,7 +195,8 @@ text(s, Inches(8.8), Inches(1.95), Inches(4.1), Inches(4.3), [
     "Our question: how many do the data themselves support?",
 ], size=14.5, space_after=14)
 note(s, "P1 presents P6's benchmark. 20,694 usable games; 681 excluded as "
-        "inconsistent with any positive m.")
+        "inconsistent with any positive m. The target of 5.5 is assumed by this fitted "
+        "constant-m approximation, not verified as BGG's official algorithm.")
 
 # =========================================================== P2 · Act II =====
 s = slide(5, "Our models", "Three models for the average rating, one for the number of ratings",
@@ -236,30 +237,36 @@ s = figure_slide(7, "With averages alone, the rater SD is not identified", [
 note(s, "P5. The data alone cannot tell whether the extra spread of low-count games is "
         "rater noise or real heterogeneity, so s absorbs it.")
 
-s = figure_slide(8, "Measured rater SDs settle it: about 3 pseudo-votes", [
+s = figure_slide(8, "Extended model: about 3 effective pseudo-votes", [
     f"Historical per-game rating SD: median {SD_MED:.2f}, half the inferred s",
-    f"M1a Extended: median effective m = {S['ranking_model_m_eff_median']:.2f} "
+    f"M1a Extended: model-based median m = {S['ranking_model_m_eff_median']:.2f} "
     f"(IQR {S['ranking_model_m_eff_q25']:.2f}–{S['ranking_model_m_eff_q75']:.2f}), 21,375 games",
     f"From {M_BAND_LO:.1f} (30–99 ratings) to {M_BAND_HI:.1f} (10,000+)",
     f"SD scaled by 0.8–1.2: median {sens['0.8']:.1f}–{sens['1.2']:.1f} (sensitivity range)",
 ], f"{P5F}/fig07_measured_sd_vs_s.png", speaker="P5", credit="Figure: P5")
 note(s, "P5. Snapshot date of the historical SDs is unverified; rating counts match the 2022 "
         "data closely (median ratio 0.998). SD is a fixed plug-in. Priors on the mean and "
-        "spread parameters have negligible effect (backup).")
+        "spread parameters have negligible effect in the tested scenarios (backup). "
+        "The Extended median effective count is model-dependent, not uniquely identified or "
+        "universally optimal. Historical SD estimates support smaller observation noise than "
+        "the averages-only Baseline; they do not conclusively rule out its s values.")
 
-s = figure_slide(9, "Prediction cannot choose how the variance is split", [
+s = figure_slide(9, "Prediction does not identify the variance split", [
     f"Extended beats Baseline: ΔELPD {float(EXT_BASE['delta_ELPD_A_minus_B']):.0f} "
     f"(SE {float(EXT_BASE['SE_cluster_approx']):.0f})",
     f"M1b beats M1a by about {float(M1B_M1A['delta_ELPD_A_minus_B']):,.0f}",
     f"In M1b, swapping in measured SDs: ΔELPD {float(M1B_SD['delta_ELPD_A_minus_B']):.0f} "
     f"(95% ≈ {float(M1B_SD['approx95_lower']):.0f} to {float(M1B_SD['approx95_upper']):.0f}): "
     "no demonstrated difference",
-    "Prediction depends on total variance; shrinkage depends on the split. "
-    "The measured SDs, not the scores, rule out s ≈ 3",
+    "Historical SDs support noise below s ≈ 3, subject to unverified timing "
+    "and fixed plug-ins; prediction scores do not identify the split",
 ], f"{P5F}/fig05_four_model_holdout.png", speaker="P5", size=13.5,
    credit="Figure: P5 · 3,209 holdout games, exploratory (consulted during development)")
 note(s, "P5. Extended changes mean, spread and noise together, so its gain is not attributed "
-        "to any one of them. WAIC is secondary: 13–15% of games have p_WAIC > 0.4 in M1b (backup).")
+        "to any one of them. External historical SD estimates support smaller observation-noise "
+        "values subject to the unverified snapshot date and fixed plug-in assumption; they "
+        "do not conclusively rule out s ≈ 3. WAIC is secondary: 13–15% of games have "
+        "p_WAIC > 0.4 in M1b (backup).")
 
 # ============================================================ P4 · Act IV =====
 s = figure_slide(10, "Real SDs shrink low-count games much less", [
@@ -293,34 +300,36 @@ s = figure_slide(12, "Attention follows a different pattern", [
 note(s, "P3. 'Consistent with' only: the model does not identify self-selection.")
 
 # ============================================================= P6 · Act V =====
-s = figure_slide(13, "Shrinking only for noise puts niche games on top", [
+s = figure_slide(13, "M1a Extended puts niche games near the top", [
     f"Ranking all 21,375 games in each of 500 posterior draws",
     f"{P_TOP10_HALF} games have P(top 10) > 0.5",
     f"Median 90% rank interval for top-10 candidates: about "
     f"{S['median_90pct_width_top10_candidates']:.0f} places",
 ], f"{P6F}/fig_top10_probability.png", speaker="P6", credit="Figure: P6")
-note(s, "P6. Rankings use M1a Extended. Why not M1b? M1a Extended shrinks only by rating "
-        "count, the same kind of rule as BGG's, so the comparison is direct; M1b shrinks toward "
-        "a designer- and feature-based prediction, a different target.")
+note(s, "P6. Rankings use M1a Extended. Its shrinkage depends on rating count and each game's "
+        "historical SD; the target and latent variance also vary with rating count. M1b adds "
+        "game features and designer effects to its target. The fitted BGG benchmark instead "
+        "assumes a target of 5.5, so this comparison does not hold all assumptions constant. "
+        "Historical SD timing is unverified and SD uncertainty is not propagated.")
 
 s = figure_slide(14, "Our top ten and BGG's share no games", [
     f"Our top ten: median {OUR_TOP_N:.0f} ratings. BGG's: {BGG_TOP_N:,.0f}",
     f"Spearman across all games: {S['spearman_vs_bgg_adjusted']:.2f}",
     "Statistical estimation and ranking design answer different questions",
-    "BGG's larger shrinkage may serve other goals (stability, resisting strategic voting) "
+    "The fitted BGG approximation may reflect other goals (stability, resisting strategic voting) "
     "that our data cannot test",
 ], f"{P6F}/fig_rank_vs_bgg.png", speaker="P6", size=13.5, credit="Figure: P6")
 note(s, "P6. Neither ranking is 'wrong'. Our shrinkage target varies with rating count; "
-        "BGG's is fixed at 5.5.")
+        "the fitted BGG benchmark assumes a target of 5.5.")
 
-s = slide(15, "Conclusion: about 3 pseudo-votes, not 1,900", speaker="P6")
+s = slide(15, "Model-dependent shrinkage: about 3 versus 1,900", speaker="P6")
 picture(s, f"{P6F}/fig_pseudovotes_comparison.png", Inches(0.42), Inches(1.3),
         Inches(7.6), Inches(4.6))
 text(s, Inches(8.35), Inches(1.45), Inches(4.4), Inches(3.6),
-     f"Sampling noise in average ratings justifies about {S['ranking_model_m_eff_median']:.0f} "
-     f"pseudo-votes; a constant-weight fit to BGG's score implies about "
-     f"{round(S['bgg_m_best_single_fit'], -2):,.0f}. The gap separates estimating a game's "
-     "rating from designing a public ranking.", size=16, bold=True, space_after=12)
+     f"M1a Extended estimates a median of about {S['ranking_model_m_eff_median']:.0f} effective "
+     "pseudo-votes, conditional on its model and historical SDs. A constant-m fit to BGG "
+     f"at target 5.5 implies about {round(S['bgg_m_best_single_fit'], -2):,.0f}. "
+     "These are different shrinkage assumptions, not a universal optimum.", size=16, bold=True, space_after=12)
 text(s, Inches(8.35), Inches(4.75), Inches(4.4), Inches(1.8), [
     "Next, by 6 Dec: M0 scored on the same holdout games; optionally M1b with spread "
     "varying by rating count",
@@ -328,7 +337,12 @@ text(s, Inches(8.35), Inches(4.75), Inches(4.4), Inches(1.8), [
 ], size=12.5, colour=INK2, space_after=8)
 text(s, Inches(0.42), Inches(6.55), Inches(9), Inches(0.3), "Figure: P6", size=10,
      colour=MUTED)
-note(s, "P6. Then questions.")
+note(s, "P6. The Extended median is model-dependent, not uniquely identified or universally "
+        "optimal. It depends on the fitted mean and latent variance, priors, and game-specific "
+        "historical SD estimates. Their snapshot date is unverified; SDs are fixed plug-ins. "
+        "The BGG value is a fitted constant-m approximation assuming target 5.5, not a verified "
+        "official algorithm. Baseline m ≈ 11.6 remains a diagnostic of weak identification and "
+        "prior sensitivity. Then questions.")
 
 # ================================================================ backups ====
 s = figure_slide("B1", "Backup · sensitivity of the Extended model", [
