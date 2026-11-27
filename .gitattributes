@@ -1,0 +1,2 @@
+# Preserve the exact CSV bytes referenced by saved posterior metadata.
+outputs/P5/M1a_Extended_ExternalSD/P5_SD_matched.csv -text

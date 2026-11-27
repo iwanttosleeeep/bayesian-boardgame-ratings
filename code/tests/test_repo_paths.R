@@ -28,8 +28,17 @@ a <- readRDS(e$p5_input("a_draws")); d <- readRDS(e$p5_input("d_draws")); train 
 stopifnot(nrow(train)==6416L, identical(as.character(a$ids),as.character(train$id)),
           isTRUE(all.equal(as.numeric(d$x_center),mean(log(train$n_2022)),tolerance=1e-9)),
           grepl("v_obs[i]",d$model,fixed=TRUE))
-# Do not waive an original-source checksum mismatch to make a fallback run.
-provenance <- try(e$p5_training_provenance(a,e$p5_input("train")),silent=TRUE)
+# The recovered original must pass the unchanged checksum gate.
+stopifnot(identical(unname(tools::md5sum(e$p5_input("train"))),unname(a$input_md5)))
+e$p5_training_provenance(a,e$p5_input("train"))
+# Regression: a missing final LF preserves CSV values but must fail provenance.
+bytes <- readBin(e$p5_input("train"),"raw",n=file.info(e$p5_input("train"))$size)
+stopifnot(tail(bytes,1)==as.raw(10L))
+truncated <- file.path(cache,"missing-final-newline.csv")
+writeBin(head(bytes,-1),truncated)
+stopifnot(identical(read.csv(truncated),train),
+          identical(unname(tools::md5sum(truncated)),"713f1976d7967b275e31e5c36b991eb0"))
+provenance <- try(e$p5_training_provenance(a,truncated),silent=TRUE)
 stopifnot(inherits(provenance,"try-error"),grepl("provenance mismatch",as.character(provenance)))
-cat("PASS: absolute lookup, caller cwd, repository fallback, cache precedence, partial-fit rejection, missing-input rejection, 6416 IDs and provenance rejection\n")
+cat("PASS: absolute lookup, caller cwd, cache precedence, partial-fit rejection, 6416 IDs, restored provenance and missing-final-newline rejection\n")
 unlink(cache,recursive=TRUE)

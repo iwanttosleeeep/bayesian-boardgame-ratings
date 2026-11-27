@@ -30,11 +30,49 @@ Rscript code/P5/13_Compare_Four_Models_WAIC_6416.R --check-paths
 
 P2's exporter validates and reuses the committed [Gibbs](../outputs/P2/M0_loglik_gibbs_share.rds) and [JAGS](../outputs/P2/M0_loglik_jags_share.rds) shares. P4's exporter similarly reuses the [original-prior 6,489-game shared likelihood](../outputs/P4/M1b_WAIC_6489/pointwise_loglik_share.rds). These default exporter commands write no new results when those files exist. P5 Script 08's `--validate-only` checks the original **6,416-game** latent draw/summary agreement and exits before copying a handoff; it is separate from P6's completed full-scope handoff.
 
+## Recovered original CSV and verified postprocessing
+
+The original [P5_SD_matched.csv](../outputs/P5/M1a_Extended_ExternalSD/P5_SD_matched.csv) was recovered from the owner's local cache and restored by a direct byte copy. The only difference from the previous repository copy was one missing **final LF byte (`0x0A`)**: the original is 466,162 bytes and the previous copy was 466,161 bytes. All 6,416 data rows, 9 columns, field strings and row order are identical. This was not a data-value or CRLF/LF conversion difference.
+
+The restored MD5 is **`db47f754a7637bca215937c481411cf1`**, exactly matching the saved Baseline posterior metadata. The previous missing-final-newline copy had MD5 `713f1976d7967b275e31e5c36b991eb0`. A file-specific `-text` Git attribute prevents line-ending conversion for this provenance-sensitive input; the checksum gate itself is unchanged.
+
+Scripts **07 and 13 both completed successfully**, using committed posterior/likelihood files and the restored CSV, with all existing provenance/model/ordered-ID checks enabled. Outputs were directed to a newly created temporary run directory outside the checkout. No committed analytical result was overwritten, and no posterior file, model, seed or analysis script was changed for this restoration.
+
+| Reproduced output | Existing committed comparison | Verification |
+| --- | --- | --- |
+| Script 07 per-game holdout comparison | Archived `comparison_holdout_per_game.csv` | 3,209 rows; exact parsed numeric/non-numeric values after mapping legacy `A` column names to `Baseline` equivalents |
+| Script 07 convergence | Archived `convergence.csv` | 8 rows; exact parsed values |
+| Script 07 holdout summary | Archived `holdout_summary.csv` | 12 metrics; exact parsed values |
+| Script 07 grouped holdout PPC | Archived `holdout_grouped_PPC.csv` | 8 rows; exact parsed values |
+| Script 07 shrinkage summary | Archived `shrinkage_summary.csv` | 9 metrics; exact parsed values |
+| Script 13 four-model WAIC summary | Current `WAIC_four_model_summary.csv` | 4 rows; exact parsed values |
+| Script 13 pairwise WAIC differences | Current `WAIC_pairwise_differences.csv` | 6 rows; exact parsed values |
+| Script 13 gamewise WAIC diagnostics | Current `WAIC_gamewise_diagnostics.csv` | 6,416 rows; exact parsed values |
+
+Across these eight CSVs, the **maximum absolute numerical difference was 0** and all non-numeric values matched. The WAIC interpretation text also matched. Script 07's additional development-rating CSV has no committed per-game counterpart; its ordered IDs/observed averages matched the source, and its shrinkage summary matched the archived result. No byte-identical-output claim is made for files with renamed headers or different final-newline formatting.
+
+The existing results are in the [archived two-model comparison](../archive/outputs/P5/M1a_Model_Comparison/) and [current four-model WAIC folder](../outputs/P5/WAIC_Comparison_6416/). To repeat the postprocessing without overwriting them, use a new temporary run directory and empty cache:
+
+```sh
+repo=/absolute/checkout
+run=$(mktemp -d /tmp/p5-verify.XXXXXX)
+mkdir -p "$run/cache" "$run/run07" "$run/run13"
+(
+  cd "$run/run07"
+  P5_CACHE_DIR="$run/cache" Rscript "$repo/code/P5/07_Baseline_vs_Extended_comparison.R"
+)
+(
+  cd "$run/run13"
+  P5_CACHE_DIR="$run/cache" Rscript "$repo/code/P5/13_Compare_Four_Models_WAIC_6416.R"
+)
+```
+
+Script 07 writes under `$run/cache/M1a_A_vs_ExternalSD_Comparison/`; Script 13 writes under `$run/run13/P5_WAIC_Comparison_6416/`. Both are postprocessing of saved fits, not MCMC or parameter refits. Checks reject any input whose bytes do not match the recorded MD5, even when parsing gives the same data.
+
 ## Exact prerequisites that remain local
 
 | Operation | Exact prerequisite and limitation |
 | --- | --- |
-| P5 Scripts 07 and 13 | The Baseline RDS records training-CSV MD5 `db47f754a7637bca215937c481411cf1`; the uploaded matched CSV has MD5 `713f1976d7967b275e31e5c36b991eb0`. Ordered 6,416-game IDs match, but the hash difference is not explained by LF/CRLF conversion. Restore the original `P5_SD_matched.csv` in `P5_CACHE_DIR`; the original assertions must not be bypassed. Both scripts now report this discrepancy explicitly before postprocessing. |
 | P5 Scripts 04 and 11 | `P5_external_SD/source_cache/historical_games.csv`, the exact historical snapshot used for the saved fits, is not committed. Script 04 needs it for holdout SD matching; Script 11 needs it for full-dataset matching. The compact development lookup cannot replace the full historical source. The upstream URL alone does not guarantee the original snapshot, so Scripts 01/11 now require the staged original file instead of automatically downloading a live historical source. |
 | P2 new likelihood export | The exact full `M0_loglik_gibbs.rds` / `M0_loglik_jags.rds` matrices and companion training IDs from the intended saved run are required when an existing shared artifact is unavailable. The 500-draw shares do not reconstruct the original full matrices. |
 | P4 `--regenerate` | Original `inputs.rds`, `pointwise_loglik.rds`, `chain_1.rds`–`chain_4.rds` and `train_game_ids.csv` under `P4_BASELINE_DIR`, matching the committed [source checksums](../outputs/P4/M1b_WAIC_6489/source_checksums.csv). The saved 500-draw share cannot reconstruct these full source files. The exporter validates root P1 data against the recorded Git-LF checksum while retaining the original source metadata. |
@@ -49,7 +87,7 @@ P5_CACHE_DIR=/absolute/P5_external_SD Rscript code/P5/01_prepare_historical_SD.R
 P5_CACHE_DIR=/absolute/P5_external_SD Rscript code/P5/01_prepare_historical_SD.R --rebuild-lookup
 ```
 
-Rebuilding with a different snapshot or CSV serialisation is not evidence of byte-identical provenance. Scripts 07 and 13 still require the original MD5; restoration of the original CSV is preferred. Once exact prerequisites are restored, Scripts 04, 07, 08, 11 and 13 retain their original postprocessing/handoff commands and seeds. Script 11 samples conditional latent ratings from saved parameters; it does not refit parameters, but it is not part of this cleanup's tests.
+Rebuilding with a different snapshot or CSV serialisation is not evidence of byte-identical provenance. Scripts 07 and 13 now pass using the restored original CSV. Their recorded MD5 requirement remains unchanged. Scripts 04, 08 and 11 retain their original postprocessing/handoff commands and seeds, with the local prerequisites above where applicable. Script 11 samples conditional latent ratings from saved parameters; it does not refit parameters, but it is not part of this cleanup's tests.
 
 For P4, restore the original source RDS files, then use a **new empty export directory**:
 
@@ -78,4 +116,4 @@ python3 code/tests/test_group_deck_wording.py
 Rscript code/tests/test_analysis_invariants.R .
 ```
 
-The path smoke suite uses an empty temporary P5 cache and checks 21 entrypoints from three launch locations plus `source()` from an unrelated directory. It expects 76 successful path checks and eight explicit missing-historical-cache reports. Helper tests verify local-cache precedence, 6,416-game IDs and rejection of the known CSV provenance mismatch. The deck comparison checks 19 slides and allows text-only XML changes, preserving geometry, styles, images, visible numerical results and speakers; the additional visible 5.5 on slide 15 makes the existing benchmark assumption explicit.
+The path smoke suite uses an empty temporary P5 cache and checks 21 entrypoints from three launch locations plus `source()` from an unrelated directory. It expects 76 successful path checks and eight explicit missing-historical-cache reports. Helper tests verify local-cache precedence, 6,416-game IDs and acceptance of the recovered original CSV; a temporary copy missing its final LF is confirmed to parse identically but fail the unchanged checksum gate. The deck comparison checks 19 slides and allows text-only XML changes, preserving geometry, styles, images, visible numerical results and speakers; the additional visible 5.5 on slide 15 makes the existing benchmark assumption explicit.
