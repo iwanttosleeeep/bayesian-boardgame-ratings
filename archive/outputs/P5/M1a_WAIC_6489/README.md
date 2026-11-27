@@ -1,5 +1,7 @@
 # P5 — M1a Baseline WAIC handoff (6,489 development games)
 
+> **Current status — 27 November 2026:** both [parameter_draws.rds](parameter_draws.rds) and [pointwise_loglik_share.rds](pointwise_loglik_share.rds) are committed in this archived 6,489-game refit folder. The corresponding [M0/M1a/M1b WAIC comparison](../WAIC_Comparison_6489/README.md) is complete. The pending-upload and pending-comparison statements below are preserved as historical delivery notes, not outstanding tasks. This refit is distinct from the current 6,416-game matched-SD analysis and the 21,375-game ranking handoff.
+
 **Status: fit completed; code and small results committed. The large pointwise log-likelihood RDS is NOT YET in this directory.** This is a separate refit of the original M1a Baseline on all 6,489 rows of `dev_subsample.csv`; it does not replace P5's previous 6,416-game Baseline vs External-SD experiment.
 
 ## Reproduction and uploaded artifacts

@@ -1,7 +1,7 @@
 # How Much Should We Shrink a Board Game Rating?
 
 **STAT6106 Bayesian Data Analysis | Group project**  
-**Working repository overview — updated 26 Nov 2026**
+**Working repository overview — updated 27 Nov 2026**
 
 We examine Bayesian shrinkage of BoardGameGeek (BGG) average ratings, how assumptions influence adjusted scores and ranking uncertainty, and how our results compare with BGG's own adjusted-rating benchmark. M0, M1b and M2 support the central M1a shrinkage analysis.
 
@@ -11,17 +11,17 @@ We examine Bayesian shrinkage of BoardGameGeek (BGG) average ratings, how assump
 
 This section is the agreed narrative for the presentation and the report. Every number below links to a committed file. Where the older status sections further down differ, **this section and its linked files take precedence**.
 
-**Central conclusion.** Under our extended Bayesian model, sampling uncertainty in average ratings implies a median effective shrinkage of about **3 pseudo-votes**, compared with about **1,900** under a constant-weight approximation to BGG's adjusted score. The gap shows that statistical estimation of a game's rating and the design of a public ranking answer different questions.
+**Central conclusion.** Under **M1a Extended**, the median effective shrinkage estimate is **3.02 pseudo-votes** across 21,375 SD-matched games. This is a model-dependent estimate, not a uniquely identified or universally optimal amount of shrinkage. A fitted constant-m approximation to BGG's adjusted score, assuming a target of **5.5**, gives **1,874** pseudo-votes (about **1,900**); it does not identify BGG's official algorithm. The comparison illustrates that statistical rating estimation and public ranking design can answer different questions.
 
 ### Presentation running order (12 minutes, every member speaks once)
 
-The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), built by [`code/P6/04_make_group_deck.py`](code/P6/04_make_group_deck.py). Speaker labels are on each slide; caveats and prepared answers are in the speaker notes.
+The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), built by [`code/P6/04_make_group_deck.py`](code/P6/04_make_group_deck.py). It contains **15 main slides and 4 backup slides**. Speaker labels are on each slide; caveats and prepared answers are in the speaker notes.
 
 | Order | Speaker | Time | Slides | Content |
 | --- | --- | --- | --- | --- |
 | 1 | P1 | 2 min | 2–4 | Act I: the question, rating-count patterns, BGG's ≈1,900 dummy votes |
 | 2 | P2 | 1.5 min | 5–6 | Act II: model overview; M0 misses the variance pattern (three-method check in one line) |
-| 3 | P5 | 3 min | 7–9 | Acts II–III: s not identified from averages; measured SDs give ≈3 pseudo-votes; prediction cannot choose the variance split |
+| 3 | P5 | 3 min | 7–9 | Acts II–III: s not identified from averages; Extended median ≈3 pseudo-votes; prediction cannot choose the variance split |
 | 4 | P4 | 2 min | 10–11 | Act IV: smaller shrinkage with real SDs; designer and covariate effects |
 | 5 | P3 | 1.5 min | 12 | Act IV: what drives the number of ratings; the wargame pattern |
 | 6 | P6 | 2 min | 13–15 | Act V: ranking uncertainty, top-ten divergence, conclusion |
@@ -29,7 +29,7 @@ The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), buil
 
 ### Act I — The ranking problem
 
-- BGG's adjusted score is well approximated by adding **1,874** dummy votes at 5.5 to every game (RMSE 0.020; 20,694 games) — [`outputs/P6/bgg_benchmark_summary.csv`](outputs/P6/bgg_benchmark_summary.csv). This is a fitted approximation, not BGG's published algorithm.
+- A fitted constant-m approximation to BGG's adjusted score, assuming a target of **5.5**, adds **1,874** dummy votes to every game (RMSE 0.020; 20,694 games) — [`outputs/P6/bgg_benchmark_summary.csv`](outputs/P6/bgg_benchmark_summary.csv). This fit does not verify BGG's official algorithm.
 - In the data, games with more ratings have higher averages (6.19 for 30–40 ratings to 7.22 for 5,000+) and smaller spread (variance 1.172 to 0.365) — [`tables/ppc_grouped_summary.csv`](tables/ppc_grouped_summary.csv), 6,489 development games.
 - Question: how much should an average rating be shrunk, statistically?
 
@@ -43,9 +43,9 @@ The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), buil
 ### Act III — Separating noise from heterogeneity
 
 - External information: each game's historical rating SD (median **1.49**; rating counts match the 2022 data closely, median ratio 0.998, but the snapshot date is unverified) — [`outputs/P5/M1a_Extended_ExternalSD/P5_SD_matched.csv`](outputs/P5/M1a_Extended_ExternalSD/P5_SD_matched.csv).
-- **M1a Extended** (per-game SD; mean and between-game SD vary with log rating count): median effective pseudo-votes **3.02** (IQR 2.36–3.84) over 21,375 SD-matched games — [`outputs/P6/ranking_model_effective_m.csv`](outputs/P6/ranking_model_effective_m.csv). On the 6,416 development games, scaling the SD by 0.8 or 1.2 gives a median of 1.93 to 4.47 — [`outputs/P5/Sensitivity_Analysis/External_SD/`](outputs/P5/Sensitivity_Analysis/External_SD/). Priors on the mean and variance parameters have negligible effect.
+- **M1a Extended** (per-game SD; mean and between-game SD vary with log rating count): model-dependent median effective pseudo-votes **3.02** (IQR 2.36–3.84) over 21,375 SD-matched games — [`outputs/P6/ranking_model_effective_m.csv`](outputs/P6/ranking_model_effective_m.csv). On the 6,416 development games, scaling the SD by 0.8 or 1.2 gives a median of 1.93 to 4.47 — [`outputs/P5/Sensitivity_Analysis/External_SD/`](outputs/P5/Sensitivity_Analysis/External_SD/). The tested alternative priors on the mean and variance parameters have negligible effect.
 - Exploratory holdout (3,209 games): Extended beats Baseline by **ΔELPD 221.7** (cluster SE 20.6) — [`outputs/P5/Holdout_Comparison_3209/`](outputs/P5/Holdout_Comparison_3209/). PPC: development 4/4 groups, holdout 3/4.
-- **Key point:** in M1b, replacing `s` with the external SD shows no predictive gain (ΔELPD −15.1, SE 8.3, approximate 95% interval −31.4 to 1.3). Predictive scores depend on the predictive mean and total variance; shrinkage depends on how that variance is split. **Prediction cannot choose the split — the measured rater SDs (≈1.5) are what rule out s ≈ 3.** Extended changes the mean, the variance structure and the noise term together, so its predictive gain is not attributed to any one of them.
+- **Key point:** in M1b, replacing `s` with the external SD shows no predictive gain (ΔELPD −15.1, SE 8.3, approximate 95% interval −31.4 to 1.3). Predictive scores depend on the predictive mean and total variance; shrinkage depends on how that variance is split. **Predictive scores alone do not identify the variance split. External historical SD estimates (≈1.5) provide evidence supporting smaller observation-noise values than s ≈ 3, subject to the unverified snapshot date and the fixed plug-in assumption.** Extended changes the mean, the variance structure and the noise term together, so its predictive gain is not attributed to any one of them.
 
 ### Act IV — What explains ratings and popularity?
 
@@ -57,8 +57,8 @@ The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), buil
 ### Act V — Rethinking the rankings
 
 - Ranking 21,375 SD-matched games in each of 500 joint posterior draws under M1a Extended — [`outputs/P6/`](outputs/P6/): our top 10 has a median of **46 ratings** versus **25,535** for BGG's; top-10 overlap 0, top-50 overlap 1; Spearman 0.78 over the whole list; median 90% rank interval for top-10 candidates ≈ 71 places; 6 games have P(top 10) > 0.5.
-- Interpretation: shrinking only for sampling noise lets games with few, very favourable ratings reach the top. BGG's much larger shrinkage may serve other goals (stable rankings, resistance to strategic voting); our data cannot test that. Neither ranking is "wrong": they answer different questions.
-- Prepared answer to "why rank with M1a Extended, not M1b?": M1a Extended shrinks only by rating count, the same kind of rule as BGG's, so the comparison is direct. M1b shrinks toward a designer- and feature-based prediction, a different target. Note also that M1a Extended's target varies with rating count, whereas BGG's is fixed at 5.5.
+- Interpretation: under M1a Extended's mean, latent-variance and historical-SD assumptions, games with few, very favourable ratings can reach the top. The larger shrinkage in the fitted BGG approximation may reflect other goals (stable rankings, resistance to strategic voting); our data cannot test that. Neither ranking is "wrong": they answer different questions.
+- Prepared answer to "why rank with M1a Extended, not M1b?": M1a Extended uses rating count and game-specific historical SD for shrinkage; its target and latent variance also vary with rating count. M1b uses additional game covariates and designer effects to define its target. The fitted BGG benchmark assumes a fixed target of 5.5, so this is a comparison of different shrinkage assumptions rather than identical rules.
 
 ### Methods woven through the acts
 
@@ -69,7 +69,7 @@ The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), buil
 ### Wording rules
 
 - Self-selection: "consistent with", never "shows" or "confirms".
-- m ≈ 11.6: diagnostic of weak identification, not an answer. 1,874: a constant-m approximation, not BGG's algorithm.
+- m ≈ 11.6: Baseline diagnostic of weak identification and prior sensitivity. m ≈ 3.02: the model-dependent median effective estimate under M1a Extended, not a unique or universal optimum. 1,874: a fitted constant-m approximation assuming a target of 5.5, not a verified official BGG algorithm.
 - 1.93–4.47 is an SD-scaling sensitivity range on 6,416 games, not a credible interval.
 - Designer share is of residual latent variance under M1b's assumptions, not of all rating variation. M2 rate ratios are conditional on the other covariates.
 - The holdout was consulted during exploration: all holdout results are exploratory. Rankings cover the 21,375 SD-matched games, not the whole BGG catalogue.
@@ -82,7 +82,7 @@ The deck is [`slides/Group_deck_draft.pptx`](slides/Group_deck_draft.pptx), buil
 
 ## Repository guide
 
-Current structure and entry points as of **26 November 2026**. The [archive index](archive/README.md) records superseded P5 comparisons without discarding their evidence.
+Current structure and entry points as of **27 November 2026**. The [archive index](archive/README.md) records superseded P5 comparisons without discarding their evidence.
 
 | Folder / owner | Key file or entry point | Contents |
 | --- | --- | --- |
@@ -91,12 +91,12 @@ Current structure and entry points as of **26 November 2026**. The [archive inde
 | `code/P3/`, `outputs/P3/` — P3 | [M2 workflow](code/P3/README.md), [handoff](docs/P3_HANDOFF.md), [reproduction guide](docs/P3_REPRODUCE.md) | Truncated Poisson/NB popularity models, posteriors, PPC and sensitivity |
 | `code/P4/`, `outputs/P4/` — P4 | [ExternalSD delivery](docs/P4_EXTERNALSD.md), [holdout results](outputs/P4/Holdout_3209/README.md) | M1b Baseline/ExternalSD, diagnostics, sensitivity, resources and comparison evidence |
 | `code/P5/`, `outputs/P5/` — P5 | [P5 results index](outputs/P5/README.md), [four-model holdout script](code/P5/14_Compare_Four_Models_Holdout_3209.R) | Current `M1a_Baseline/`, `M1a_Extended_ExternalSD/`, `WAIC_Comparison_6416/`, `Holdout_Comparison_3209/`, `Sensitivity_Analysis/` and `P6_Full_Handoff/` |
-| `code/P6/`, `outputs/P6/`, `slides/` — P6 | [Ranking results](outputs/P6/README.md), [group deck builder](code/P6/04_make_group_deck.py) | BGG benchmark, posterior ranking uncertainty and the 19-slide [group deck](slides/Group_deck_draft.pptx) |
+| `code/P6/`, `outputs/P6/`, `slides/` — P6 | [Ranking results](outputs/P6/README.md), [group deck builder](code/P6/04_make_group_deck.py) | BGG benchmark, posterior ranking uncertainty and the [group deck](slides/Group_deck_draft.pptx) (15 main + 4 backup slides) |
 | `figures/`, `tables/` | [Figure index](figures/README.md), [table index](tables/README.md) | Committed EDA, model, diagnostic and presentation artifacts, including member subfolders |
 | `docs/` | [Data guide](docs/P1_DATA_GUIDE.md), [24 Nov status record](docs/TEAM_PLAN_AND_STATUS.md) | Handoffs, reproduction instructions and methodological evidence; this README is the current team status source |
 | `archive/` | [Archive index](archive/README.md) | Superseded P5 results, with working references for scripts that still need them |
 
-**P1's scripts and the four shared CSVs remain at the repository root** for compatibility; the dictionary script is now [04_variable_dictionary.R](04_variable_dictionary.R). The EDA script still has machine-specific input/output paths; its committed figures can be inspected without rerunning it. P4's evidence remains at its established paths.
+**P1's data-preparation scripts 01–04 and the four shared CSVs remain at the repository root** for compatibility; the dictionary script is now [04_variable_dictionary.R](04_variable_dictionary.R). Scripts [05 (EDA)](code/P1/05_eda.R) and [06 (grouped PPC)](code/P1/06_grouped_ppc_m0_m1a.R) resolve inputs relative to the repository and write to `figures/` and `tables/`. P4's evidence remains at its established paths. See the [reference audit](docs/REPOSITORY_REFERENCE_AUDIT.md) for verified paths and unresolved local reproduction requirements.
 
 ## Fixed data contract
 
@@ -113,9 +113,9 @@ The game-level split uses seed **20261122** and has no overlapping game IDs, but
 
 Current comparisons are in [6,416-game WAIC](outputs/P5/WAIC_Comparison_6416/) and [3,209-game exploratory holdout](outputs/P5/Holdout_Comparison_3209/); **holdout ELPD is primary**, with WAIC secondary.
 
-## Team status — 26 November 2026
+## Team status — 27 November 2026
 
-All six members have delivered their analysis artifacts; the assembled group deck follows the agreed storyline above. Report writing and final submission checks remain.
+All six members have completed their core analytical deliverables. The assembled group deck has **15 main slides and 4 backup slides** and follows the agreed running order above. Report writing, optional extensions and final submission checks remain; optional analyses are not marked complete.
 
 | Member | Delivered | Main output folder(s) |
 | --- | --- | --- |

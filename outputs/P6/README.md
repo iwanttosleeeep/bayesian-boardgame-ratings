@@ -2,9 +2,11 @@
 
 Owner: P6 (Zhang Yihui, 1155272837). Covers RQ3 of the proposal.
 
+**Delivery status — 27 November 2026:** benchmark, ranking uncertainty, verification, all seven figures and group slide integration are complete. Report prose remains a draft.
+
 Inputs are P5's handoff in [`outputs/P5/P6_Full_Handoff/`](../P5/P6_Full_Handoff/README.md).
 Code is in [`code/P6/`](../../code/P6/). Every number below is produced by those
-scripts; nothing is typed in by hand.
+scripts. This documentation audit checked the committed files without rerunning the scripts.
 
 ```bash
 Rscript code/P6/01_bgg_benchmark.R     # benchmark
@@ -33,8 +35,7 @@ imply:
 m_i = n_i (ybar_i − bayes_i) / (bayes_i − 5.5)
 ```
 
-**This is an equivalent count under a constant-m approximation, not an official BGG
-parameter.** The numbers below describe how well that approximation reproduces the
+**This is a fitted constant-m approximation assuming a target of 5.5, not a verified official BGG parameter or algorithm.** The numbers below describe how well that approximation reproduces the
 published scores; they do not identify BGG's actual algorithm.
 
 | Quantity | Value |
@@ -66,13 +67,11 @@ Two caveats belong with these numbers.
 First, the Baseline m is an estimate under this model and its priors, not a
 property of the data alone. In the M1a posterior `s` sits at the top of its prior
 (posterior mean 2.96, prior upper bound 3.0). The data contain averages only, so `s`
-is weakly identified; a different prior on `s` would move `m`. It is therefore more
-accurate to say the data are **consistent with a small m under this prior** than
-that sampling noise alone justifies twelve votes.
+is weakly identified; a different prior on `s` would move `m`. The Baseline m ≈ 11.6 is therefore a diagnostic of weak identification and prior sensitivity, rather than a uniquely data-determined amount of shrinkage.
 
 Second, the ranking export uses the **Extended** model, which has a shrinkage target
 that varies with n (`mu_i = alpha + gamma·x_i`, `x_i = log n_i − x_center`) and a
-variance that varies with n (`tau2_i = exp(2(a_tau + b_tau·x_i))`). There is no single
+variance that varies with n (`tau2_i = exp(2(a_tau + b_tau·x_i))`). The shrinkage weight depends on both n and game-specific historical SD. There is no single
 m in that model. The effective per-game count is computed draw by draw as
 
 ```
@@ -81,14 +80,14 @@ m_i^(b) = sd_hist_i^2 / exp(2 (a_tau^(b) + b_tau^(b) x_i))
 
 with the posterior mean taken per game and the median/IQR reported across games —
 the same aggregation as `code/P5/05_Extended_SD_sensitivity.R`. All 12,000 parameter
-draws are used, in batches, and no game is filtered out. The median is 3.02; P5's
+draws are used, in batches, and no game is filtered out. The model-dependent median is 3.02, not a uniquely identified or universally optimal value; P5's
 independently computed 3.06 on 6,416 development games is consistent with it.
 
 The Extended model does **not** inherit the Baseline's prior on `s`. It replaces
 `s²/n` with a per-game `sd_hist²/n` plug-in, keeps no shared `s`, and has its own
 priors on `a_tau` and `b_tau`. Its own prior- and SD-sensitivity runs are in
 `outputs/P5/Sensitivity_Analysis/`; the numbers above should be read as that model's
-result, not as a re-parameterisation of the Baseline.
+result, not as a re-parameterisation of the Baseline. External historical SD estimates provide evidence supporting smaller observation-noise values than the Baseline s ≈ 3, subject to the unverified snapshot date and fixed plug-in assumption.
 
 ## 3. Ranking under posterior shrinkage
 
@@ -99,8 +98,7 @@ the same posterior sample. Ranking once on the posterior mean would ignore the
 correlation between games and understate the uncertainty in the ordering.
 
 These are latent ratings from **M1a Extended**, not from M1b, which has the best
-holdout predictive performance. The two questions are different: M1b is fitted to
-predict an average, M1a is the model from which a pseudo-vote count is defined.
+holdout predictive performance. The two questions are different: M1a Extended gives a rating-count and per-game-SD shrinkage comparison with a target and latent variance that vary with rating count; M1b additionally uses game features and designer effects. The BGG benchmark assumes a fixed target of 5.5, so the comparison does not hold all other assumptions constant.
 
 | Quantity | Value |
 |---|---|
@@ -145,7 +143,7 @@ statistics in the table above are reported with that caveat.
 **What can and cannot be said.** The divergence at the top is consistent with the
 much smaller shrinkage our model applies. It should not be attributed to m alone:
 the Extended model's shrinkage target varies with n, its variance is
-heteroskedastic, and both differ from the assumptions behind BGG's rule. The honest
+heteroskedastic, and both differ from the assumptions of the fitted BGG approximation. The honest
 statement is that the two rankings encode different beliefs about how much a rating
 from a small number of raters should be trusted, and that this choice — not sampling
 noise — is what separates the two lists.
@@ -167,11 +165,15 @@ P(top 10), P(top 50), P(top 100) lie in [0, 1], are monotone per game, and sum t
 
 | File | Contents |
 |---|---|
-| `figures/P6/fig_bgg_pseudovotes.png` | Distribution of BGG's implied m against the model's m (log scale) |
-| `figures/P6/fig_bgg_m_by_band.png` | Implied m by rating-count band |
-| `figures/P6/fig_top10_probability.png` | P(top 10) for the 20 most likely games |
-| `figures/P6/fig_rank_intervals.png` | 90% rank intervals for the 15 highest-ranked games, with BGG's rank marked |
-| `figures/P6/fig_rank_vs_bgg.png` | Our median rank against BGG's adjusted rank, all 21,375 games |
+| [fig_bgg_pseudovotes.png](../../figures/P6/fig_bgg_pseudovotes.png) | Earlier BGG approximation versus Baseline diagnostic m (log scale) |
+| [fig_bgg_m_by_band.png](../../figures/P6/fig_bgg_m_by_band.png) | Implied m by rating-count band |
+| [fig_top10_probability.png](../../figures/P6/fig_top10_probability.png) | P(top 10) for the 20 most likely games |
+| [fig_rank_intervals.png](../../figures/P6/fig_rank_intervals.png) | 90% rank intervals for the 15 highest-ranked games, with BGG's rank marked |
+| [fig_rank_vs_bgg.png](../../figures/P6/fig_rank_vs_bgg.png) | Our median rank against BGG's adjusted rank, all 21,375 games |
+| [fig_bgg_m_only.png](../../figures/P6/fig_bgg_m_only.png) | Fitted BGG approximation assuming target 5.5, without a model overlay; main slide 4 |
+| [fig_pseudovotes_comparison.png](../../figures/P6/fig_pseudovotes_comparison.png) | M1a Extended effective counts versus the fitted BGG approximation; main slide 15 |
+
+All seven PNGs are committed. The two presentation-specific figures are produced by [06_fig_pseudovotes.py](../../code/P6/06_fig_pseudovotes.py); this audit did not run it. The current [group deck](../../slides/Group_deck_draft.pptx) contains 15 main slides and 4 backup slides, assembled by [04_make_group_deck.py](../../code/P6/04_make_group_deck.py). The retired standalone P6 presentation files are no longer part of the repository.
 
 ## 6. Data files
 
@@ -207,16 +209,12 @@ P(top 10), P(top 50), P(top 100) lie in [0, 1], are monotone per game, and sum t
    listed separately.
 6. **"BGG's rule is wrong" is not a supported claim.** Its larger m may also serve to
    resist strategic voting and to produce a stable list; that is a plausible design
-   purpose, not something this study demonstrates. The benchmark quantifies what one
-   model, under one prior, implies.
+   purpose, not something this study demonstrates. The fitted BGG approximation assumes a target of 5.5; the Extended estimate depends on its own mean, variance, prior and historical-SD assumptions.
 
 ## 8. Slide-ready points
 
-- BGG's published adjusted score is consistent with about **1,874 dummy votes at
-  5.5**, and the implied count varies little across rating counts.
-- Under M1a, `m = s²/τ²` has posterior mean **11.6 (95% CI 10.7 – 12.3)**; the
-  ranking model's effective per-game count has median **3.0**. Both are model-based
-  and depend on the prior for `s`.
+- A fitted constant-m approximation to BGG's published adjusted score gives **1,874 dummy votes**, assuming a target of **5.5**. This is not a verified official BGG algorithm.
+- Under M1a Baseline, `m = s²/τ²` has posterior mean **11.6 (95% CI 10.7 – 12.3)**, a diagnostic of weak identification and s-prior sensitivity. Under M1a Extended, the model-dependent median effective count is **3.02** over 21,375 games; it has no shared s or inherited s prior. Its shrinkage uses both rating count and per-game historical SD, with a rating-count-dependent target and latent variance.
 - The two rankings agree broadly (Spearman 0.78) but share **none** of their top ten.
   That gap reflects the different shrinkage assumptions, not sampling noise alone.
 
