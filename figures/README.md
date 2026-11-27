@@ -1,4 +1,6 @@
-M0 figures
+# Figure index
+
+Current presentation manifests: [P4](P4/presentation/README.md), [P5 — seven figures](P5/README.md), [P6 — seven figures](../outputs/P6/README.md#5-figures). P2's corrected three-method interval plots are committed as [PNG](M0_three_method_intervals.png) and [SVG](M0_three_method_intervals.svg).
 
 ## P1 EDA figures (05_eda.R, 23 Nov 2026)
 
@@ -16,7 +18,7 @@ M0 figures
 | eda_09b_dev_vs_holdout_users.png | Development vs holdout: rating-count density |
 
 Summary statistics: [tables/eda_descriptive_summary.csv](../tables/eda_descriptive_summary.csv).
-Reproduce with `05_eda.R` at the repository root.
+The EDA script is [code/P1/05_eda.R](../code/P1/05_eda.R); its repository-root invocation is `Rscript code/P1/05_eda.R`. It reads the root CSVs and writes to `figures/` and `tables/`.
 
 ## P1 grouped PPC figures (code/P1/06_grouped_ppc_m0_m1a.R, updated 26 Nov 2026)
 

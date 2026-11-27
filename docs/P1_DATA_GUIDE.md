@@ -1,6 +1,6 @@
 # P1 — Data and sampling guide
 
-**Documentation updated 22 Nov 2026.** The actual P1 files stay at the **repository root**; this guide indexes them without changing their contents or locations. The [original P1 notes](P1_PIPELINE_NOTES_2026-11-22.md) are preserved separately.
+**Documentation updated 27 Nov 2026.** The actual P1 files stay at the **repository root**; this guide indexes them without changing their contents or locations. The [original P1 notes](P1_PIPELINE_NOTES_2026-11-22.md) are preserved separately.
 
 ## Published P1 files
 
@@ -47,8 +47,8 @@ These commands generate intermediate objects under `data/processed/` and files u
 
 In [`03_sampling.R`](../03_sampling.R), **3,244** holdout rows are drawn first, then **6,489** distinct development rows from the remainder. There is **zero game-ID overlap**, but **912 designer IDs** appear in both partitions. This does **not** validate performance for entirely unseen designers; P4 needs separate seen-/unseen-designer prediction handling.
 
-`comparison_sample.csv` is **not a trainable comparison sample**. Despite the filename, its current meaning is **holdout**. Do not train on it and then report its accuracy as held out. For M0/M1a/M1b formal same-row WAIC, agree on a new *development-only* complete-case ID intersection and document the model-specific likelihoods.
+`comparison_sample.csv` is **not a trainable comparison sample**. Despite the filename, its current meaning is **holdout**. Do not train on it and then report its accuracy as held out. The [archived 6,489-game M0/M1a/M1b comparison](../archive/outputs/P5/WAIC_Comparison_6489/README.md) is complete; the current [6,416-game matched-SD WAIC](../outputs/P5/WAIC_Comparison_6416/README.md) and [3,209-game exploratory holdout](../outputs/P5/Holdout_Comparison_3209/README.md) use their documented aligned samples and predictive targets.
 
-P5's two shrinkage models use the same **6,416** games within development that match usable historical per-game rating SD; their exploratory holdout comparison uses **3,209** matched held-out games. P5's output and posterior draws are in [`outputs/P5`](../outputs/P5/). These are not global BGG samples for top-10 ranking claims.
+P5's two shrinkage models use the same **6,416** games within development that match usable historical per-game rating SD; their exploratory holdout comparison uses **3,209** matched held-out games. P5's output and posterior draws are in [`outputs/P5`](../outputs/P5/). These development/holdout subsets are separate from the completed [21,375-game ranking handoff](../outputs/P5/P6_Full_Handoff/README.md), which reuses the fitted Extended parameters and conditions on each included game's observed rating. Neither scope is the full/current BGG catalogue.
 
-**Not yet verified in the GitHub tree:** P1-authored EDA charts/tables and PPC deliverables. They may exist locally. The project plan schedules these separately from the completed data preparation.
+**P1 analytical delivery is complete:** [Script 05](../code/P1/05_eda.R), [ten EDA figures](../figures/README.md#p1-eda-figures-05_edar-23-nov-2026), [descriptive statistics](../tables/eda_descriptive_summary.csv), [Script 06](../code/P1/06_grouped_ppc_m0_m1a.R), [grouped PPC summary](../tables/ppc_grouped_summary.csv) and [PPC notes](P1_PPC_NOTES.md) are committed. Scripts 05–06 read repository-relative inputs and write to `figures/` and `tables/`. See the [script index](../code/P1/README.md) for their input dependencies and the distinction from the root data-preparation pipeline.

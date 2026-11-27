@@ -1,8 +1,8 @@
 # STAT6106 — P5 Bayesian rating shrinkage
 
-**Status:** planned P5 model calculations and cross-model comparisons complete as of 24 November 2026. Presentation and report remain. This is P5's contribution; P1's files and the team proposal remain unchanged.
+**Status — 27 November 2026:** all planned P5 model comparisons and ranking handoffs are complete. Seven presentation figures are committed and the group deck is assembled (15 main + 4 backup slides). Report writing and optional extensions remain. This is P5's contribution; P1's files and the team proposal remain unchanged.
 
-## Final comparison deliverables (24 November)
+## Completed comparison and ranking deliverables
 
 - [Archived 6,489-game M0/M1a/M1b WAIC](../../archive/outputs/P5/WAIC_Comparison_6489/README.md) — complete, separate sample.
 - [6,416-game four-model WAIC](WAIC_Comparison_6416/README.md) — complete; substantial M1b pointwise WAIC warnings.
@@ -18,7 +18,7 @@ This is a **separate, same-specification baseline refit**, not a replacement for
 - Handoff files and upload status: [archived M1a WAIC handoff](../../archive/outputs/P5/M1a_WAIC_6489/README.md).
 - Four MCMC chains, 3,000 retained samples/chain; all reported R-hat <=1.01 and ESS >=400.
 - Posterior mean `s` = 2.9655, close to the U(0.5,3) upper boundary; this parameter is **not** a reliably identified individual-rater SD.
-- **Single-model** WAIC = **17,496.15** (`p_WAIC` = 2.2385), calculated from a 500 × 6,489 game-level log-likelihood matrix with latent game rating integrated out. This is **in-sample**, not holdout ELPD, and does not yet establish which of M0/M1a/M1b performs best.
+- **Single-model** WAIC = **17,496.15** (`p_WAIC` = 2.2385), calculated from a 500 × 6,489 game-level log-likelihood matrix with latent game rating integrated out. This is **in-sample**, not holdout ELPD, and alone does not establish which model performs best; the [aligned three-model comparison](../../archive/outputs/P5/WAIC_Comparison_6489/README.md) is complete, with its predictive-target and WAIC caveats retained.
 - P5's 6,489 training IDs have been checked **identical and in the same order** to P4 baseline's uploaded `train_game_ids.csv`. P2 and P4 subsequently delivered aligned likelihood files; the M1a 6,489 likelihood RDS is uploaded and the comparison is complete; the existing 6,416-game RDS must **not** be substituted.
 
 ## Two models retained for the final P5 narrative
@@ -34,12 +34,14 @@ Extended: `x_i = log(n_i)-mean_training(log(n))`, `mu_i = alpha+gamma*x_i`, `tau
 
 These models differ in the **mean**, **between-game variance**, and **measurement-noise** assumptions. A difference in predictive performance cannot be attributed to historical SD alone.
 
+The Extended shrinkage weight depends on both rating count and game-specific historical SD; its target and latent variance vary with log rating count. The main full-scope ranking result is a **model-dependent median effective m ≈ 3.02** (IQR 2.36–3.84), not a unique or universally optimal shrinkage value. Historical SD estimates support smaller observation-noise values than the Baseline s ≈ 3, subject to their unverified snapshot date and fixed plug-in treatment. Baseline m ≈ 11.6 remains a diagnostic of weak identification and prior sensitivity.
+
 ## Fixed data and comparison
 
 - P1's development sample: 6,489 games, of which **6,416** match usable historical per-game SD. Both models are fitted to exactly those **same 6,416 game IDs**; no re-sampling of P1 data.
 - P1's independent holdout: 3,244 games, of which **3,209** match usable SD. Both models are assessed on precisely the **same 3,209 holdout games**.
 - The holdout was already consulted in earlier model development, so this is an **exploratory** predictive comparison, not a pristine, untouched test set.
-- Posterior ranking and Top 50 comparisons cover only the **6,416 development games**, **not all BGG games**. Do not call these global BGG rankings.
+- The **earlier Baseline-vs-Extended ranking and Top 50 comparison** covers only the **6,416 development games**; its overlap of 36/50 is a development-sample result. The completed [full-scope P6 handoff](P6_Full_Handoff/README.md) instead covers **21,375 SD-matched games**, using 500 joint latent-rating draws from the already fitted Extended model; P6 has delivered [ranking results](../P6/README.md). Neither scope is the entire/current BGG catalogue.
 
 ## Verified outputs from the 6,416/3,209 comparison
 
@@ -77,7 +79,7 @@ The earlier full-21,831-game Model A outputs and **old common-s D vs external-SD
 
 ## Running scripts and legacy local cache paths
 
-Run the R scripts from the **same RStudio working directory** used for the initial P5 analysis. All scripts deliberately retain existing local input/output paths under `P5_external_SD/` (e.g. `Model_A_same_6416/`, `Model_D_calibrated/`, `M1a_A_vs_ExternalSD_Comparison/`) to **avoid moving or invalidating previously generated posterior draws**. These are internal cache paths, **not** the GitHub folder names above. The numbered script names and external documentation are now normalized; no reruns were needed for this repository reorganization.
+Run the R scripts from the **same RStudio working directory** used for the initial P5 analysis. The original modelling workflow (Scripts 01–08 and 13) retains local input/output paths under `P5_external_SD/` (e.g. `Model_A_same_6416/`, `Model_D_calibrated/`, `M1a_A_vs_ExternalSD_Comparison/`) to **avoid moving or invalidating previously generated posterior draws**. These are internal cache paths, **not** the GitHub folder names above. The numbered script names and external documentation are now normalized; no reruns were needed for this repository reorganization.
 
 If starting clean: run 01 to prepare external SD; 02 and 03 to fit both models; 04 to construct the holdout prediction cache; 05/06 for sensitivities; 07 for the model comparison; 08 for P6 handoff. R packages `rjags` and `coda` plus JAGS are required.
 
@@ -88,10 +90,10 @@ If starting clean: run 01 to prepare external SD; 02 and 03 to fit both models; 
 - [Baseline](M1a_Baseline/): `parameter_draws.rds`, `latent_rating_draws_for_P6.rds`
 - [Extended External SD](M1a_Extended_ExternalSD/): `parameter_draws.rds`, `latent_rating_draws_for_P6.rds`
 
-The GitHub object listing confirms each file is present; these binary files have **not** been independently opened or the model fits rerun during this README update. They are intended for P6's **within-6,416-game** rank credible intervals and top-10 probabilities.
+All four files are present; their contents were not decoded and no model was refitted in this documentation audit. They belong to the **6,416-game development analysis**. P6's completed **21,375-game** ranking uses the separate [P6_Full_Handoff](P6_Full_Handoff/README.md), including all five uploaded `P6_theta_draws_part_*.rds` files and the full-scope summary CSV. P6 ranks within each of the 500 joint draw columns; the development-only latent files must not replace that handoff.
 
 **Not a complete single-command reproduction package:** the local P5 R scripts still use original working paths under `P5_external_SD/` rather than the GitHub presentation folders. For reuse without refitting, download or copy the RDS and matched CSV into the script-expected local locations. Some source caches and detailed development comparisons are not committed. Both P5 per-game holdout CSVs are now uploaded.
 
 The external historical rating SD snapshot date is not verified, SD is treated as a plug-in value, and holdout data were consulted during exploration; these limitations should remain visible in the final report. Formal cross-model comparisons are complete. Use the separate comparison READMEs for sample definitions and interpretation.
 
-See the [team status](../../docs/TEAM_PLAN_AND_STATUS.md) and [P1 data contract](../../docs/P1_DATA_GUIDE.md).
+See the [current team status](../../README.md#team-status--27-november-2026), [24 Nov historical record](../../docs/TEAM_PLAN_AND_STATUS.md) and [P1 data contract](../../docs/P1_DATA_GUIDE.md).
