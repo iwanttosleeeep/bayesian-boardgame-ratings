@@ -1,0 +1,68 @@
+{
+  "dataset": "TidyTuesday 2022-01-25 Board Games",
+  "upstream_repository": "https://github.com/rfordatascience/tidytuesday",
+  "upstream_commit": "84c6abbadd5a038b99ca01da5aa377a07c8b46a7",
+  "upstream_commit_date": "2022-01-25T01:39:20Z",
+  "retrieved_date": "2026-11-27",
+  "files": [
+    {
+      "file": "details.csv",
+      "source_url": "https://raw.githubusercontent.com/rfordatascience/tidytuesday/84c6abbadd5a038b99ca01da5aa377a07c8b46a7/data/2022/2022-01-25/details.csv",
+      "upstream_commit": "84c6abbadd5a038b99ca01da5aa377a07c8b46a7",
+      "git_blob_sha1": "211cebeb4ef9362732f42704e4509e14e00e7bef",
+      "size_bytes": 34332666,
+      "md5": "82314a19cabb42830583885aef1718b8",
+      "sha256": "f49ca5c4f36c9cb881e7f42fba1407512b8e1fbbf1a53040211d36c53c46fedc",
+      "rows": 21631,
+      "columns": 23,
+      "column_names": [
+        "num",
+        "id",
+        "primary",
+        "description",
+        "yearpublished",
+        "minplayers",
+        "maxplayers",
+        "playingtime",
+        "minplaytime",
+        "maxplaytime",
+        "minage",
+        "boardgamecategory",
+        "boardgamemechanic",
+        "boardgamefamily",
+        "boardgameexpansion",
+        "boardgameimplementation",
+        "boardgamedesigner",
+        "boardgameartist",
+        "boardgamepublisher",
+        "owned",
+        "trading",
+        "wanting",
+        "wishing"
+      ]
+    },
+    {
+      "file": "ratings.csv",
+      "source_url": "https://raw.githubusercontent.com/rfordatascience/tidytuesday/84c6abbadd5a038b99ca01da5aa377a07c8b46a7/data/2022/2022-01-25/ratings.csv",
+      "upstream_commit": "84c6abbadd5a038b99ca01da5aa377a07c8b46a7",
+      "git_blob_sha1": "62dea9f1f8dcfd3fbbea5ffa1ec73405de3a3fe2",
+      "size_bytes": 5032959,
+      "md5": "727ac4df2a4a03bb58e8e6475b325b4e",
+      "sha256": "cf88b6903a1beab047bf8fdfb698cd3bdf1bc2410cb57975a1c24483e3f6c090",
+      "rows": 21831,
+      "columns": 10,
+      "column_names": [
+        "num",
+        "id",
+        "name",
+        "year",
+        "rank",
+        "average",
+        "bayes_average",
+        "users_rated",
+        "url",
+        "thumbnail"
+      ]
+    }
+  ]
+}
