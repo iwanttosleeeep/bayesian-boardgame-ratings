@@ -1,2 +1,4 @@
 # Preserve the exact CSV bytes referenced by saved posterior metadata.
 outputs/P5/M1a_Extended_ExternalSD/P5_SD_matched.csv -text
+# Preserve the recovered historical SD source snapshot without conversion.
+data/raw/historical_games.csv -text
